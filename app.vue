@@ -63,7 +63,7 @@
 
             <div
                 v-if="showResults"
-                class="grid grid-cols-1 md:grid-cols-2 gap-4"
+                class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white"
             >
                 <!-- 只在A中存在的名字 -->
                 <div class="rounded-lg shadow-md p-4">
@@ -84,7 +84,7 @@
                 </div>
 
                 <!-- 只在B中存在的名字 -->
-                <div class="rounded-lg shadow-md p-4">
+                <div class="rounded-lg shadow-md p-4 bg-white">
                     <h2 class="text-lg font-semibold mb-2">
                         仅在名单 B 中存在 ({{ onlyInB.length }})
                     </h2>
