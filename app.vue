@@ -1,4 +1,3 @@
-// pages/index.vue
 <template>
     <div class="w-full min-h-screen bg-[#f8fafc]">
         <main class="container mx-auto p-4">
@@ -63,10 +62,10 @@
 
             <div
                 v-if="showResults"
-                class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white"
+                class="grid grid-cols-1 md:grid-cols-3 gap-4"
             >
                 <!-- 只在A中存在的名字 -->
-                <div class="rounded-lg shadow-md p-4">
+                <div class="rounded-lg shadow-md p-4 bg-white">
                     <h2 class="text-lg font-semibold mb-2">
                         仅在名单 A 中存在 ({{ onlyInA.length }})
                     </h2>
@@ -75,6 +74,24 @@
                             <li
                                 v-for="(name, index) in onlyInA"
                                 :key="'a-' + index"
+                                class="mb-1"
+                            >
+                                {{ name }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 在A和B中都存在的名字 -->
+                <div class="rounded-lg shadow-md p-4 bg-white">
+                    <h2 class="text-lg font-semibold mb-2">
+                        在名单 A 和 B 中都存在 ({{ inBoth.length }})
+                    </h2>
+                    <div class="max-h-64 overflow-y-auto">
+                        <ul class="list-disc pl-6">
+                            <li
+                                v-for="(name, index) in inBoth"
+                                :key="'both-' + index"
                                 class="mb-1"
                             >
                                 {{ name }}
@@ -122,6 +139,7 @@ const listA = ref("");
 const listB = ref("");
 const onlyInA = ref([]);
 const onlyInB = ref([]);
+const inBoth = ref([]);
 const showResults = ref(false);
 
 // 处理文件上传 - 名单A
@@ -171,6 +189,9 @@ const compareNames = () => {
     // 找出只在B中存在的名字
     onlyInB.value = [...setB].filter((name) => !setA.has(name));
 
+    // 找出在A和B中都存在的名字
+    inBoth.value = [...setA].filter((name) => setB.has(name));
+
     // 显示结果
     showResults.value = true;
 };
@@ -179,6 +200,8 @@ const compareNames = () => {
 const exportResults = () => {
     let content = "仅在名单A中存在的名字：\n";
     content += onlyInA.value.join("\n");
+    content += "\n\n在名单A和B中都存在的名字：\n";
+    content += inBoth.value.join("\n");
     content += "\n\n仅在名单B中存在的名字：\n";
     content += onlyInB.value.join("\n");
 
