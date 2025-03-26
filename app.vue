@@ -27,21 +27,60 @@
                                 上传文件
                             </label>
                         </div>
-                        <div class="text-sm text-gray-600" v-if="listA.trim()">
+                        <p class="text-sm text-gray-600" v-if="listA.trim()">
                             已检测到
                             <span class="font-semibold">{{
                                 listAStats.valid
                             }}</span>
                             个有效姓名，
                             <span
-                                class="font-semibold"
-                                :class="{
-                                    'text-orange-500': listAStats.invalid !== 0,
-                                }"
-                                >{{ listAStats.invalid }}</span
+                                v-if="listAStats.invalid > 0"
+                                class="font-semibold text-red-500"
                             >
+                                {{ listAStats.invalid }}
+                            </span>
+                            <span v-else class="font-semibold">{{
+                                listAStats.invalid
+                            }}</span>
                             个无效姓名
+                            <span
+                                v-if="
+                                    !showInvalidNamesA && listAStats.invalid > 0
+                                "
+                                @click="toggleInvalidNames('A')"
+                                class="font-semibold hover:cursor-pointer text-xl"
+                            >
+                                +
+                            </span>
+                            <span
+                                v-if="
+                                    showInvalidNamesA && listAStats.invalid > 0
+                                "
+                                @click="toggleInvalidNames('A')"
+                                class="font-semibold hover:cursor-pointer text-xl"
+                            >
+                                -
+                            </span>
+                        </p>
+                    </div>
+
+                    <!-- 无效姓名折叠面板 -->
+                    <div
+                        v-if="showInvalidNamesA && listAStats.invalid > 0"
+                        class="mt-3 p-3 bg-gray-50 rounded border border-gray-200 transition-all duration-300"
+                    >
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="font-medium text-sm">无效姓名列表</div>
                         </div>
+                        <ul class="max-h-36 overflow-y-auto list-disc pl-6">
+                            <li
+                                v-for="(name, index) in getInvalidNames(listA)"
+                                :key="index"
+                                class="py-1 px-2 text-sm border-gray-100 last:border-b-0"
+                            >
+                                {{ name }}
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
@@ -66,21 +105,60 @@
                                 上传文件
                             </label>
                         </div>
-                        <div class="text-sm text-gray-600" v-if="listB.trim()">
+                        <p class="text-sm text-gray-600" v-if="listB.trim()">
                             已检测到
                             <span class="font-semibold">{{
                                 listBStats.valid
                             }}</span>
                             个有效姓名，
                             <span
-                                class="font-semibold"
-                                :class="{
-                                    'text-orange-500': listBStats.invalid !== 0,
-                                }"
-                                >{{ listBStats.invalid }}</span
+                                v-if="listBStats.invalid > 0"
+                                class="font-semibold text-red-500"
                             >
+                                {{ listBStats.invalid }}
+                            </span>
+                            <span v-else class="font-semibold">{{
+                                listBStats.invalid
+                            }}</span>
                             个无效姓名
+                            <span
+                                v-if="
+                                    !showInvalidNamesB && listBStats.invalid > 0
+                                "
+                                @click="toggleInvalidNames('B')"
+                                class="font-semibold hover:cursor-pointer text-xl"
+                            >
+                                +
+                            </span>
+                            <span
+                                v-if="
+                                    showInvalidNamesB && listBStats.invalid > 0
+                                "
+                                @click="toggleInvalidNames('B')"
+                                class="font-semibold hover:cursor-pointer text-xl"
+                            >
+                                -
+                            </span>
+                        </p>
+                    </div>
+
+                    <!-- 无效姓名折叠面板 -->
+                    <div
+                        v-if="showInvalidNamesB && listBStats.invalid > 0"
+                        class="mt-3 p-3 bg-gray-50 rounded border border-gray-200 transition-all duration-300"
+                    >
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="font-medium text-sm">无效姓名列表</div>
                         </div>
+                        <ul class="max-h-36 overflow-y-auto list-disc pl-6">
+                            <li
+                                v-for="(name, index) in getInvalidNames(listB)"
+                                :key="index"
+                                class="py-1 px-2 text-sm border-gray-100 last:border-b-0"
+                            >
+                                {{ name }}
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -171,11 +249,47 @@ const showResults = ref(false);
 const listAStats = reactive({ valid: 0, invalid: 0 });
 const listBStats = reactive({ valid: 0, invalid: 0 });
 
+// 折叠面板状态
+const showInvalidNamesA = ref(false);
+const showInvalidNamesB = ref(false);
+
+// 切换折叠面板
+const toggleInvalidNames = (list) => {
+    if (list === "A") {
+        showInvalidNamesA.value = !showInvalidNamesA.value;
+    } else if (list === "B") {
+        showInvalidNamesB.value = !showInvalidNamesB.value;
+    }
+};
+
 // 检查名字是否只包含符号
 const isOnlySymbols = (name) => {
     // 匹配任何非字母、非数字、非汉字的字符
     const symbolPattern = /^[^\p{L}\p{N}\p{Script=Han}]+$/u;
     return symbolPattern.test(name);
+};
+
+// 判断一个名字是否有效
+const isValidName = (name) => {
+    return name !== "" && !isOnlySymbols(name);
+};
+
+// 获取一个列表中的无效姓名
+const getInvalidNames = (text) => {
+    if (text.trim() === "") {
+        return [];
+    }
+
+    // 使用与parseNames相同的逻辑分割名字
+    let allNames = text.split(/\n/);
+    allNames = allNames.flatMap((line) =>
+        line.split(/[,，、;;\s\.。\/\\\(\)\[\]\{\}【】（）]+/),
+    );
+
+    // 过滤出非空但无效的名字
+    return allNames
+        .map((name) => name.trim())
+        .filter((name) => name !== "" && !isValidName(name));
 };
 
 // 将文本解析为名字数组，支持多种分隔符，并统计有效/无效名字
