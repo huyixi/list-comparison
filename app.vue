@@ -12,7 +12,7 @@
                     <textarea
                         v-model="listA"
                         class="w-full h-64 border rounded p-2"
-                        placeholder="请输入第一份名单，可用逗号、空格、句号、斜杠、括号或换行分隔名字"
+                        placeholder="请输入第一份名单。可用逗号、空格、句号、斜杠、括号或换行分隔名字。"
                     ></textarea>
                     <div class="mt-2 flex items-center">
                         <input
@@ -34,7 +34,7 @@
                     <textarea
                         v-model="listB"
                         class="w-full h-64 border rounded p-2"
-                        placeholder="请输入第二份名单，可用逗号、空格、句号、斜杠、括号或换行分隔名字"
+                        placeholder="请输入第二份名单。可用逗号、空格、句号、斜杠、括号或换行分隔名字。"
                     ></textarea>
                     <div class="mt-2 flex items-center">
                         <input
