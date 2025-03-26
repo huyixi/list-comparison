@@ -14,17 +14,34 @@
                         class="w-full h-64 border rounded p-2"
                         placeholder="请输入第一份名单。可用逗号、空格、句号、斜杠、括号或换行分隔名字。"
                     ></textarea>
-                    <div class="mt-2 flex items-center">
-                        <input
-                            type="file"
-                            @change="handleFileA"
-                            class="hidden"
-                            id="fileA"
-                            accept=".txt,.csv"
-                        />
-                        <label for="fileA" class="secondary-btn mr-2">
-                            上传文件
-                        </label>
+                    <div class="mt-2 flex items-center justify-between">
+                        <div>
+                            <input
+                                type="file"
+                                @change="handleFileA"
+                                class="hidden"
+                                id="fileA"
+                                accept=".txt,.csv"
+                            />
+                            <label for="fileA" class="secondary-btn mr-2">
+                                上传文件
+                            </label>
+                        </div>
+                        <div class="text-sm text-gray-600" v-if="listA.trim()">
+                            已检测到
+                            <span class="font-semibold">{{
+                                listAStats.valid
+                            }}</span>
+                            个有效姓名，
+                            <span
+                                class="font-semibold"
+                                :class="{
+                                    'text-orange-500': listAStats.invalid !== 0,
+                                }"
+                                >{{ listAStats.invalid }}</span
+                            >
+                            个无效姓名
+                        </div>
                     </div>
                 </div>
 
@@ -36,17 +53,34 @@
                         class="w-full h-64 border rounded p-2"
                         placeholder="请输入第二份名单。可用逗号、空格、句号、斜杠、括号或换行分隔名字。"
                     ></textarea>
-                    <div class="mt-2 flex items-center">
-                        <input
-                            type="file"
-                            @change="handleFileB"
-                            class="hidden"
-                            id="fileB"
-                            accept=".txt,.csv"
-                        />
-                        <label for="fileB" class="secondary-btn mr-2">
-                            上传文件
-                        </label>
+                    <div class="mt-2 flex items-center justify-between">
+                        <div>
+                            <input
+                                type="file"
+                                @change="handleFileB"
+                                class="hidden"
+                                id="fileB"
+                                accept=".txt,.csv"
+                            />
+                            <label for="fileB" class="secondary-btn mr-2">
+                                上传文件
+                            </label>
+                        </div>
+                        <div class="text-sm text-gray-600" v-if="listB.trim()">
+                            已检测到
+                            <span class="font-semibold">{{
+                                listBStats.valid
+                            }}</span>
+                            个有效姓名，
+                            <span
+                                class="font-semibold"
+                                :class="{
+                                    'text-orange-500': listBStats.invalid !== 0,
+                                }"
+                                >{{ listBStats.invalid }}</span
+                            >
+                            个无效姓名
+                        </div>
                     </div>
                 </div>
             </div>
@@ -124,7 +158,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch, reactive } from "vue";
 
 const listA = ref("");
 const listB = ref("");
@@ -133,19 +167,53 @@ const onlyInB = ref([]);
 const inBoth = ref([]);
 const showResults = ref(false);
 
-// 将文本解析为名字数组，支持多种分隔符
-const parseNames = (text) => {
+// 统计信息
+const listAStats = reactive({ valid: 0, invalid: 0 });
+const listBStats = reactive({ valid: 0, invalid: 0 });
+
+// 检查名字是否只包含符号
+const isOnlySymbols = (name) => {
+    // 匹配任何非字母、非数字、非汉字的字符
+    const symbolPattern = /^[^\p{L}\p{N}\p{Script=Han}]+$/u;
+    return symbolPattern.test(name);
+};
+
+// 将文本解析为名字数组，支持多种分隔符，并统计有效/无效名字
+const parseNames = (text, stats = null) => {
+    if (text.trim() === "") {
+        if (stats) {
+            stats.valid = 0;
+            stats.invalid = 0;
+        }
+        return [];
+    }
+
     // 先用换行分割
-    let names = text.split(/\n/);
+    let allNames = text.split(/\n/);
 
     // 对每个结果再用各种分隔符分割
     // 包括: 逗号, 中文逗号, 顿号, 分号, 空格, 句号, 中文句号, 斜杠, 反斜杠, 括号等
-    names = names.flatMap((line) =>
+    allNames = allNames.flatMap((line) =>
         line.split(/[,，、;;\s\.。\/\\\(\)\[\]\{\}【】（）]+/),
     );
 
-    // 处理结果：去除空格、空行等
-    return names.map((name) => name.trim()).filter((name) => name !== "");
+    // 预处理所有名字
+    allNames = allNames.map((name) => name.trim());
+
+    // 过滤出有效和无效名字
+    const validNames = allNames.filter(
+        (name) => name !== "" && !isOnlySymbols(name),
+    );
+    const invalidCount =
+        allNames.filter((name) => name !== "").length - validNames.length;
+
+    // 更新统计信息
+    if (stats) {
+        stats.valid = validNames.length;
+        stats.invalid = invalidCount;
+    }
+
+    return validNames;
 };
 
 // 处理文件上传 - 名单A
@@ -175,8 +243,8 @@ const handleFileB = (event) => {
 // 对比两份名单
 const compareNames = () => {
     // 使用增强的parseNames函数解析输入
-    const namesA = parseNames(listA.value);
-    const namesB = parseNames(listB.value);
+    const namesA = parseNames(listA.value, listAStats);
+    const namesB = parseNames(listB.value, listBStats);
 
     // 转换为Set，便于快速查找
     const setA = new Set(namesA);
@@ -192,7 +260,9 @@ const compareNames = () => {
     inBoth.value = [...setA].filter((name) => setB.has(name));
 
     // 显示结果
-    showResults.value = true;
+    if (namesA.length > 0 && namesB.length > 0) {
+        showResults.value = true;
+    }
 };
 
 // 导出结果
@@ -215,13 +285,17 @@ const exportResults = () => {
     URL.revokeObjectURL(url);
 };
 
+// 监听表单变化
 watch([listA, listB], () => {
-    checkInputs();
-});
+    // 单独解析两个列表以获取统计数据
+    parseNames(listA.value, listAStats);
+    parseNames(listB.value, listBStats);
 
-const checkInputs = () => {
+    // 如果两个列表都有内容，进行比较
     if (listA.value.trim() !== "" && listB.value.trim() !== "") {
         compareNames();
+    } else {
+        showResults.value = false;
     }
-};
+});
 </script>
