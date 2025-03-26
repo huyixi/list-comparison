@@ -56,7 +56,7 @@
                     </div>
                 </div>
             </div>
-
+            <!--
             <div class="text-center mb-6">
                 <button
                     @click="compareNames"
@@ -64,7 +64,7 @@
                 >
                     对比名单
                 </button>
-            </div>
+            </div> -->
 
             <div
                 v-if="showResults"
@@ -228,5 +228,15 @@ const exportResults = () => {
     link.click();
 
     URL.revokeObjectURL(url);
+};
+
+watch([listA, listB], () => {
+    checkInputs();
+});
+
+const checkInputs = () => {
+    if (listA.value.trim() !== "" && listB.value.trim() !== "") {
+        compareNames();
+    }
 };
 </script>
