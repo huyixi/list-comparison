@@ -12,19 +12,22 @@
                     <textarea
                         v-model="listA"
                         class="w-full h-128 border rounded p-2"
-                        placeholder="请输入第一份名单，每行一个名字"
+                        placeholder="请输入第一份名单，可用逗号、空格、句号、斜杠、括号或换行分隔名字"
                     ></textarea>
-                    <div class="mt-2">
+                    <div class="mt-2 flex items-center">
                         <input
                             type="file"
                             @change="handleFileA"
                             class="hidden"
                             id="fileA"
-                            accept=".txt"
+                            accept=".txt,.csv"
                         />
-                        <label for="fileA" class="secondary-btn">
+                        <label for="fileA" class="secondary-btn mr-2">
                             上传文件
                         </label>
+                        <div class="text-sm text-gray-500">
+                            支持多种分隔符：换行、逗号、空格、句号、斜杠、括号等
+                        </div>
                     </div>
                 </div>
 
@@ -34,19 +37,22 @@
                     <textarea
                         v-model="listB"
                         class="w-full h-128 border rounded p-2"
-                        placeholder="请输入第二份名单，每行一个名字"
+                        placeholder="请输入第二份名单，可用逗号、空格、句号、斜杠、括号或换行分隔名字"
                     ></textarea>
-                    <div class="mt-2">
+                    <div class="mt-2 flex items-center">
                         <input
                             type="file"
                             @change="handleFileB"
                             class="hidden"
                             id="fileB"
-                            accept=".txt"
+                            accept=".txt,.csv"
                         />
-                        <label for="fileB" class="secondary-btn">
+                        <label for="fileB" class="secondary-btn mr-2">
                             上传文件
                         </label>
+                        <div class="text-sm text-gray-500">
+                            支持多种分隔符：换行、逗号、空格、句号、斜杠、括号等
+                        </div>
                     </div>
                 </div>
             </div>
@@ -142,6 +148,21 @@ const onlyInB = ref([]);
 const inBoth = ref([]);
 const showResults = ref(false);
 
+// 将文本解析为名字数组，支持多种分隔符
+const parseNames = (text) => {
+    // 先用换行分割
+    let names = text.split(/\n/);
+
+    // 对每个结果再用各种分隔符分割
+    // 包括: 逗号, 中文逗号, 顿号, 分号, 空格, 句号, 中文句号, 斜杠, 反斜杠, 括号等
+    names = names.flatMap((line) =>
+        line.split(/[,，、;;\s\.。\/\\\(\)\[\]\{\}【】（）]+/),
+    );
+
+    // 处理结果：去除空格、空行等
+    return names.map((name) => name.trim()).filter((name) => name !== "");
+};
+
 // 处理文件上传 - 名单A
 const handleFileA = (event) => {
     const file = event.target.files[0];
@@ -168,16 +189,9 @@ const handleFileB = (event) => {
 
 // 对比两份名单
 const compareNames = () => {
-    // 将输入的文本分割成数组，并去除空行和空格
-    const namesA = listA.value
-        .split("\n")
-        .map((name) => name.trim())
-        .filter((name) => name !== "");
-
-    const namesB = listB.value
-        .split("\n")
-        .map((name) => name.trim())
-        .filter((name) => name !== "");
+    // 使用增强的parseNames函数解析输入
+    const namesA = parseNames(listA.value);
+    const namesB = parseNames(listB.value);
 
     // 转换为Set，便于快速查找
     const setA = new Set(namesA);
