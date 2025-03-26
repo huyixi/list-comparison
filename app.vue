@@ -11,7 +11,7 @@
                     <h2 class="text-lg font-semibold mb-2">名单 A</h2>
                     <textarea
                         v-model="listA"
-                        class="w-full h-128 border rounded p-2"
+                        class="w-full h-64 border rounded p-2"
                         placeholder="请输入第一份名单，可用逗号、空格、句号、斜杠、括号或换行分隔名字"
                     ></textarea>
                     <div class="mt-2 flex items-center">
@@ -25,9 +25,6 @@
                         <label for="fileA" class="secondary-btn mr-2">
                             上传文件
                         </label>
-                        <div class="text-sm text-gray-500">
-                            支持多种分隔符：换行、逗号、空格、句号、斜杠、括号等
-                        </div>
                     </div>
                 </div>
 
@@ -36,7 +33,7 @@
                     <h2 class="text-lg font-semibold mb-2">名单 B</h2>
                     <textarea
                         v-model="listB"
-                        class="w-full h-128 border rounded p-2"
+                        class="w-full h-64 border rounded p-2"
                         placeholder="请输入第二份名单，可用逗号、空格、句号、斜杠、括号或换行分隔名字"
                     ></textarea>
                     <div class="mt-2 flex items-center">
@@ -50,21 +47,9 @@
                         <label for="fileB" class="secondary-btn mr-2">
                             上传文件
                         </label>
-                        <div class="text-sm text-gray-500">
-                            支持多种分隔符：换行、逗号、空格、句号、斜杠、括号等
-                        </div>
                     </div>
                 </div>
             </div>
-            <!--
-            <div class="text-center mb-6">
-                <button
-                    @click="compareNames"
-                    class="primary-btn text-white px-6 py-2 rounded font-semibold"
-                >
-                    对比名单
-                </button>
-            </div> -->
 
             <div
                 v-if="showResults"
