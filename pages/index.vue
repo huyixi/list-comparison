@@ -259,14 +259,14 @@
                     }}</UBadge>
                 </div>
                 <div class="max-h-64 overflow-y-auto">
-                    <UList>
-                        <UListItem
+                    <ul>
+                        <li
                             v-for="(name, index) in inBoth"
                             :key="'both-' + index"
                         >
                             {{ name }}
-                        </UListItem>
-                    </UList>
+                        </li>
+                    </ul>
                 </div>
             </UCard>
 
@@ -279,14 +279,14 @@
                     }}</UBadge>
                 </div>
                 <div class="max-h-64 overflow-y-auto">
-                    <UList>
-                        <UListItem
+                    <ul>
+                        <li
                             v-for="(name, index) in onlyInB"
                             :key="'b-' + index"
                         >
                             {{ name }}
-                        </UListItem>
-                    </UList>
+                        </li>
+                    </ul>
                 </div>
             </UCard>
         </div>
