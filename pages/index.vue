@@ -293,10 +293,10 @@
             </UCard>
         </div>
 
-        <div v-if="showResults" class="text-center mt-6">
+        <div v-if="showResults" class="text-center my-6">
             <UButton
                 @click="exportResults"
-                color="purple"
+                color="primary"
                 icon="i-heroicons-arrow-down-tray"
                 class="font-semibold"
             >
