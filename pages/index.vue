@@ -46,10 +46,10 @@
                             个重复姓名
                         </template>
 
-                        <!-- <UButton
+                        <UButton
                             v-if="
-                                listAStats.invalid > 0 ||
-                                listAStats.duplicates > 0
+                                listAStats?.invalid > 0 ||
+                                listAStats?.duplicates > 0
                             "
                             variant="ghost"
                             size="xs"
@@ -61,7 +61,7 @@
                             "
                             class="align-middle p-0"
                             @click="showListADetails = !showListADetails"
-                        /> -->
+                        />
                     </p>
                 </div>
 
@@ -147,10 +147,10 @@
                             个重复姓名
                         </template>
 
-                        <!-- <UButton
+                        <UButton
                             v-if="
-                                listBStats.invalid > 0 ||
-                                listBStats.duplicates > 0
+                                listBStats?.invalid > 0 ||
+                                listBStats?.duplicates > 0
                             "
                             variant="ghost"
                             size="xs"
@@ -162,7 +162,7 @@
                             "
                             class="align-middle p-0"
                             @click="showListBDetails = !showListBDetails"
-                        /> -->
+                        />
                     </p>
                 </div>
 
