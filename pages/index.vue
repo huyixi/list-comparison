@@ -28,28 +28,28 @@
                     <p class="text-sm text-gray-600" v-if="listA.trim()">
                         已检测到
                         <UBadge color="primary" variant="subtle">{{
-                            listAStats.valid
+                            namesAInfo.validCount
                         }}</UBadge>
                         个有效姓名
-                        <template v-if="listAStats.invalid > 0">
+                        <template v-if="namesAInfo.invalidNames.length > 0">
                             ，
                             <UBadge color="error" variant="subtle">{{
-                                listAStats.invalid
+                                namesAInfo.invalidNames.length
                             }}</UBadge>
                             个无效姓名
                         </template>
 
-                        <template v-if="listAStats.duplicates > 0">
+                        <template v-if="namesAInfo.duplicates.length > 0">
                             ，<UBadge color="warning" variant="subtle">{{
-                                listAStats.duplicates
+                                namesAInfo.duplicates.length
                             }}</UBadge>
                             个重复姓名
                         </template>
 
                         <UButton
                             v-if="
-                                listAStats?.invalid > 0 ||
-                                listAStats?.duplicates > 0
+                                namesAInfo.invalidNames.length > 0 ||
+                                namesAInfo.duplicates.length > 0
                             "
                             variant="ghost"
                             size="xs"
@@ -69,32 +69,31 @@
                 <div
                     v-if="
                         showListADetails &&
-                        (listAStats.invalid > 0 || listAStats.duplicates > 0)
+                        (namesAInfo.invalidNames.length > 0 ||
+                            namesAInfo.duplicates.length > 0)
                     "
                     class="mt-3 rounded p-2 max-h-36 overflow-y-auto ring-1 ring-gray-200 dark:ring-gray-700"
                 >
-                    <div v-if="listAStats.invalid > 0">
+                    <div v-if="namesAInfo.invalidNames.length > 0">
                         <div class="text-sm font-medium text-red-600 mb-1">
                             无效姓名：
                         </div>
                         <ul>
                             <li
-                                v-for="(name, index) in getInvalidNames(listA)"
+                                v-for="(name, index) in namesAInfo.invalidNames"
                                 :key="'invalid-a-' + index"
                             >
                                 {{ name }}
                             </li>
                         </ul>
                     </div>
-                    <div v-if="listAStats.duplicates > 0">
+                    <div v-if="namesAInfo.duplicates.length > 0">
                         <div class="text-sm font-medium text-orange-600 mb-1">
                             重复姓名：
                         </div>
                         <ul>
                             <li
-                                v-for="(item, index) in getDuplicateNames(
-                                    listADuplicates,
-                                )"
+                                v-for="(item, index) in namesAInfo.duplicates"
                                 :key="'dupe-a-' + index"
                             >
                                 {{ item.name }}
@@ -130,28 +129,28 @@
                     <p class="text-sm text-gray-600" v-if="listB.trim()">
                         已检测到
                         <UBadge color="primary" variant="subtle">{{
-                            listBStats.valid
+                            namesBInfo.validCount
                         }}</UBadge>
                         个有效姓名
-                        <template v-if="listBStats.invalid > 0">
+                        <template v-if="namesBInfo.invalidNames.length > 0">
                             ，
                             <UBadge color="error" variant="subtle">{{
-                                listBStats.invalid
+                                namesBInfo.invalidNames.length
                             }}</UBadge>
                             个无效姓名
                         </template>
 
-                        <template v-if="listBStats.duplicates > 0">
+                        <template v-if="namesBInfo.duplicates.length > 0">
                             ，<UBadge color="warning" variant="subtle">{{
-                                listBStats.duplicates
+                                namesBInfo.duplicates.length
                             }}</UBadge>
                             个重复姓名
                         </template>
 
                         <UButton
                             v-if="
-                                listBStats?.invalid > 0 ||
-                                listBStats?.duplicates > 0
+                                namesBInfo.invalidNames.length > 0 ||
+                                namesBInfo.duplicates.length > 0
                             "
                             variant="ghost"
                             size="xs"
@@ -171,17 +170,18 @@
                 <div
                     v-if="
                         showListBDetails &&
-                        (listBStats.invalid > 0 || listBStats.duplicates > 0)
+                        (namesBInfo.invalidNames.length > 0 ||
+                            namesBInfo.duplicates.length > 0)
                     "
                     class="mt-3 rounded p-2 max-h-36 overflow-y-auto ring-1 ring-gray-200 dark:ring-gray-700"
                 >
-                    <div v-if="listBStats.invalid > 0">
+                    <div v-if="namesBInfo.invalidNames.length > 0">
                         <div class="text-sm font-medium text-red-600 mb-1">
                             无效姓名：
                         </div>
                         <ul>
                             <li
-                                v-for="(name, index) in getInvalidNames(listB)"
+                                v-for="(name, index) in namesBInfo.invalidNames"
                                 :key="'invalid-b-' + index"
                             >
                                 {{ name }}
@@ -189,15 +189,13 @@
                         </ul>
                     </div>
 
-                    <div v-if="listBStats.duplicates > 0">
+                    <div v-if="namesBInfo.duplicates.length > 0">
                         <div class="text-sm font-medium text-orange-600 mb-1">
                             重复姓名：
                         </div>
                         <ul>
                             <li
-                                v-for="(item, index) in getDuplicateNames(
-                                    listBDuplicates,
-                                )"
+                                v-for="(item, index) in namesBInfo.duplicates"
                                 :key="'dupe-b-' + index"
                             >
                                 {{ item.name }}
@@ -292,7 +290,7 @@
 </template>
 
 <script setup>
-import { ref, watch, reactive } from "vue";
+import { ref, watch, reactive, computed } from "vue";
 
 const listA = ref("");
 const listB = ref("");
@@ -301,17 +299,9 @@ const onlyInB = ref([]);
 const inBoth = ref([]);
 const showResults = ref(false);
 
-// 保存重复姓名信息
-const listADuplicates = ref({});
-const listBDuplicates = ref({});
-
 // 控制显示/隐藏无效和重复名单
 const showListADetails = ref(true);
 const showListBDetails = ref(true);
-
-// 统计信息
-const listAStats = reactive({ valid: 0, invalid: 0, duplicates: 0 });
-const listBStats = reactive({ valid: 0, invalid: 0, duplicates: 0 });
 
 // 检查名字是否只包含符号
 const isOnlySymbols = (name) => {
@@ -325,46 +315,18 @@ const isValidName = (name) => {
     return name !== "" && !isOnlySymbols(name);
 };
 
-// 获取一个列表中的无效姓名
-const getInvalidNames = (text) => {
-    if (text.trim() === "") {
-        return [];
-    }
+// 解析和分析名单
+const parseNameList = (text) => {
+    const result = {
+        allNames: [], // 所有拆分后的名字
+        validNames: [], // 有效的名字
+        invalidNames: [], // 无效的名字
+        duplicates: [], // 重复的名字及其出现次数
+        validCount: 0, // 有效名字数量
+    };
 
-    // 使用与parseNames相同的逻辑分割名字
-    let allNames = text.split(/\n/);
-    allNames = allNames.flatMap((line) =>
-        line.split(/[,，、;;\s\.。\/\\\(\)\[\]\{\}【】（）]+/),
-    );
-
-    // 过滤出非空但无效的名字
-    return allNames
-        .map((name) => name.trim())
-        .filter((name) => name !== "" && !isValidName(name));
-};
-
-// 将重复姓名对象转换为排序后的数组
-const getDuplicateNames = (duplicatesObj) => {
-    return Object.entries(duplicatesObj)
-        .filter(([_, count]) => count > 1)
-        .map(([name, count]) => ({ name, count }))
-        .sort((a, b) => b.count - a.count);
-};
-
-// 将文本解析为名字数组，支持多种分隔符，并统计有效/无效名字
-const parseNames = (text, stats = null, duplicatesObj = null) => {
-    if (text.trim() === "") {
-        if (stats) {
-            stats.valid = 0;
-            stats.invalid = 0;
-            stats.duplicates = 0;
-        }
-        if (duplicatesObj) {
-            Object.keys(duplicatesObj).forEach(
-                (key) => delete duplicatesObj[key],
-            );
-        }
-        return [];
+    if (!text.trim()) {
+        return result;
     }
 
     // 先用换行分割
@@ -376,43 +338,37 @@ const parseNames = (text, stats = null, duplicatesObj = null) => {
     );
 
     // 预处理所有名字
-    allNames = allNames.map((name) => name.trim());
+    result.allNames = allNames.map((name) => name.trim());
 
-    // 过滤出有效和无效名字
-    const validNames = allNames.filter(
-        (name) => name !== "" && !isOnlySymbols(name),
+    // 过滤有效和无效名字
+    result.validNames = result.allNames.filter((name) => isValidName(name));
+    result.invalidNames = result.allNames.filter(
+        (name) => name !== "" && !isValidName(name),
     );
-    const invalidCount =
-        allNames.filter((name) => name !== "").length - validNames.length;
 
-    // 检测重复名字
-    const nameCount = {};
-    validNames.forEach((name) => {
-        nameCount[name] = (nameCount[name] || 0) + 1;
+    // 统计重复名字
+    const nameCountMap = {};
+    result.validNames.forEach((name) => {
+        nameCountMap[name] = (nameCountMap[name] || 0) + 1;
     });
 
-    // 计算重复名字数量
-    const duplicateNameCount = Object.values(nameCount).filter(
-        (count) => count > 1,
-    ).length;
+    // 提取重复的名字
+    result.duplicates = Object.entries(nameCountMap)
+        .filter(([_, count]) => count > 1)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count);
 
-    // 更新重复名字对象
-    if (duplicatesObj) {
-        Object.keys(duplicatesObj).forEach((key) => delete duplicatesObj[key]);
-        Object.entries(nameCount).forEach(([name, count]) => {
-            duplicatesObj[name] = count;
-        });
-    }
+    // 更新有效名字计数
+    result.validCount = result.validNames.length;
 
-    // 更新统计信息
-    if (stats) {
-        stats.valid = validNames.length;
-        stats.invalid = invalidCount;
-        stats.duplicates = duplicateNameCount;
-    }
-
-    return validNames;
+    return result;
 };
+
+// 计算属性 - 名单 A 的分析结果
+const namesAInfo = computed(() => parseNameList(listA.value));
+
+// 计算属性 - 名单 B 的分析结果
+const namesBInfo = computed(() => parseNameList(listB.value));
 
 // 处理文件上传 - 名单A
 const handleFileA = (event) => {
@@ -440,9 +396,8 @@ const handleFileB = (event) => {
 
 // 对比两份名单
 const compareNames = () => {
-    // 使用增强的parseNames函数解析输入
-    const namesA = parseNames(listA.value, listAStats, listADuplicates);
-    const namesB = parseNames(listB.value, listBStats, listBDuplicates);
+    const namesA = namesAInfo.value.validNames;
+    const namesB = namesBInfo.value.validNames;
 
     // 转换为Set，便于快速查找
     const setA = new Set(namesA);
@@ -473,16 +428,16 @@ const exportResults = () => {
     content += onlyInB.value.join("\n");
 
     // 添加重复姓名信息
-    if (listAStats.duplicates > 0) {
+    if (namesAInfo.value.duplicates.length > 0) {
         content += "\n\n名单A中的重复姓名：\n";
-        getDuplicateNames(listADuplicates).forEach((item) => {
+        namesAInfo.value.duplicates.forEach((item) => {
             content += `${item.name} (出现${item.count}次)\n`;
         });
     }
 
-    if (listBStats.duplicates > 0) {
+    if (namesBInfo.value.duplicates.length > 0) {
         content += "\n\n名单B中的重复姓名：\n";
-        getDuplicateNames(listBDuplicates).forEach((item) => {
+        namesBInfo.value.duplicates.forEach((item) => {
             content += `${item.name} (出现${item.count}次)\n`;
         });
     }
@@ -500,10 +455,6 @@ const exportResults = () => {
 
 // 监听表单变化
 watch([listA, listB], () => {
-    // 单独解析两个列表以获取统计数据
-    parseNames(listA.value, listAStats, listADuplicates);
-    parseNames(listB.value, listBStats, listBDuplicates);
-
     // 如果两个列表都有内容，进行比较
     if (listA.value.trim() !== "" && listB.value.trim() !== "") {
         compareNames();
