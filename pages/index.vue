@@ -59,7 +59,8 @@
                                     ? 'i-heroicons-eye-slash'
                                     : 'i-heroicons-eye'
                             "
-                            class="align-middle p-0"
+                            class="align-middle"
+                            style="padding: 4px"
                             @click="showListADetails = !showListADetails"
                         />
                     </p>
@@ -160,7 +161,8 @@
                                     ? 'i-heroicons-eye-slash'
                                     : 'i-heroicons-eye'
                             "
-                            class="align-middle p-0"
+                            class="align-middle"
+                            style="padding: 4px"
                             @click="showListBDetails = !showListBDetails"
                         />
                     </p>
