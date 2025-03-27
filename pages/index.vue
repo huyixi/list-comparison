@@ -59,8 +59,7 @@
                                     ? 'i-heroicons-eye-slash'
                                     : 'i-heroicons-eye'
                             "
-                            class="align-middle"
-                            style="padding: 4px"
+                            class="align-middle p-0"
                             @click="showListADetails = !showListADetails"
                         />
                     </p>
@@ -161,8 +160,7 @@
                                     ? 'i-heroicons-eye-slash'
                                     : 'i-heroicons-eye'
                             "
-                            class="align-middle"
-                            style="padding: 4px"
+                            class="align-middle p-0"
                             @click="showListBDetails = !showListBDetails"
                         />
                     </p>
@@ -290,6 +288,7 @@
         </div>
     </UContainer>
 </template>
+
 <script setup>
 import { ref, watch, reactive } from "vue";
 
