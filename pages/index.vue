@@ -46,7 +46,7 @@
                             个重复姓名
                         </template>
 
-                        <UButton
+                        <!-- <UButton
                             v-if="
                                 listAStats.invalid > 0 ||
                                 listAStats.duplicates > 0
@@ -61,7 +61,7 @@
                             "
                             class="align-middle p-0"
                             @click="showListADetails = !showListADetails"
-                        />
+                        /> -->
                     </p>
                 </div>
 
@@ -147,7 +147,7 @@
                             个重复姓名
                         </template>
 
-                        <UButton
+                        <!-- <UButton
                             v-if="
                                 listBStats.invalid > 0 ||
                                 listBStats.duplicates > 0
@@ -162,7 +162,7 @@
                             "
                             class="align-middle p-0"
                             @click="showListBDetails = !showListBDetails"
-                        />
+                        /> -->
                     </p>
                 </div>
 
@@ -304,8 +304,8 @@ const listADuplicates = ref({});
 const listBDuplicates = ref({});
 
 // 控制显示/隐藏无效和重复名单
-const showListADetails = ref(false);
-const showListBDetails = ref(false);
+const showListADetails = ref(true);
+const showListBDetails = ref(true);
 
 // 统计信息
 const listAStats = reactive({ valid: 0, invalid: 0, duplicates: 0 });
