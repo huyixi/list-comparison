@@ -1,6 +1,6 @@
 <template>
     <UContainer class="py-8">
-        <div class="text-center mb-6">
+        <div class="mb-6">
             <h1 class="text-2xl font-bold text-primary">名单对比工具</h1>
         </div>
 
@@ -53,52 +53,60 @@
                             }}</UBadge>
                             个重复姓名
                         </template>
+
+                        <UButton
+                            v-if="
+                                listAStats.invalid > 0 ||
+                                listAStats.duplicates > 0
+                            "
+                            variant="ghost"
+                            size="xs"
+                            :color="showListADetails ? 'gray' : 'primary'"
+                            :icon="
+                                showListADetails
+                                    ? 'i-heroicons-eye-slash'
+                                    : 'i-heroicons-eye'
+                            "
+                            class="align-middle"
+                            padding="p-1"
+                            @click="showListADetails = !showListADetails"
+                        />
                     </p>
                 </div>
 
-                <div v-if="listAStats.invalid > 0" class="mt-3">
-                    <UButton
-                        variant="soft"
-                        color="red"
-                        size="sm"
-                        block
-                        @click="showInvalidA = !showInvalidA"
-                        class="mb-2"
-                    >
-                        {{ showInvalidA ? "隐藏" : "查看" }}无效姓名列表
-                    </UButton>
-                    <div
-                        v-if="showInvalidA"
-                        class="max-h-36 overflow-y-auto border rounded p-2"
-                    >
-                        <UList>
-                            <UListItem
+                <div
+                    v-if="
+                        showListADetails &&
+                        (listAStats.invalid > 0 || listAStats.duplicates > 0)
+                    "
+                    class="mt-3 rounded p-2 max-h-36 overflow-y-auto ring-1 ring-(--ui-border)"
+                >
+                    <div v-if="listAStats.invalid > 0">
+                        <div class="text-sm font-medium text-red-600 mb-1">
+                            无效姓名：
+                        </div>
+                        <ul>
+                            <li
                                 v-for="(name, index) in getInvalidNames(listA)"
                                 :key="'invalid-a-' + index"
                             >
                                 {{ name }}
-                            </UListItem>
-                        </UList>
+                            </li>
+                        </ul>
                     </div>
-                </div>
 
-                <div v-if="listAStats.duplicates > 0" class="mt-3">
-                    <UButton
-                        variant="soft"
-                        color="orange"
-                        size="sm"
-                        block
-                        @click="showDuplicatesA = !showDuplicatesA"
-                        class="mb-2"
-                    >
-                        {{ showDuplicatesA ? "隐藏" : "查看" }}重复姓名列表
-                    </UButton>
-                    <div
-                        v-if="showDuplicatesA"
-                        class="max-h-36 overflow-y-auto border rounded p-2"
-                    >
-                        <UList>
-                            <UListItem
+                    <UDivider
+                        v-if="
+                            listAStats.invalid > 0 && listAStats.duplicates > 0
+                        "
+                    />
+
+                    <div v-if="listAStats.duplicates > 0">
+                        <div class="text-sm font-medium text-orange-600 mb-1">
+                            重复姓名：
+                        </div>
+                        <ul>
+                            <li
                                 v-for="(item, index) in getDuplicateNames(
                                     listADuplicates,
                                 )"
@@ -108,8 +116,8 @@
                                 <UBadge color="orange" size="xs" class="ml-2">
                                     出现 {{ item.count }} 次
                                 </UBadge>
-                            </UListItem>
-                        </UList>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </UCard>
@@ -120,7 +128,7 @@
                 <UTextarea
                     v-model="listB"
                     :rows="12"
-                    class="w-full"
+                    class="w-full h-full"
                     placeholder="请输入第二份名单。可用逗号、空格、句号、斜杠、括号或换行分隔名字。"
                 />
                 <div class="mt-2 flex items-center justify-between">
@@ -147,65 +155,75 @@
                         <UBadge color="primary" variant="subtle">{{
                             listBStats.valid
                         }}</UBadge>
-                        个有效姓名，
-                        <UBadge
-                            :color="listBStats.invalid > 0 ? 'red' : 'gray'"
-                            variant="subtle"
-                            >{{ listBStats.invalid }}</UBadge
-                        >
-                        个无效姓名
+                        个有效姓名
+                        <template v-if="listBStats.invalid > 0">
+                            ，
+                            <UBadge color="error" variant="subtle">{{
+                                listBStats.invalid
+                            }}</UBadge>
+                            个无效姓名
+                        </template>
+
                         <template v-if="listBStats.duplicates > 0">
-                            ，<UBadge color="orange" variant="subtle">{{
+                            ，<UBadge color="warning" variant="subtle">{{
                                 listBStats.duplicates
                             }}</UBadge>
                             个重复姓名
                         </template>
+
+                        <UButton
+                            v-if="
+                                listBStats.invalid > 0 ||
+                                listBStats.duplicates > 0
+                            "
+                            variant="ghost"
+                            size="xs"
+                            :color="showListBDetails ? 'gray' : 'primary'"
+                            :icon="
+                                showListBDetails
+                                    ? 'i-heroicons-eye-slash'
+                                    : 'i-heroicons-eye'
+                            "
+                            class="align-middle"
+                            padding="p-1"
+                            @click="showListBDetails = !showListBDetails"
+                        />
                     </p>
                 </div>
 
-                <div v-if="listBStats.invalid > 0" class="mt-3">
-                    <UButton
-                        variant="soft"
-                        color="red"
-                        size="sm"
-                        block
-                        @click="showInvalidB = !showInvalidB"
-                        class="mb-2"
-                    >
-                        {{ showInvalidB ? "隐藏" : "查看" }}无效姓名列表
-                    </UButton>
-                    <div
-                        v-if="showInvalidB"
-                        class="max-h-36 overflow-y-auto border rounded p-2"
-                    >
-                        <UList>
-                            <UListItem
+                <div
+                    v-if="
+                        showListBDetails &&
+                        (listBStats.invalid > 0 || listBStats.duplicates > 0)
+                    "
+                    class="mt-3 rounded p-2 max-h-36 overflow-y-auto ring-1 ring-(--ui-border)"
+                >
+                    <div v-if="listBStats.invalid > 0">
+                        <div class="text-sm font-medium text-red-600 mb-1">
+                            无效姓名：
+                        </div>
+                        <ul>
+                            <li
                                 v-for="(name, index) in getInvalidNames(listB)"
                                 :key="'invalid-b-' + index"
                             >
                                 {{ name }}
-                            </UListItem>
-                        </UList>
+                            </li>
+                        </ul>
                     </div>
-                </div>
 
-                <div v-if="listBStats.duplicates > 0" class="mt-3">
-                    <UButton
-                        variant="soft"
-                        color="orange"
-                        size="sm"
-                        block
-                        @click="showDuplicatesB = !showDuplicatesB"
-                        class="mb-2"
-                    >
-                        {{ showDuplicatesB ? "隐藏" : "查看" }}重复姓名列表
-                    </UButton>
-                    <div
-                        v-if="showDuplicatesB"
-                        class="max-h-36 overflow-y-auto border rounded p-2"
-                    >
-                        <UList>
-                            <UListItem
+                    <UDivider
+                        v-if="
+                            listBStats.invalid > 0 && listBStats.duplicates > 0
+                        "
+                    />
+
+                    <div v-if="listBStats.duplicates > 0">
+                        <div class="text-sm font-medium text-orange-600 mb-1">
+                            重复姓名：
+                        </div>
+                        <ul>
+                            <li
                                 v-for="(item, index) in getDuplicateNames(
                                     listBDuplicates,
                                 )"
@@ -215,8 +233,8 @@
                                 <UBadge color="orange" size="xs" class="ml-2">
                                     出现 {{ item.count }} 次
                                 </UBadge>
-                            </UListItem>
-                        </UList>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </UCard>
@@ -318,10 +336,8 @@ const listADuplicates = ref({});
 const listBDuplicates = ref({});
 
 // 控制显示/隐藏无效和重复名单
-const showInvalidA = ref(false);
-const showInvalidB = ref(false);
-const showDuplicatesA = ref(false);
-const showDuplicatesB = ref(false);
+const showListADetails = ref(false);
+const showListBDetails = ref(false);
 
 // 统计信息
 const listAStats = reactive({ valid: 0, invalid: 0, duplicates: 0 });
