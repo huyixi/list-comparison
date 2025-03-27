@@ -86,13 +86,6 @@
                             </li>
                         </ul>
                     </div>
-
-                    <UDivider
-                        v-if="
-                            listAStats.invalid > 0 && listAStats.duplicates > 0
-                        "
-                    />
-
                     <div v-if="listAStats.duplicates > 0">
                         <div class="text-sm font-medium text-orange-600 mb-1">
                             重复姓名：
@@ -196,12 +189,6 @@
                         </ul>
                     </div>
 
-                    <UDivider
-                        v-if="
-                            listBStats.invalid > 0 && listBStats.duplicates > 0
-                        "
-                    />
-
                     <div v-if="listBStats.duplicates > 0">
                         <div class="text-sm font-medium text-orange-600 mb-1">
                             重复姓名：
@@ -223,8 +210,6 @@
                 </div>
             </UCard>
         </div>
-
-        <UDivider v-if="showResults" />
 
         <div
             v-if="showResults"
