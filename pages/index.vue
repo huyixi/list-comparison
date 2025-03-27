@@ -16,22 +16,14 @@
                 />
                 <div class="mt-2 flex items-center justify-between">
                     <div>
-                        <input
+                        <UInput
                             type="file"
-                            @change="handleFileA"
-                            class="hidden"
-                            id="fileA"
                             accept=".txt,.csv"
-                        />
-                        <UButton
-                            variant="soft"
-                            size="sm"
+                            @change="handleFileA"
                             icon="i-heroicons-document-arrow-up"
-                            as="label"
-                            for="fileA"
-                        >
-                            上传文件
-                        </UButton>
+                            size="sm"
+                            class="w-50"
+                        />
                     </div>
                     <p class="text-sm text-gray-600" v-if="listA.trim()">
                         已检测到
@@ -68,7 +60,7 @@
                                     : 'i-heroicons-eye'
                             "
                             class="align-middle"
-                            padding="p-1"
+                            style="padding: 4px"
                             @click="showListADetails = !showListADetails"
                         />
                     </p>
@@ -133,22 +125,14 @@
                 />
                 <div class="mt-2 flex items-center justify-between">
                     <div>
-                        <input
+                        <UInput
                             type="file"
-                            @change="handleFileB"
-                            class="hidden"
-                            id="fileB"
                             accept=".txt,.csv"
-                        />
-                        <UButton
-                            variant="soft"
-                            size="sm"
+                            @change="handleFileB"
                             icon="i-heroicons-document-arrow-up"
-                            as="label"
-                            for="fileB"
-                        >
-                            上传文件
-                        </UButton>
+                            size="sm"
+                            class="w-50"
+                        />
                     </div>
                     <p class="text-sm text-gray-600" v-if="listB.trim()">
                         已检测到
@@ -185,7 +169,7 @@
                                     : 'i-heroicons-eye'
                             "
                             class="align-middle"
-                            padding="p-1"
+                            style="padding: 4px"
                             @click="showListBDetails = !showListBDetails"
                         />
                     </p>
