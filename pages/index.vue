@@ -71,7 +71,7 @@
                         showListADetails &&
                         (listAStats.invalid > 0 || listAStats.duplicates > 0)
                     "
-                    class="mt-3 rounded p-2 max-h-36 overflow-y-auto ring-1 ring-(--ui-border)"
+                    class="mt-3 rounded p-2 max-h-36 overflow-y-auto ring-1 ring-gray-200 dark:ring-gray-700"
                 >
                     <div v-if="listAStats.invalid > 0">
                         <div class="text-sm font-medium text-red-600 mb-1">
@@ -173,7 +173,7 @@
                         showListBDetails &&
                         (listBStats.invalid > 0 || listBStats.duplicates > 0)
                     "
-                    class="mt-3 rounded p-2 max-h-36 overflow-y-auto ring-1 ring-(--ui-border)"
+                    class="mt-3 rounded p-2 max-h-36 overflow-y-auto ring-1 ring-gray-200 dark:ring-gray-700"
                 >
                     <div v-if="listBStats.invalid > 0">
                         <div class="text-sm font-medium text-red-600 mb-1">
