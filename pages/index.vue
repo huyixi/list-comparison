@@ -100,7 +100,7 @@
                                 :key="'dupe-a-' + index"
                             >
                                 {{ item.name }}
-                                <UBadge color="orange" size="xs" class="ml-2">
+                                <UBadge color="orange" size="sm" class="ml-2">
                                     出现 {{ item.count }} 次
                                 </UBadge>
                             </li>
@@ -222,10 +222,22 @@
             <!-- 只在A中存在的名字 -->
             <UCard>
                 <div class="flex items-center justify-between mb-2">
-                    <div class="text-lg font-semibold">仅在名单 A 中存在</div>
-                    <UBadge color="primary" variant="subtle" size="sm">{{
-                        onlyInA.length
-                    }}</UBadge>
+                    <div class="flex">
+                        <div class="text-lg font-semibold">
+                            仅在名单 A 中存在
+                        </div>
+                        <UBadge color="primary" variant="subtle" size="sm">{{
+                            onlyInA.length
+                        }}</UBadge>
+                    </div>
+                    <UButton
+                        icon="i-lucide-copy"
+                        color="neutral"
+                        size="xs"
+                        variant="outline"
+                        class="p-1"
+                        @click="copyToClipboard(onlyInA, '仅在名单A中的内容')"
+                    />
                 </div>
                 <div class="max-h-64 overflow-y-auto">
                     <ul>
@@ -242,12 +254,22 @@
             <!-- 在A和B中都存在的名字 -->
             <UCard>
                 <div class="flex items-center justify-between mb-2">
-                    <div class="text-lg font-semibold">
-                        在名单 A 和 B 中都存在
+                    <div class="flex">
+                        <div class="text-lg font-semibold">
+                            在名单 A 和 B 中都存在
+                        </div>
+                        <UBadge color="primary" variant="subtle" size="xs">{{
+                            inBoth.length
+                        }}</UBadge>
                     </div>
-                    <UBadge color="primary" variant="subtle" size="sm">{{
-                        inBoth.length
-                    }}</UBadge>
+                    <UButton
+                        icon="i-lucide-copy"
+                        color="neutral"
+                        size="xs"
+                        variant="outline"
+                        class="p-1"
+                        @click="copyToClipboard(inBoth, '两个名单中都有的内容')"
+                    />
                 </div>
                 <div class="max-h-64 overflow-y-auto">
                     <ul>
@@ -264,10 +286,22 @@
             <!-- 只在B中存在的名字 -->
             <UCard>
                 <div class="flex items-center justify-between mb-2">
-                    <div class="text-lg font-semibold">仅在名单 B 中存在</div>
-                    <UBadge color="primary" variant="subtle" size="sm">{{
-                        onlyInB.length
-                    }}</UBadge>
+                    <div class="flex">
+                        <div class="text-lg font-semibold">
+                            仅在名单 B 中存在
+                        </div>
+                        <UBadge color="primary" variant="subtle" size="sm">{{
+                            onlyInB.length
+                        }}</UBadge>
+                    </div>
+                    <UButton
+                        icon="i-lucide-copy"
+                        color="neutral"
+                        size="xs"
+                        variant="outline"
+                        class="p-1"
+                        @click="copyToClipboard(onlyInB, '仅在名单B中的内容')"
+                    />
                 </div>
                 <div class="max-h-64 overflow-y-auto">
                     <ul>
@@ -296,7 +330,8 @@
 </template>
 
 <script setup>
-import { ref, watch, reactive, computed } from "vue";
+import { ref, watch, computed } from "vue";
+const toast = useToast();
 
 const listA = ref("");
 const listB = ref("");
@@ -457,6 +492,37 @@ const exportResults = () => {
     link.click();
 
     URL.revokeObjectURL(url);
+};
+
+const copyToClipboard = (items, type) => {
+    if (items.length === 0) {
+        toast.add({
+            title: "提示",
+            description: "没有内容可复制",
+            color: "blue",
+        });
+        return;
+    }
+
+    const textToCopy = items.join("\n");
+
+    navigator.clipboard
+        .writeText(textToCopy)
+        .then(() => {
+            toast.add({
+                title: "成功",
+                description: `已复制${type}到剪贴板`,
+                color: "green",
+            });
+        })
+        .catch((err) => {
+            console.error("复制失败: ", err);
+            toast.add({
+                title: "错误",
+                description: "复制失败",
+                color: "red",
+            });
+        });
 };
 
 // 监听表单变化
