@@ -217,7 +217,7 @@
             <UCard>
                 <div class="flex items-center justify-between mb-2">
                     <div class="text-lg font-semibold">仅在名单 A 中存在</div>
-                    <UBadge color="blue" variant="solid" size="sm">{{
+                    <UBadge color="primary" variant="subtle">{{
                         onlyInA.length
                     }}</UBadge>
                 </div>
@@ -259,7 +259,7 @@
             <UCard>
                 <div class="flex items-center justify-between mb-2">
                     <div class="text-lg font-semibold">仅在名单 B 中存在</div>
-                    <UBadge color="amber" variant="solid" size="sm">{{
+                    <UBadge color="primary" variant="subtle">{{
                         onlyInB.length
                     }}</UBadge>
                 </div>
