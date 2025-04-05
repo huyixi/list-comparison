@@ -27,22 +27,25 @@
                     </div>
                     <p class="text-sm text-gray-600" v-if="listA.trim()">
                         已检测到
-                        <UBadge color="primary" variant="subtle">{{
+                        <UBadge color="primary" variant="subtle" size="sm">{{
                             namesAInfo.validCount
                         }}</UBadge>
                         个有效姓名
                         <template v-if="namesAInfo.invalidNames.length > 0">
                             ，
-                            <UBadge color="error" variant="subtle">{{
+                            <UBadge color="error" variant="subtle" size="sm">{{
                                 namesAInfo.invalidNames.length
                             }}</UBadge>
                             个无效姓名
                         </template>
 
                         <template v-if="namesAInfo.duplicates.length > 0">
-                            ，<UBadge color="warning" variant="subtle">{{
-                                namesAInfo.duplicates.length
-                            }}</UBadge>
+                            ，<UBadge
+                                color="warning"
+                                variant="subtle"
+                                size="sm"
+                                >{{ namesAInfo.duplicates.length }}</UBadge
+                            >
                             个重复姓名
                         </template>
 
@@ -128,22 +131,25 @@
                     </div>
                     <p class="text-sm text-gray-600" v-if="listB.trim()">
                         已检测到
-                        <UBadge color="primary" variant="subtle">{{
+                        <UBadge color="primary" variant="subtle" size="sm">{{
                             namesBInfo.validCount
                         }}</UBadge>
                         个有效姓名
                         <template v-if="namesBInfo.invalidNames.length > 0">
                             ，
-                            <UBadge color="error" variant="subtle">{{
+                            <UBadge color="error" variant="subtle" size="sm">{{
                                 namesBInfo.invalidNames.length
                             }}</UBadge>
                             个无效姓名
                         </template>
 
                         <template v-if="namesBInfo.duplicates.length > 0">
-                            ，<UBadge color="warning" variant="subtle">{{
-                                namesBInfo.duplicates.length
-                            }}</UBadge>
+                            ，<UBadge
+                                color="warning"
+                                variant="subtle"
+                                size="sm"
+                                >{{ namesBInfo.duplicates.length }}</UBadge
+                            >
                             个重复姓名
                         </template>
 
@@ -217,7 +223,7 @@
             <UCard>
                 <div class="flex items-center justify-between mb-2">
                     <div class="text-lg font-semibold">仅在名单 A 中存在</div>
-                    <UBadge color="primary" variant="subtle">{{
+                    <UBadge color="primary" variant="subtle" size="sm">{{
                         onlyInA.length
                     }}</UBadge>
                 </div>
@@ -239,7 +245,7 @@
                     <div class="text-lg font-semibold">
                         在名单 A 和 B 中都存在
                     </div>
-                    <UBadge color="green" variant="solid" size="sm">{{
+                    <UBadge color="primary" variant="subtle" size="sm">{{
                         inBoth.length
                     }}</UBadge>
                 </div>
@@ -259,7 +265,7 @@
             <UCard>
                 <div class="flex items-center justify-between mb-2">
                     <div class="text-lg font-semibold">仅在名单 B 中存在</div>
-                    <UBadge color="primary" variant="subtle">{{
+                    <UBadge color="primary" variant="subtle" size="sm">{{
                         onlyInB.length
                     }}</UBadge>
                 </div>
