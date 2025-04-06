@@ -304,9 +304,28 @@
         </div>
 
         <div
-            v-if="showResults"
-            class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6"
+            v-if="!showResults"
+            class="bg-white p-8 rounded-lg shadow-sm border border-gray-200 text-center"
         >
+            <div class="flex flex-col items-center justify-center">
+                <div
+                    class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4"
+                >
+                    <div
+                        class="i-heroicons-document-duplicate text-gray-400 w-8 h-8"
+                    ></div>
+                </div>
+                <h3 class="text-lg font-medium text-gray-700 mb-2">
+                    No comparison results yet
+                </h3>
+                <p class="text-sm text-gray-500 max-w-md mx-auto mb-4">
+                    Enter your lists in the text areas above and click "Validate
+                    & Compare" to see the differences and similarities
+                </p>
+            </div>
+        </div>
+
+        <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
             <!-- 只在A中存在的名字 -->
             <div
                 class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col"
