@@ -308,100 +308,121 @@
             class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6"
         >
             <!-- 只在A中存在的名字 -->
-            <UCard>
-                <div class="flex items-center justify-between mb-2">
-                    <div class="flex">
-                        <div class="text-lg font-semibold">
+            <div
+                class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col"
+            >
+                <div
+                    class="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50"
+                >
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-base font-medium text-gray-700">
                             仅在名单 A 中存在
-                        </div>
-                        <UBadge color="primary" variant="subtle" size="sm">{{
-                            onlyInA.length
-                        }}</UBadge>
+                        </h2>
                     </div>
                     <UButton
                         icon="i-lucide-copy"
                         color="neutral"
                         size="xs"
                         variant="outline"
-                        class="p-1"
+                        class="hover:cursor-pointer"
                         @click="copyToClipboard(onlyInA, '仅在名单A中的内容')"
                     />
                 </div>
-                <div class="max-h-64 overflow-y-auto">
-                    <ul>
+                <div class="min-h-64 max-h-64 overflow-y-auto p-3">
+                    <ul class="space-y-1">
                         <li
                             v-for="(name, index) in onlyInA"
                             :key="'a-' + index"
+                            class="text-sm"
                         >
                             {{ name }}
                         </li>
                     </ul>
                 </div>
-            </UCard>
+                <div
+                    class="p-2 border-t border-gray-200 bg-gray-50 text-xs text-gray-500"
+                >
+                    {{ onlyInA.length }} items
+                </div>
+            </div>
 
             <!-- 在A和B中都存在的名字 -->
-            <UCard>
-                <div class="flex items-center justify-between mb-2">
-                    <div class="flex">
-                        <div class="text-lg font-semibold">
+            <div
+                class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col"
+            >
+                <div
+                    class="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50"
+                >
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-base font-medium text-gray-700">
                             在名单 A 和 B 中都存在
-                        </div>
-                        <UBadge color="primary" variant="subtle" size="xs">{{
-                            inBoth.length
-                        }}</UBadge>
+                        </h2>
                     </div>
                     <UButton
                         icon="i-lucide-copy"
                         color="neutral"
                         size="xs"
                         variant="outline"
-                        class="p-1"
+                        class="hover:cursor-pointer"
                         @click="copyToClipboard(inBoth, '两个名单中都有的内容')"
                     />
                 </div>
-                <div class="max-h-64 overflow-y-auto">
-                    <ul>
+                <div class="min-h-64 max-h-64 overflow-y-auto p-3">
+                    <ul class="space-y-1">
                         <li
                             v-for="(name, index) in inBoth"
                             :key="'both-' + index"
+                            class="text-sm"
                         >
                             {{ name }}
                         </li>
                     </ul>
                 </div>
-            </UCard>
+                <div
+                    class="p-2 border-t border-gray-200 bg-gray-50 text-xs text-gray-500"
+                >
+                    {{ inBoth.length }} items
+                </div>
+            </div>
 
             <!-- 只在B中存在的名字 -->
-            <UCard>
-                <div class="flex items-center justify-between mb-2">
-                    <div class="flex">
-                        <div class="text-lg font-semibold">
+            <div
+                class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col"
+            >
+                <div
+                    class="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50"
+                >
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-base font-medium text-gray-700">
                             仅在名单 B 中存在
-                        </div>
-                        <UBadge color="primary" variant="subtle" size="sm">{{
-                            onlyInB.length
-                        }}</UBadge>
+                        </h2>
                     </div>
                     <UButton
                         icon="i-lucide-copy"
                         color="neutral"
                         size="xs"
                         variant="outline"
-                        class="p-1"
+                        class="hover:cursor-pointer"
                         @click="copyToClipboard(onlyInB, '仅在名单B中的内容')"
                     />
                 </div>
-                <div class="max-h-64 overflow-y-auto">
-                    <ul>
+                <div class="min-h-64 max-h-64 overflow-y-auto p-3">
+                    <ul class="space-y-1">
                         <li
                             v-for="(name, index) in onlyInB"
                             :key="'b-' + index"
+                            class="text-sm"
                         >
                             {{ name }}
                         </li>
                     </ul>
                 </div>
-            </UCard>
+                <div
+                    class="p-2 border-t border-gray-200 bg-gray-50 text-xs text-gray-500"
+                >
+                    {{ onlyInB.length }} items
+                </div>
+            </div>
         </div>
 
         <div v-if="showResults" class="text-center my-6">
