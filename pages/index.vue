@@ -65,8 +65,8 @@
                                 color="gray"
                                 :icon="
                                     showListADetails
-                                        ? 'i-heroicons-eye'
-                                        : 'i-heroicons-eye-slash'
+                                        ? 'i-heroicons-eye-slash'
+                                        : 'i-heroicons-eye'
                                 "
                                 class="hover:cursor-pointer p-0"
                                 @click="showListADetails = !showListADetails"
@@ -92,7 +92,7 @@
                                                     name, index
                                                 ) in namesAInfo.invalidNames"
                                                 :key="'invalid-a-' + index"
-                                                class="text-sm"
+                                                class="text-sm flex items-center justify-between"
                                             >
                                                 {{ name }}
                                             </li>
@@ -112,7 +112,7 @@
                                                     item, index
                                                 ) in namesAInfo.duplicates"
                                                 :key="'dupe-a-' + index"
-                                                class="text-sm flex items-center"
+                                                class="text-sm flex items-center justify-between"
                                             >
                                                 {{ item.name }}
                                                 <span
@@ -211,8 +211,8 @@
                                 color="gray"
                                 :icon="
                                     showListBDetails
-                                        ? 'i-heroicons-eye'
-                                        : 'i-heroicons-eye-slash'
+                                        ? 'i-heroicons-eye-slash'
+                                        : 'i-heroicons-eye'
                                 "
                                 class="hover:cursor-pointer p-0"
                                 @click="showListBDetails = !showListBDetails"
