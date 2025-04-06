@@ -319,8 +319,8 @@
                     No comparison results yet
                 </h3>
                 <p class="text-sm text-gray-500 max-w-md mx-auto mb-4">
-                    Enter your lists in the text areas above and click "Validate
-                    & Compare" to see the differences and similarities
+                    Enter your lists in the text areas above to see the
+                    differences and similarities
                 </p>
             </div>
         </div>
