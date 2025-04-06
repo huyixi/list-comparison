@@ -115,13 +115,13 @@
                                                 class="text-sm flex items-center"
                                             >
                                                 {{ item.name }}
-                                                <UBadge
+                                                <span
                                                     color="orange"
                                                     size="sm"
                                                     class="ml-2"
                                                 >
-                                                    出现 {{ item.count }} 次
-                                                </UBadge>
+                                                    {{ item.count }} repeat
+                                                </span>
                                             </li>
                                         </ul>
                                     </div>
@@ -138,10 +138,10 @@
                         </span>
                         <span class="flex items-center">
                             <span
-                                class="w-2 h-2 rounded-full bg-rose-500 mr-1"
+                                class="w-2 h-2 rounded-full bg-yellow-400 mr-1"
                             ></span>
                             <span class="text-gray-700">{{
-                                namesAInfo.invalidNames.length
+                                namesAInfo.duplicates.length
                             }}</span>
                         </span>
                         <span class="flex items-center">
@@ -149,7 +149,7 @@
                                 class="w-2 h-2 rounded-full bg-rose-500 mr-1"
                             ></span>
                             <span class="text-gray-700">{{
-                                namesAInfo.duplicates.length
+                                namesAInfo.invalidNames.length
                             }}</span>
                         </span>
                     </div>
@@ -284,10 +284,10 @@
                         </span>
                         <span class="flex items-center">
                             <span
-                                class="w-2 h-2 rounded-full bg-rose-500 mr-1"
+                                class="w-2 h-2 rounded-full bg-yellow-400 mr-1"
                             ></span>
                             <span class="text-gray-700">{{
-                                namesBInfo.invalidNames.length
+                                namesBInfo.duplicates.length
                             }}</span>
                         </span>
                         <span class="flex items-center">
@@ -295,7 +295,7 @@
                                 class="w-2 h-2 rounded-full bg-rose-500 mr-1"
                             ></span>
                             <span class="text-gray-700">{{
-                                namesBInfo.duplicates.length
+                                namesBInfo.invalidNames.length
                             }}</span>
                         </span>
                     </div>
