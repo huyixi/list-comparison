@@ -320,12 +320,16 @@
                         </h2>
                     </div>
                     <UButton
-                        icon="i-lucide-copy"
+                        :icon="
+                            onlyInACopied
+                                ? 'i-lucide-copy-check'
+                                : 'i-lucide-copy'
+                        "
                         color="neutral"
                         size="xs"
                         variant="outline"
                         class="hover:cursor-pointer"
-                        @click="copyToClipboard(onlyInA, '仅在名单A中的内容')"
+                        @click="copyToClipboard(onlyInA, 'only-in-a')"
                     />
                 </div>
                 <div class="min-h-64 max-h-64 overflow-y-auto p-3">
@@ -358,13 +362,18 @@
                             在名单 A 和 B 中都存在
                         </h2>
                     </div>
+
                     <UButton
-                        icon="i-lucide-copy"
+                        :icon="
+                            inBothCopied
+                                ? 'i-lucide-copy-check'
+                                : 'i-lucide-copy'
+                        "
                         color="neutral"
                         size="xs"
                         variant="outline"
                         class="hover:cursor-pointer"
-                        @click="copyToClipboard(inBoth, '两个名单中都有的内容')"
+                        @click="copyToClipboard(inBoth, 'in-both')"
                     />
                 </div>
                 <div class="min-h-64 max-h-64 overflow-y-auto p-3">
@@ -398,12 +407,16 @@
                         </h2>
                     </div>
                     <UButton
-                        icon="i-lucide-copy"
+                        :icon="
+                            onlyInBCopied
+                                ? 'i-lucide-copy-check'
+                                : 'i-lucide-copy'
+                        "
                         color="neutral"
                         size="xs"
                         variant="outline"
                         class="hover:cursor-pointer"
-                        @click="copyToClipboard(onlyInB, '仅在名单B中的内容')"
+                        @click="copyToClipboard(onlyInB, 'only-in-b')"
                     />
                 </div>
                 <div class="min-h-64 max-h-64 overflow-y-auto p-3">
@@ -545,10 +558,6 @@ const triggerFileUploadA = () => {
 const triggerFileUploadB = () => {
     fileInputB.value.click();
 };
-// 触发文件输入
-const triggerFileInput = (inputId) => {
-    document.getElementById(inputId).click();
-};
 
 // 对比两份名单
 const compareNames = () => {
@@ -609,11 +618,15 @@ const exportResults = () => {
     URL.revokeObjectURL(url);
 };
 
+const onlyInACopied = ref(false);
+const inBothCopied = ref(false);
+const onlyInBCopied = ref(false);
+
 const copyToClipboard = (items, type) => {
     if (items.length === 0) {
         toast.add({
-            title: "提示",
-            description: "没有内容可复制",
+            title: "Notice",
+            description: "No content to copy",
             color: "blue",
         });
         return;
@@ -624,17 +637,32 @@ const copyToClipboard = (items, type) => {
     navigator.clipboard
         .writeText(textToCopy)
         .then(() => {
-            toast.add({
-                title: "成功",
-                description: `已复制${type}到剪贴板`,
-                color: "green",
-            });
+            // Reset all copy states first
+            onlyInACopied.value = false;
+            inBothCopied.value = false;
+            onlyInBCopied.value = false;
+
+            // Set the appropriate copy state based on type
+            if (type === "only-in-a") {
+                onlyInACopied.value = true;
+            } else if (type === "in-both") {
+                inBothCopied.value = true;
+            } else if (type === "only-in-b") {
+                onlyInBCopied.value = true;
+            }
+
+            // Reset the copy state after 2 seconds
+            setTimeout(() => {
+                onlyInACopied.value = false;
+                inBothCopied.value = false;
+                onlyInBCopied.value = false;
+            }, 1600);
         })
         .catch((err) => {
-            console.error("复制失败: ", err);
+            console.error("Copy failed: ", err);
             toast.add({
-                title: "错误",
-                description: "复制失败",
+                title: "Error",
+                description: "Copy failed",
                 color: "red",
             });
         });
