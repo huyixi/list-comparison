@@ -351,14 +351,14 @@
                         @click="copyToClipboard(onlyInA, 'only-in-a')"
                     />
                 </div>
-                <div class="min-h-64 max-h-64 overflow-y-auto p-3">
-                    <ul class="space-y-1">
+                <div class="min-h-64 max-h-64 overflow-y-auto">
+                    <ul class="divide-dashed divide-gray-200">
                         <li
                             v-for="(name, index) in onlyInA"
                             :key="'a-' + index"
-                            class="text-sm"
+                            class="px-2 py-1 flex items-center hover:bg-gray-50"
                         >
-                            {{ name }}
+                            <span class="flex-grow">{{ name }}</span>
                         </li>
                     </ul>
                 </div>
@@ -396,11 +396,11 @@
                     />
                 </div>
                 <div class="min-h-64 max-h-64 overflow-y-auto p-3">
-                    <ul class="space-y-1">
+                    <ul class="divide-dashed divide-gray-200">
                         <li
                             v-for="(name, index) in inBoth"
                             :key="'both-' + index"
-                            class="text-sm"
+                            class="px-2 py-1 flex items-center hover:bg-gray-50"
                         >
                             {{ name }}
                         </li>
@@ -439,11 +439,11 @@
                     />
                 </div>
                 <div class="min-h-64 max-h-64 overflow-y-auto p-3">
-                    <ul class="space-y-1">
+                    <ul class="divide-dashed divide-red-500">
                         <li
                             v-for="(name, index) in onlyInB"
                             :key="'b-' + index"
-                            class="text-sm"
+                            class="px-2 py-1 flex items-center hover:bg-gray-50"
                         >
                             {{ name }}
                         </li>
