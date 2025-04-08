@@ -1,13 +1,6 @@
 <template>
     <UContainer class="py-8">
-        <header class="mb-6">
-            <h1 class="text-2xl sm:text-3xl font-semibold text-gray-800">
-                列表对比工具
-            </h1>
-            <p class="text-sm text-gray-500 mt-1">
-                对比两个列表，找出各自独有及共有的条目，并提示重复项和特殊格式项。
-            </p>
-        </header>
+        <AppHeader />
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div
