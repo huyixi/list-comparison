@@ -785,46 +785,84 @@ const compareNames = () => {
 };
 
 const exportResults = () => {
-    let content = "--- 仅在列表 A 中存在的条目 ---\n";
-    content += onlyInA.value.length > 0 ? onlyInA.value.join("\n") : "(无)";
-    content += "\n\n--- 同时存在于列表 A 和 B 中的条目 ---\n";
-    content += inBoth.value.length > 0 ? inBoth.value.join("\n") : "(无)";
-    content += "\n\n--- 仅在列表 B 中存在的条目 ---\n";
-    content += onlyInB.value.length > 0 ? onlyInB.value.join("\n") : "(无)";
+    // 收集所有有内容的部分
+    const sections = [];
 
-    // 添加重复信息
+    // 只有在有内容时才添加相应部分
+    if (onlyInA.value.length > 0) {
+        sections.push({
+            title: "--- 仅在列表 A 中存在的条目 ---",
+            content: onlyInA.value.join("\n"),
+        });
+    }
+
+    if (inBoth.value.length > 0) {
+        sections.push({
+            title: "--- 同时存在于列表 A 和 B 中的条目 ---",
+            content: inBoth.value.join("\n"),
+        });
+    }
+
+    if (onlyInB.value.length > 0) {
+        sections.push({
+            title: "--- 仅在列表 B 中存在的条目 ---",
+            content: onlyInB.value.join("\n"),
+        });
+    }
+
+    // 添加重复信息（如果有）
     if (listAInfo.value.duplicates.length > 0) {
-        content += "\n\n--- 列表 A 中的重复输入 ---\n";
-        listAInfo.value.duplicates.forEach((item) => {
-            content += `${item.name} (输入 ${item.count} 次)\n`;
+        const duplicateContent = listAInfo.value.duplicates
+            .map((item) => `${item.name} (输入 ${item.count} 次)`)
+            .join("\n");
+
+        sections.push({
+            title: "--- 列表 A 中的重复输入 ---",
+            content: duplicateContent,
         });
-    } else {
-        content += "\n\n--- 列表 A 中的重复输入 ---\n(无)";
-    }
-    if (listBInfo.value.duplicates.length > 0) {
-        content += "\n\n--- 列表 B 中的重复输入 ---\n";
-        listBInfo.value.duplicates.forEach((item) => {
-            content += `${item.name} (输入 ${item.count} 次)\n`;
-        });
-    } else {
-        content += "\n\n--- 列表 B 中的重复输入 ---\n(无)";
     }
 
-    // 添加“无效格式”提示信息
+    if (listBInfo.value.duplicates.length > 0) {
+        const duplicateContent = listBInfo.value.duplicates
+            .map((item) => `${item.name} (输入 ${item.count} 次)`)
+            .join("\n");
+
+        sections.push({
+            title: "--- 列表 B 中的重复输入 ---",
+            content: duplicateContent,
+        });
+    }
+
+    // 添加"无效格式"提示信息（如果有）
     if (listAInfo.value.invalidNames.length > 0) {
-        content += "\n\n--- 列表 A 中检测到的特殊格式或空条目 (仅提示) ---\n";
-        content += listAInfo.value.invalidNames.join("\n");
-    } else {
-        content +=
-            "\n\n--- 列表 A 中检测到的特殊格式或空条目 (仅提示) ---\n(无)";
+        sections.push({
+            title: "--- 列表 A 中检测到的特殊格式或空条目 (仅提示) ---",
+            content: listAInfo.value.invalidNames.join("\n"),
+        });
     }
+
     if (listBInfo.value.invalidNames.length > 0) {
-        content += "\n\n--- 列表 B 中检测到的特殊格式或空条目 (仅提示) ---\n";
-        content += listBInfo.value.invalidNames.join("\n");
-    } else {
-        content +=
-            "\n\n--- 列表 B 中检测到的特殊格式或空条目 (仅提示) ---\n(无)";
+        sections.push({
+            title: "--- 列表 B 中检测到的特殊格式或空条目 (仅提示) ---",
+            content: listBInfo.value.invalidNames.join("\n"),
+        });
     }
+
+    // 如果没有任何内容可导出
+    if (sections.length === 0) {
+        toast.add({
+            title: "没有可导出的内容",
+            description: "没有发现任何可导出的结果",
+            color: "blue",
+            icon: "i-heroicons-information-circle",
+        });
+        return;
+    }
+
+    // 合并所有部分，使用两个换行符分隔
+    const content = sections
+        .map((section) => `${section.title}\n${section.content}`)
+        .join("\n\n\n");
 
     try {
         const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
@@ -845,12 +883,13 @@ const exportResults = () => {
             title: "导出成功",
             icon: "i-heroicons-check-circle",
             color: "green",
+            timeout: 2000,
         });
     } catch (error) {
         console.error("导出失败:", error);
         toast.add({
             title: "导出失败",
-            description: "无法生成下载文件。",
+            description: "无法生成下载文件",
             color: "red",
             icon: "i-heroicons-exclamation-triangle",
         });
