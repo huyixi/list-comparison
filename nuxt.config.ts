@@ -12,4 +12,5 @@ export default defineNuxtConfig({
     colorMode: false,
   },
   modules: ["@nuxt/ui"],
+  plugins: [{ src: "~/plugins/clipboard.js", mode: "client" }],
 });

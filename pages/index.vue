@@ -11,6 +11,7 @@
                 >
                     <h2 class="text-base font-medium text-gray-700">列表 A</h2>
                     <div class="flex items-center gap-2">
+                        <ClipboardPaste targetList="A" @paste="handlePaste" />
                         <UButton
                             icon="i-heroicons-document-arrow-up"
                             size="xs"
@@ -227,6 +228,7 @@
                 >
                     <h2 class="text-base font-medium text-gray-700">列表 B</h2>
                     <div class="flex items-center gap-2">
+                        <ClipboardPaste targetList="B" @paste="handlePaste" />
                         <UButton
                             icon="i-heroicons-document-arrow-up"
                             size="xs"
@@ -607,6 +609,7 @@
                 icon="i-heroicons-arrow-down-tray"
                 color="neutral"
                 variant="outline"
+                class="px-4 py-2 hover:cursor-pointer"
             >
                 导出结果
             </UButton>
@@ -645,6 +648,28 @@ const isConsideredInvalid = (name) => {
     if (trimmedName === "") return true;
     const validCharPattern = /[\p{L}\p{N}\p{Script=Han}]/u;
     return !validCharPattern.test(trimmedName);
+};
+
+const handlePaste = (data) => {
+    if (!data || !data.content) return;
+
+    const { targetList, content } = data;
+    const listRef =
+        targetList === "A" ? listA : targetList === "B" ? listB : null;
+
+    if (!listRef) return;
+
+    try {
+        const currentValue = listRef.value || "";
+
+        const separator =
+            currentValue && !currentValue.endsWith("\n") ? "\n" : "";
+        listRef.value = currentValue
+            ? `${currentValue}${separator}${content}`
+            : content;
+    } catch (error) {
+        console.error("粘贴处理失败:", error);
+    }
 };
 
 const parseNameList = (text) => {
