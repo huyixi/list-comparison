@@ -707,45 +707,62 @@ const parseNameList = (text) => {
 const listAInfo = computed(() => parseNameList(listA.value));
 const listBInfo = computed(() => parseNameList(listB.value));
 
-const handleFileUpload = (event, listType) => {
+const isValidFileType = (file) => {
+    const validTypes = ["text/plain", "text/csv"];
+    const validExtensions = [".txt", ".csv"];
+
+    return (
+        validTypes.includes(file.type) ||
+        validExtensions.some((ext) => file.name.toLowerCase().endsWith(ext))
+    );
+};
+
+const handleFileUpload = async (event, listType) => {
     const file = event.target.files[0];
-    if (file) {
-        if (
-            file.type === "text/plain" ||
-            file.type === "text/csv" ||
-            file.name.endsWith(".txt") ||
-            file.name.endsWith(".csv")
-        ) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                if (listType === "A") {
-                    listA.value = e.target.result;
-                } else if (listType === "B") {
-                    listB.value = e.target.result;
-                }
-                event.target.value = "";
-            };
-            reader.onerror = (e) => {
-                console.error("File reading error:", e);
-                toast.add({
-                    title: "读取文件出错",
-                    color: "red",
-                    icon: "i-heroicons-exclamation-triangle",
-                });
-                event.target.value = "";
-            };
-            reader.readAsText(file);
-        } else {
-            console.warn(`Unsupported file type: ${file.type || file.name}`);
-            toast.add({
-                title: "不支持的文件类型",
-                description: "请上传 .txt 或 .csv 文件。",
-                color: "orange",
-                icon: "i-heroicons-exclamation-triangle",
-            });
-            event.target.value = "";
-        }
+    if (!file) return;
+
+    const resetInput = () => {
+        event.target.value = "";
+    };
+
+    if (!isValidFileType(file)) {
+        console.warn(`Unsupported file type: ${file.type || file.name}`);
+        toast.add({
+            title: "不支持的文件类型",
+            description: "请上传 .txt 或 .csv 文件。",
+            color: "orange",
+            icon: "i-heroicons-exclamation-triangle",
+        });
+        resetInput();
+        return;
     }
+
+    try {
+        const content = await readFileAsText(file);
+        if (listType === "A") {
+            listA.value = content;
+        } else if (listType === "B") {
+            listB.value = content;
+        }
+        resetInput();
+    } catch (error) {
+        console.error("File reading error:", error);
+        toast.add({
+            title: "读取文件出错",
+            color: "red",
+            icon: "i-heroicons-exclamation-triangle",
+        });
+        resetInput();
+    }
+};
+
+const readFileAsText = (file) => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = (e) => reject(e);
+        reader.readAsText(file);
+    });
 };
 
 const triggerFileUploadA = () => {
