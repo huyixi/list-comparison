@@ -120,7 +120,7 @@
                                             icon="ph:broom-fill"
                                             size="2xs"
                                             color="neutral"
-                                            variant="outline"
+                                            variant="link"
                                             @click="removeDuplicates('A')"
                                             class="hover:cursor-pointer p-1"
                                         >
@@ -185,8 +185,8 @@
                                             <UButton
                                                 icon="ph:broom-fill"
                                                 size="2xs"
-                                                variant="outline"
                                                 color="neutral"
+                                                variant="link"
                                                 class="hover:cursor-pointer p-1"
                                                 @click="removeInvalidItems('A')"
                                             >
@@ -195,7 +195,7 @@
                                         </div>
 
                                         <p class="text-gray-500 text-[10px]">
-                                            注：这些条目仍会参与对比，此处仅作提示。
+                                            注：这些条目仍会参与比对，此处仅作提示。
                                         </p>
                                     </div>
 
@@ -210,7 +210,7 @@
                                             <span
                                                 class="w-2 h-2 rounded-full bg-red-500 mr-1 inline-block"
                                             ></span>
-                                            <span>'{{ item }}'</span>
+                                            <span>{{ item }}</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -337,7 +337,7 @@
                                             icon="ph:broom-fill"
                                             size="2xs"
                                             color="neutral"
-                                            variant="outline"
+                                            variant="link"
                                             @click="removeDuplicates('B')"
                                             class="hover:cursor-pointer p-1"
                                         >
@@ -402,7 +402,7 @@
                                             <UButton
                                                 icon="ph:broom-fill"
                                                 size="2xs"
-                                                variant="outline"
+                                                variant="link"
                                                 color="neutral"
                                                 class="hover:cursor-pointer p-1"
                                                 @click="removeInvalidItems('B')"
@@ -412,7 +412,7 @@
                                         </div>
 
                                         <p class="text-gray-500 text-[10px]">
-                                            注：这些条目仍会参与对比，此处仅作提示。
+                                            注：这些条目仍会参与比对，此处仅作提示。
                                         </p>
                                     </div>
 
@@ -427,7 +427,7 @@
                                             <span
                                                 class="w-2 h-2 rounded-full bg-red-500 mr-1 inline-block"
                                             ></span>
-                                            <span>'{{ item }}'</span>
+                                            <span>{{ item }}</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -452,7 +452,7 @@
                     />
                 </div>
                 <h3 class="text-lg font-medium text-gray-700 mb-2">
-                    尚未生成对比结果
+                    尚未生成比对结果
                 </h3>
                 <p class="text-sm text-gray-500 max-w-md mx-auto mb-4">
                     在上方区域输入或上传列表以查看它们之间的差异和相同之处。
@@ -891,7 +891,7 @@ const exportResults = () => {
             .slice(0, 16)
             .replace("T", "_")
             .replace(":", "-");
-        link.download = `列表对比结果_${timestamp}.txt`;
+        link.download = `比对结果_${timestamp}.txt`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
