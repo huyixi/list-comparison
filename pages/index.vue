@@ -9,7 +9,7 @@
                 <div
                     class="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50"
                 >
-                    <h2 class="text-base font-medium text-gray-700">列表 A</h2>
+                    <h2 class="text-base font-medium text-gray-700">名单 A</h2>
                     <div class="flex items-center gap-2">
                         <ClipboardPaste targetList="A" @paste="handlePaste" />
                         <UButton
@@ -19,7 +19,7 @@
                             variant="outline"
                             class="hover:cursor-pointer"
                             @click="triggerFileUploadA"
-                            aria-label="上传列表 A"
+                            aria-label="上传名单 A"
                         >
                         </UButton>
                         <input
@@ -34,13 +34,13 @@
                 <textarea
                     v-model="listA"
                     class="w-full min-h-80 p-3 border-0 focus:ring-0 resize-none flex-1"
-                    placeholder="输入第一个列表。条目可用逗号、分号、制表符或换行分隔。"
+                    placeholder="输入第一份名单。姓名可用逗号、分号、制表符或换行分隔。"
                 ></textarea>
                 <div
                     class="flex justify-between items-center border-t border-gray-200 bg-gray-50 text-xs"
                 >
                     <span class="text-gray-700 p-2"
-                        >检测到 {{ listAInfo.totalEnteredCount }} 项</span
+                        >检测到 {{ listAInfo.totalEnteredCount }} 个姓名</span
                     >
                     <div class="flex items-center justify-end gap-3 p-2">
                         <UPopover v-if="listAInfo.allUniqueNames.length > 0">
@@ -114,7 +114,7 @@
                                                     listAInfo.duplicateInfoCount
                                                 }}
                                             </span>
-                                            条重复项
+                                            个重复姓名
                                         </p>
                                         <UButton
                                             icon="ph:broom-fill"
@@ -180,7 +180,7 @@
                                                 >
                                                     {{ listAInfo.invalidCount }}
                                                 </span>
-                                                条可能无效项
+                                                个可能无效姓名
                                             </p>
                                             <UButton
                                                 icon="ph:broom-fill"
@@ -226,7 +226,7 @@
                 <div
                     class="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50"
                 >
-                    <h2 class="text-base font-medium text-gray-700">列表 B</h2>
+                    <h2 class="text-base font-medium text-gray-700">名单 B</h2>
                     <div class="flex items-center gap-2">
                         <ClipboardPaste targetList="B" @paste="handlePaste" />
                         <UButton
@@ -236,7 +236,7 @@
                             variant="outline"
                             class="hover:cursor-pointer"
                             @click="triggerFileUploadB"
-                            aria-label="上传列表 B"
+                            aria-label="上传名单 B"
                         >
                         </UButton>
                         <input
@@ -251,13 +251,13 @@
                 <textarea
                     v-model="listB"
                     class="w-full min-h-80 p-3 border-0 focus:ring-0 resize-none flex-1"
-                    placeholder="输入第二个列表。条目可用逗号、分号、制表符或换行分隔。"
+                    placeholder="输入第二份名单。姓名可用逗号、分号、制表符或换行分隔。"
                 ></textarea>
                 <div
                     class="flex justify-between items-center border-t border-gray-200 bg-gray-50 text-xs"
                 >
                     <span class="text-gray-700 p-2"
-                        >检测到 {{ listBInfo.totalEnteredCount }} 项</span
+                        >检测到 {{ listBInfo.totalEnteredCount }} 个姓名</span
                     >
                     <div class="flex items-center justify-end gap-3 p-2">
                         <UPopover v-if="listBInfo.allUniqueNames.length > 0">
@@ -331,7 +331,7 @@
                                                     listBInfo.duplicateInfoCount
                                                 }}
                                             </span>
-                                            条重复项
+                                            个重复姓名
                                         </p>
                                         <UButton
                                             icon="ph:broom-fill"
@@ -397,7 +397,7 @@
                                                 >
                                                     {{ listBInfo.invalidCount }}
                                                 </span>
-                                                条可能无效项
+                                                个可能无效姓名
                                             </p>
                                             <UButton
                                                 icon="ph:broom-fill"
@@ -455,7 +455,7 @@
                     尚未生成比对结果
                 </h3>
                 <p class="text-sm text-gray-500 max-w-md mx-auto mb-4">
-                    在上方区域输入或上传列表以查看它们之间的差异和相同之处。
+                    在上方区域输入或上传名单以查看它们之间的差异和相同之处。
                 </p>
             </div>
         </div>
@@ -468,7 +468,7 @@
                     class="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50"
                 >
                     <h2 class="text-base font-medium text-gray-700">
-                        仅在列表 A
+                        仅在名单 A
                     </h2>
                     <UButton
                         :icon="
@@ -481,7 +481,7 @@
                         variant="outline"
                         class="hover:cursor-pointer"
                         @click="copyToClipboard(onlyInA, 'only-in-a')"
-                        aria-label="复制仅在列表A中的条目"
+                        aria-label="复制仅在名单A 中的条目"
                     />
                 </div>
                 <div class="min-h-64 max-h-64 overflow-y-auto">
@@ -497,7 +497,7 @@
                             v-if="onlyInA.length === 0"
                             class="px-3 py-4 text-center text-gray-400 text-xs"
                         >
-                            列表 A 中没有独有条目。
+                            名单 A 中没有独有条目。
                         </li>
                     </ul>
                 </div>
@@ -528,7 +528,7 @@
                         variant="outline"
                         class="hover:cursor-pointer"
                         @click="copyToClipboard(inBoth, 'in-both')"
-                        aria-label="复制同时存在于两个列表中的条目"
+                        aria-label="复制同时存在于两个名单中的条目"
                     />
                 </div>
                 <div class="min-h-64 max-h-64 overflow-y-auto">
@@ -562,7 +562,7 @@
                     class="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50"
                 >
                     <h2 class="text-base font-medium text-gray-700">
-                        仅在列表 B
+                        仅在名单 B
                     </h2>
                     <UButton
                         :icon="
@@ -575,7 +575,7 @@
                         variant="outline"
                         class="hover:cursor-pointer"
                         @click="copyToClipboard(onlyInB, 'only-in-b')"
-                        aria-label="复制仅在列表B中的条目"
+                        aria-label="复制仅在名单B中的条目"
                     />
                 </div>
                 <div class="min-h-64 max-h-64 overflow-y-auto">
@@ -591,7 +591,7 @@
                             v-if="onlyInB.length === 0"
                             class="px-3 py-4 text-center text-gray-400 text-xs"
                         >
-                            列表 B 中没有独有条目。
+                            名单 B 中没有独有条目。
                         </li>
                     </ul>
                 </div>
@@ -785,7 +785,7 @@ const compareNames = () => {
         return;
     }
 
-    // 使用 Set 来获取每个列表中的 *独一无二* 的条目（包括“无效”条目）
+    // 使用 Set 来获取每个名单中的 *独一无二* 的条目（包括“无效”条目）
     const setA = new Set(namesA);
     const setB = new Set(namesB);
 
@@ -808,21 +808,21 @@ const exportResults = () => {
     // 只有在有内容时才添加相应部分
     if (onlyInA.value.length > 0) {
         sections.push({
-            title: "--- 仅在列表 A 中存在的条目 ---",
+            title: "--- 仅在名单 A 中存在的条目 ---",
             content: onlyInA.value.join("\n"),
         });
     }
 
     if (inBoth.value.length > 0) {
         sections.push({
-            title: "--- 同时存在于列表 A 和 B 中的条目 ---",
+            title: "--- 同时存在于名单 A 和 B 中的条目 ---",
             content: inBoth.value.join("\n"),
         });
     }
 
     if (onlyInB.value.length > 0) {
         sections.push({
-            title: "--- 仅在列表 B 中存在的条目 ---",
+            title: "--- 仅在名单 B 中存在的条目 ---",
             content: onlyInB.value.join("\n"),
         });
     }
@@ -834,7 +834,7 @@ const exportResults = () => {
             .join("\n");
 
         sections.push({
-            title: "--- 列表 A 中的重复输入 ---",
+            title: "--- 名单 A 中的重复输入 ---",
             content: duplicateContent,
         });
     }
@@ -845,7 +845,7 @@ const exportResults = () => {
             .join("\n");
 
         sections.push({
-            title: "--- 列表 B 中的重复输入 ---",
+            title: "--- 名单 B 中的重复输入 ---",
             content: duplicateContent,
         });
     }
@@ -853,14 +853,14 @@ const exportResults = () => {
     // 添加"无效格式"提示信息（如果有）
     if (listAInfo.value.invalidNames.length > 0) {
         sections.push({
-            title: "--- 列表 A 中检测到的特殊格式或空条目 (仅提示) ---",
+            title: "--- 名单 A 中检测到的特殊格式或空条目 (仅提示) ---",
             content: listAInfo.value.invalidNames.join("\n"),
         });
     }
 
     if (listBInfo.value.invalidNames.length > 0) {
         sections.push({
-            title: "--- 列表 B 中检测到的特殊格式或空条目 (仅提示) ---",
+            title: "--- 名单 B 中检测到的特殊格式或空条目 (仅提示) ---",
             content: listBInfo.value.invalidNames.join("\n"),
         });
     }
@@ -923,7 +923,7 @@ const copyToClipboard = async (items, type) => {
     if (!items || items.length === 0) {
         toast.add({
             title: "无可复制内容",
-            description: "该列表为空。",
+            description: "该名单为空。",
             color: "blue",
             icon: "i-heroicons-information-circle",
         });
@@ -971,7 +971,7 @@ const removeDuplicates = (listType) => {
 
     if (listInfo.duplicateInfoCount === 0) {
         toast.add({
-            title: `列表 ${listType} 中没有检测到重复项`,
+            title: `名单 ${listType} 中没有检测到重复姓名`,
             color: "blue",
             icon: "i-heroicons-information-circle",
         });
@@ -986,7 +986,7 @@ const removeDuplicates = (listType) => {
     currentListRef.value = uniqueItemsArray.join("\n"); // Update list
 
     toast.add({
-        title: `列表 ${listType} 的重复项已移除`,
+        title: `名单 ${listType} 的重复姓名已移除`,
         icon: "i-heroicons-check-circle",
         color: "green",
     });
@@ -1000,7 +1000,7 @@ const removeInvalidItems = (listType) => {
 
     if (listInfo.invalidCount === 0) {
         toast.add({
-            title: `列表 ${listType} 中没有检测到特殊格式项`,
+            title: `名单 ${listType} 中没有检测到特殊格式姓名`,
             color: "blue",
             icon: "i-heroicons-information-circle",
         });
@@ -1021,7 +1021,7 @@ const removeInvalidItems = (listType) => {
     currentListRef.value = sortedValidItems.join("\n");
 
     toast.add({
-        title: `列表 ${listType} 的特殊格式项已移除`,
+        title: `名单 ${listType} 的特殊格式姓名已移除`,
         icon: "i-heroicons-check-circle",
         color: "green",
     });
