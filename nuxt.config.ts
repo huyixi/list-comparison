@@ -11,6 +11,10 @@ export default defineNuxtConfig({
   ui: {
     colorMode: false,
   },
-  modules: ["@nuxt/ui"],
+  modules: ["@nuxt/ui", "nuxt-og-image"],
   plugins: [{ src: "~/plugins/clipboard.js", mode: "client" }],
+  site: {
+    url: "https://list.huyixi.com",
+    name: "名单比对工具",
+  },
 });
