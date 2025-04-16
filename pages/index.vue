@@ -620,7 +620,7 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 defineOgImageComponent("NuxtSeo", {
-    title: "名单比对工具 🔍",
+    title: "名单比对工具",
     description: "快速、精准地对比名单数据，轻松找出重复项、差异项或唯一项！",
     theme: "#ff0000",
     colorMode: "dark",
