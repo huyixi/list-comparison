@@ -1,10 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+// https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
   site: {
     url: "https://list.huyixi.com",
-    name: "名单比对工具",
+    name: "名单比对",
     description: "比对两份名单列表，找出各自独有及共有的姓名。",
   },
   compatibilityDate: "2024-11-01",
