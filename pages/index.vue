@@ -440,7 +440,7 @@
 
         <div
             v-if="!showResults"
-            class="bg-white p-8 rounded-lg shadow-sm border border-gray-200 text-center"
+            class="bg-white px-8 py-12 rounded-lg shadow-sm border border-gray-200 text-center"
         >
             <div class="flex flex-col items-center justify-center">
                 <div
