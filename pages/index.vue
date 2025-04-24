@@ -3,439 +3,91 @@
         <AppHeader />
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div
-                class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col"
+            <ListInput
+                v-model="listA"
+                title="名单 A"
+                :total-count="listAInfo.totalEnteredCount"
+                @upload="triggerFileUpload('A')"
             >
-                <div
-                    class="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50"
-                >
-                    <h2 class="text-base font-medium text-gray-700">名单 A</h2>
-                    <div class="flex items-center gap-2">
-                        <ClipboardPaste targetList="A" @paste="handlePaste" />
-                        <UButton
-                            icon="i-heroicons-document-arrow-up"
-                            size="xs"
-                            color="neutral"
-                            variant="outline"
-                            class="hover:cursor-pointer"
-                            @click="triggerFileUploadA"
-                            aria-label="上传名单 A"
-                        >
-                        </UButton>
-                        <input
-                            type="file"
-                            accept=".txt,.csv"
-                            @change="handleFileUpload($event, 'A')"
-                            class="hidden"
-                            ref="fileInputA"
-                        />
-                    </div>
-                </div>
-                <textarea
-                    v-model="listA"
-                    class="w-full min-h-80 p-3 border-0 focus:ring-0 resize-none flex-1"
-                    placeholder="输入第一份名单。姓名可用逗号、分号、制表符或换行分隔。"
-                ></textarea>
-                <div
-                    class="flex justify-between items-center border-t border-gray-200 bg-gray-50 text-xs"
-                >
-                    <span class="text-gray-700 p-2"
-                        >检测到 {{ listAInfo.totalEnteredCount }} 个姓名</span
-                    >
-                    <div class="flex items-center justify-end gap-3 p-2">
-                        <UPopover v-if="listAInfo.allUniqueNames.length > 0">
-                            <p class="flex items-center hover:cursor-pointer">
-                                <span
-                                    class="w-2 h-2 rounded-full bg-green-500 mr-1"
-                                ></span>
-                                <span class="text-gray-700">{{
-                                    listAInfo.allUniqueNames.length
-                                }}</span>
-                            </p>
-                            <template #content>
-                                <div
-                                    class="max-w-sm max-h-72 overflow-y-auto text-xs"
-                                >
-                                    <div
-                                        class="p-2 flex justify-between bg-gray-50 border-b border-gray-200"
-                                    >
-                                        <p class="font-medium inline-block">
-                                            <span
-                                                class="text-green-600 font-semibold"
-                                            >
-                                                {{
-                                                    listAInfo.allUniqueNames
-                                                        .length
-                                                }}
-                                            </span>
-                                            条有效条目
-                                        </p>
-                                    </div>
+                <template #actions>
+                    <ClipboardPaste
+                        @paste="(content) => handlePaste('A', content)"
+                    />
+                </template>
 
-                                    <ul class="space-y-0.5">
-                                        <li
-                                            v-for="(
-                                                name, index
-                                            ) in listAInfo.allUniqueNames"
-                                            :key="'all-unique-a-' + index"
-                                            class="px-1.5 py-1 border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
-                                        >
-                                            <span
-                                                class="w-2 h-2 rounded-full bg-green-500 mr-1 inline-block"
-                                            ></span>
-                                            <span>{{ name }}</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </template>
-                        </UPopover>
+                <template #stats>
+                    <StatPopover
+                        title="条有效条目"
+                        :count="listAInfo.allUniqueNames.length"
+                        :items="listAInfo.allUniqueNames"
+                        status="green"
+                    />
 
-                        <UPopover v-if="listAInfo.duplicates.length > 0">
-                            <p class="flex items-center hover:cursor-pointer">
-                                <span
-                                    class="w-2 h-2 rounded-full bg-yellow-400 mr-1"
-                                ></span>
-                                <span class="text-gray-700">{{
-                                    listAInfo.duplicateInfoCount
-                                }}</span>
-                            </p>
-                            <template #content>
-                                <div
-                                    class="max-w-sm max-h-72 overflow-y-auto text-xs"
-                                >
-                                    <div
-                                        class="p-2 gap-2 flex justify-between items-center bg-gray-50 border-b border-gray-200"
-                                    >
-                                        <p class="font-medium inline-block">
-                                            <span
-                                                class="text-orange-600 font-semibold"
-                                            >
-                                                {{
-                                                    listAInfo.duplicateInfoCount
-                                                }}
-                                            </span>
-                                            个重复姓名
-                                        </p>
-                                        <UButton
-                                            icon="ph:broom-fill"
-                                            size="2xs"
-                                            color="neutral"
-                                            variant="link"
-                                            @click="removeDuplicates('A')"
-                                            class="hover:cursor-pointer p-1"
-                                        >
-                                            移除
-                                        </UButton>
-                                    </div>
+                    <StatPopover
+                        title="个重复姓名"
+                        :count="listAInfo.duplicateInfoCount"
+                        :items="listAInfo.duplicates"
+                        status="yellow"
+                        :show-clean="true"
+                        :display-formatter="
+                            (item) => `${item.name} (重复 ${item.count} 次)`
+                        "
+                        @clean="removeDuplicates('A')"
+                    />
 
-                                    <ul class="space-y-0.5">
-                                        <li
-                                            v-for="(
-                                                item, index
-                                            ) in listAInfo.duplicates"
-                                            :key="'dup-a-' + index"
-                                            class="px-1.5 py-1 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 flex items-center justify-between"
-                                        >
-                                            <div>
-                                                <span
-                                                    class="w-2 h-2 rounded-full bg-orange-500 mr-1 inline-block"
-                                                ></span>
-                                                <span class="">{{
-                                                    item.name
-                                                }}</span>
-                                            </div>
-                                            <span class="">
-                                                重复 {{ item.count }} 次
-                                            </span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </template>
-                        </UPopover>
+                    <StatPopover
+                        title="个可能无效姓名"
+                        :count="listAInfo.invalidCount"
+                        :items="listAInfo.invalidNames"
+                        status="red"
+                        :show-clean="true"
+                        @clean="removeInvalidItems('A')"
+                    />
+                </template>
+            </ListInput>
 
-                        <UPopover v-if="listAInfo.invalidNames.length > 0">
-                            <span
-                                class="flex items-center hover:cursor-pointer"
-                            >
-                                <span
-                                    class="w-2 h-2 rounded-full bg-rose-500 mr-1"
-                                ></span>
-                                <span class="text-gray-700">{{
-                                    listAInfo.invalidCount
-                                }}</span>
-                            </span>
-                            <template #content>
-                                <div
-                                    class="max-w-sm max-h-72 overflow-y-auto text-xs"
-                                >
-                                    <div
-                                        class="p-2 gap-1 flex flex-col bg-gray-50 border-b border-gray-200"
-                                    >
-                                        <div
-                                            class="flex justify-between items-center"
-                                        >
-                                            <p class="font-medium inline-block">
-                                                <span
-                                                    class="text-red-600 font-semibold"
-                                                >
-                                                    {{ listAInfo.invalidCount }}
-                                                </span>
-                                                个可能无效姓名
-                                            </p>
-                                            <UButton
-                                                icon="ph:broom-fill"
-                                                size="2xs"
-                                                color="neutral"
-                                                variant="link"
-                                                class="hover:cursor-pointer p-1"
-                                                @click="removeInvalidItems('A')"
-                                            >
-                                                移除
-                                            </UButton>
-                                        </div>
-
-                                        <p class="text-gray-500 text-[10px]">
-                                            注：这些条目仍会参与比对，此处仅作提示。
-                                        </p>
-                                    </div>
-
-                                    <ul class="space-y-0.5">
-                                        <li
-                                            v-for="(
-                                                item, index
-                                            ) in listAInfo.invalidNames"
-                                            :key="'invalid-a-' + index"
-                                            class="px-1.5 py-1 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 flex items-center"
-                                        >
-                                            <span
-                                                class="w-2 h-2 rounded-full bg-red-500 mr-1 inline-block"
-                                            ></span>
-                                            <span>{{ item }}</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </template>
-                        </UPopover>
-                    </div>
-                </div>
-            </div>
-
-            <div
-                class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col"
+            <ListInput
+                v-model="listB"
+                title="名单 B"
+                :total-count="listBInfo.totalEnteredCount"
+                @upload="triggerFileUpload('B')"
             >
-                <div
-                    class="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50"
-                >
-                    <h2 class="text-base font-medium text-gray-700">名单 B</h2>
-                    <div class="flex items-center gap-2">
-                        <ClipboardPaste targetList="B" @paste="handlePaste" />
-                        <UButton
-                            icon="i-heroicons-document-arrow-up"
-                            size="xs"
-                            color="neutral"
-                            variant="outline"
-                            class="hover:cursor-pointer"
-                            @click="triggerFileUploadB"
-                            aria-label="上传名单 B"
-                        >
-                        </UButton>
-                        <input
-                            type="file"
-                            accept=".txt,.csv"
-                            @change="handleFileUpload($event, 'B')"
-                            class="hidden"
-                            ref="fileInputB"
-                        />
-                    </div>
-                </div>
-                <textarea
-                    v-model="listB"
-                    class="w-full min-h-80 p-3 border-0 focus:ring-0 resize-none flex-1"
-                    placeholder="输入第二份名单。姓名可用逗号、分号、制表符或换行分隔。"
-                ></textarea>
-                <div
-                    class="flex justify-between items-center border-t border-gray-200 bg-gray-50 text-xs"
-                >
-                    <span class="text-gray-700 p-2"
-                        >检测到 {{ listBInfo.totalEnteredCount }} 个姓名</span
-                    >
-                    <div class="flex items-center justify-end gap-3 p-2">
-                        <UPopover v-if="listBInfo.allUniqueNames.length > 0">
-                            <p class="flex items-center hover:cursor-pointer">
-                                <span
-                                    class="w-2 h-2 rounded-full bg-green-500 mr-1"
-                                ></span>
-                                <span class="text-gray-700">{{
-                                    listBInfo.allUniqueNames.length
-                                }}</span>
-                            </p>
-                            <template #content>
-                                <div
-                                    class="max-w-sm max-h-72 overflow-y-auto text-xs"
-                                >
-                                    <div
-                                        class="p-2 flex justify-between bg-gray-50 border-b border-gray-200"
-                                    >
-                                        <p class="font-medium inline-block">
-                                            <span
-                                                class="text-green-600 font-semibold"
-                                            >
-                                                {{
-                                                    listBInfo.allUniqueNames
-                                                        .length
-                                                }}
-                                            </span>
-                                            条有效条目
-                                        </p>
-                                    </div>
+                <template #actions>
+                    <ClipboardPaste
+                        @paste="(content) => handlePaste('B', content)"
+                    />
+                </template>
 
-                                    <ul class="space-y-0.5">
-                                        <li
-                                            v-for="(
-                                                name, index
-                                            ) in listBInfo.allUniqueNames"
-                                            :key="'all-unique-b-' + index"
-                                            class="px-1.5 py-1 border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
-                                        >
-                                            <span
-                                                class="w-2 h-2 rounded-full bg-green-500 mr-1 inline-block"
-                                            ></span>
-                                            <span>{{ name }}</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </template>
-                        </UPopover>
+                <template #stats>
+                    <StatPopover
+                        title="条有效条目"
+                        :count="listBInfo.allUniqueNames.length"
+                        :items="listBInfo.allUniqueNames"
+                        status="green"
+                    />
 
-                        <UPopover v-if="listBInfo.duplicates.length > 0">
-                            <p class="flex items-center hover:cursor-pointer">
-                                <span
-                                    class="w-2 h-2 rounded-full bg-yellow-400 mr-1"
-                                ></span>
-                                <span class="text-gray-700">{{
-                                    listBInfo.duplicateInfoCount
-                                }}</span>
-                            </p>
-                            <template #content>
-                                <div
-                                    class="max-w-sm max-h-72 overflow-y-auto text-xs"
-                                >
-                                    <div
-                                        class="p-2 gap-2 flex justify-between items-center bg-gray-50 border-b border-gray-200"
-                                    >
-                                        <p class="font-medium inline-block">
-                                            <span
-                                                class="text-orange-600 font-semibold"
-                                            >
-                                                {{
-                                                    listBInfo.duplicateInfoCount
-                                                }}
-                                            </span>
-                                            个重复姓名
-                                        </p>
-                                        <UButton
-                                            icon="ph:broom-fill"
-                                            size="2xs"
-                                            color="neutral"
-                                            variant="link"
-                                            @click="removeDuplicates('B')"
-                                            class="hover:cursor-pointer p-1"
-                                        >
-                                            移除
-                                        </UButton>
-                                    </div>
+                    <StatPopover
+                        title="个重复姓名"
+                        :count="listBInfo.duplicateInfoCount"
+                        :items="listBInfo.duplicates"
+                        status="yellow"
+                        :show-clean="true"
+                        :display-formatter="
+                            (item) => `${item.name} (重复 ${item.count} 次)`
+                        "
+                        @clean="removeDuplicates('B')"
+                    />
 
-                                    <ul class="space-y-0.5">
-                                        <li
-                                            v-for="(
-                                                item, index
-                                            ) in listBInfo.duplicates"
-                                            :key="'dup-b-' + index"
-                                            class="px-1.5 py-1 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 flex items-center justify-between"
-                                        >
-                                            <div>
-                                                <span
-                                                    class="w-2 h-2 rounded-full bg-orange-500 mr-1 inline-block"
-                                                ></span>
-                                                <span class="">{{
-                                                    item.name
-                                                }}</span>
-                                            </div>
-                                            <span class="">
-                                                重复 {{ item.count }} 次
-                                            </span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </template>
-                        </UPopover>
-
-                        <UPopover v-if="listBInfo.invalidNames.length > 0">
-                            <span
-                                class="flex items-center hover:cursor-pointer"
-                            >
-                                <span
-                                    class="w-2 h-2 rounded-full bg-rose-500 mr-1"
-                                ></span>
-                                <span class="text-gray-700">{{
-                                    listBInfo.invalidCount
-                                }}</span>
-                            </span>
-                            <template #content>
-                                <div
-                                    class="max-w-sm max-h-72 overflow-y-auto text-xs"
-                                >
-                                    <div
-                                        class="p-2 gap-1 flex flex-col bg-gray-50 border-b border-gray-200"
-                                    >
-                                        <div
-                                            class="flex justify-between items-center"
-                                        >
-                                            <p class="font-medium inline-block">
-                                                <span
-                                                    class="text-red-600 font-semibold"
-                                                >
-                                                    {{ listBInfo.invalidCount }}
-                                                </span>
-                                                个可能无效姓名
-                                            </p>
-                                            <UButton
-                                                icon="ph:broom-fill"
-                                                size="2xs"
-                                                variant="link"
-                                                color="neutral"
-                                                class="hover:cursor-pointer p-1"
-                                                @click="removeInvalidItems('B')"
-                                            >
-                                                移除
-                                            </UButton>
-                                        </div>
-
-                                        <p class="text-gray-500 text-[10px]">
-                                            注：这些条目仍会参与比对，此处仅作提示。
-                                        </p>
-                                    </div>
-
-                                    <ul class="space-y-0.5">
-                                        <li
-                                            v-for="(
-                                                item, index
-                                            ) in listBInfo.invalidNames"
-                                            :key="'invalid-b-' + index"
-                                            class="px-1.5 py-1 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 flex items-center"
-                                        >
-                                            <span
-                                                class="w-2 h-2 rounded-full bg-red-500 mr-1 inline-block"
-                                            ></span>
-                                            <span>{{ item }}</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </template>
-                        </UPopover>
-                    </div>
-                </div>
-            </div>
+                    <StatPopover
+                        title="个可能无效姓名"
+                        :count="listBInfo.invalidCount"
+                        :items="listBInfo.invalidNames"
+                        status="red"
+                        :show-clean="true"
+                        @clean="removeInvalidItems('B')"
+                    />
+                </template>
+            </ListInput>
         </div>
 
         <div
@@ -500,12 +152,6 @@
 
 <script setup>
 import { ref, watch, computed } from "vue";
-defineOgImageComponent("Nuxt", {
-    headline: "Lightweight",
-    title: "名单比对工具",
-    description: "快速、精准地对比名单数据，轻松找出重复项、差异项或唯一项！",
-    fonts: ["Noto+Sans+SC:400"],
-});
 
 const toast = useToast();
 
@@ -537,26 +183,16 @@ const isConsideredInvalid = (name) => {
     return !validCharPattern.test(trimmedName);
 };
 
-const handlePaste = (data) => {
-    if (!data || !data.content) return;
+const handlePaste = (targetList, content) => {
+    const listRef = targetList === "A" ? listA : listB;
 
-    const { targetList, content } = data;
-    const listRef =
-        targetList === "A" ? listA : targetList === "B" ? listB : null;
-
-    if (!listRef) return;
-
-    try {
-        const currentValue = listRef.value || "";
-
-        const separator =
-            currentValue && !currentValue.endsWith("\n") ? "\n" : "";
-        listRef.value = currentValue
-            ? `${currentValue}${separator}${content}`
-            : content;
-    } catch (error) {
-        console.error("粘贴处理失败:", error);
+    if (!listRef.value) {
+        listRef.value = content;
+        return;
     }
+
+    const separator = listRef.value.endsWith("\n") ? "" : "\n";
+    listRef.value += `${separator}${content}`;
 };
 
 const parseNameList = (text) => {

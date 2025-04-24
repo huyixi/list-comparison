@@ -60,7 +60,6 @@ const copied = ref(false);
 const handleCopy = async (content, isCopyAll = false) => {
     let textToCopy;
 
-    // 处理数组类型
     if (Array.isArray(content)) {
         if (content.length === 0) {
             toast.add({
@@ -72,9 +71,7 @@ const handleCopy = async (content, isCopyAll = false) => {
             return;
         }
         textToCopy = content.join("\n");
-    }
-    // 处理字符串类型
-    else {
+    } else {
         if (typeof content !== "string" || content.trim() === "") {
             toast.add({
                 title: "无可复制内容",
@@ -90,13 +87,10 @@ const handleCopy = async (content, isCopyAll = false) => {
     try {
         await navigator.clipboard.writeText(textToCopy);
 
-        // 仅在全量复制时更新按钮状态
         if (isCopyAll) {
             copied.value = true;
             setTimeout(() => (copied.value = false), 2000);
-        }
-        // 单项复制显示成功提示
-        else {
+        } else {
             toast.add({
                 title: "复制成功",
                 description: "内容已复制到剪贴板。",
