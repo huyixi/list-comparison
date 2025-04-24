@@ -460,147 +460,28 @@
             </div>
         </div>
 
-        <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div
-                class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col"
-            >
-                <div
-                    class="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50"
-                >
-                    <h2 class="text-base font-medium text-gray-700">
-                        仅在名单 A
-                    </h2>
-                    <UButton
-                        :icon="
-                            onlyInACopied
-                                ? 'i-heroicons-check-badge'
-                                : 'i-heroicons-clipboard-document'
-                        "
-                        color="neutral"
-                        size="xs"
-                        variant="outline"
-                        class="hover:cursor-pointer"
-                        @click="copyToClipboard(onlyInA, 'only-in-a')"
-                        aria-label="复制仅在名单A 中的条目"
-                    />
-                </div>
-                <div class="min-h-64 max-h-64 overflow-y-auto">
-                    <ul class="text-sm">
-                        <li
-                            v-for="(name, index) in onlyInA"
-                            :key="'a-' + index"
-                            class="px-3 py-1.5 border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
-                        >
-                            {{ name }}
-                        </li>
-                        <li
-                            v-if="onlyInA.length === 0"
-                            class="px-3 py-4 text-center text-gray-400 text-xs"
-                        >
-                            名单 A 中没有独有条目。
-                        </li>
-                    </ul>
-                </div>
-                <div
-                    class="p-2 border-t border-gray-200 bg-gray-50 text-xs text-gray-500"
-                >
-                    {{ onlyInA.length }} 条独有
-                </div>
-            </div>
-
-            <div
-                class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col"
-            >
-                <div
-                    class="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50"
-                >
-                    <h2 class="text-base font-medium text-gray-700">
-                        同时存在于 A 和 B
-                    </h2>
-                    <UButton
-                        :icon="
-                            inBothCopied
-                                ? 'i-heroicons-check-badge'
-                                : 'i-heroicons-clipboard-document'
-                        "
-                        color="neutral"
-                        size="xs"
-                        variant="outline"
-                        class="hover:cursor-pointer"
-                        @click="copyToClipboard(inBoth, 'in-both')"
-                        aria-label="复制同时存在于两个名单中的条目"
-                    />
-                </div>
-                <div class="min-h-64 max-h-64 overflow-y-auto">
-                    <ul class="text-sm">
-                        <li
-                            v-for="(name, index) in inBoth"
-                            :key="'both-' + index"
-                            class="px-3 py-1.5 border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
-                        >
-                            {{ name }}
-                        </li>
-                        <li
-                            v-if="inBoth.length === 0"
-                            class="px-3 py-4 text-center text-gray-400 text-xs"
-                        >
-                            没有找到共同条目。
-                        </li>
-                    </ul>
-                </div>
-                <div
-                    class="p-2 border-t border-gray-200 bg-gray-50 text-xs text-gray-500"
-                >
-                    {{ inBoth.length }} 条共有
-                </div>
-            </div>
-
-            <div
-                class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col"
-            >
-                <div
-                    class="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50"
-                >
-                    <h2 class="text-base font-medium text-gray-700">
-                        仅在名单 B
-                    </h2>
-                    <UButton
-                        :icon="
-                            onlyInBCopied
-                                ? 'i-heroicons-check-badge'
-                                : 'i-heroicons-clipboard-document'
-                        "
-                        color="neutral"
-                        size="xs"
-                        variant="outline"
-                        class="hover:cursor-pointer"
-                        @click="copyToClipboard(onlyInB, 'only-in-b')"
-                        aria-label="复制仅在名单B中的条目"
-                    />
-                </div>
-                <div class="min-h-64 max-h-64 overflow-y-auto">
-                    <ul class="text-sm">
-                        <li
-                            v-for="(name, index) in onlyInB"
-                            :key="'b-' + index"
-                            class="px-3 py-1.5 border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
-                        >
-                            {{ name }}
-                        </li>
-                        <li
-                            v-if="onlyInB.length === 0"
-                            class="px-3 py-4 text-center text-gray-400 text-xs"
-                        >
-                            名单 B 中没有独有条目。
-                        </li>
-                    </ul>
-                </div>
-                <div
-                    class="p-2 border-t border-gray-200 bg-gray-50 text-xs text-gray-500"
-                >
-                    {{ onlyInB.length }} 条独有
-                </div>
-            </div>
+        <div
+            v-if="showResults"
+            class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6"
+        >
+            <ComparisonResult
+                title="仅在名单 A"
+                :items="onlyInA"
+                empty-text="名单 A 中没有独有条目。"
+                suffix="独有"
+            />
+            <ComparisonResult
+                title="同时存在于 A 和 B"
+                :items="inBoth"
+                empty-text="没有找到共同条目。"
+                suffix="共有"
+            />
+            <ComparisonResult
+                title="仅在名单 B"
+                :items="onlyInB"
+                empty-text="名单 B 中没有独有条目。"
+                suffix="独有"
+            />
         </div>
 
         <div v-if="showResults" class="text-center my-6">
