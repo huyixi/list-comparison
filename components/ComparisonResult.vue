@@ -9,7 +9,7 @@
             <UButton
                 :icon="
                     copied
-                        ? 'i-heroicons-check-badge'
+                        ? 'i-heroicons-check'
                         : 'i-heroicons-clipboard-document'
                 "
                 color="neutral"
@@ -17,6 +17,7 @@
                 variant="outline"
                 @click="handleCopy(items)"
                 :aria-label="`复制${title}`"
+                class="hover:cursor-pointer"
             />
         </div>
         <div class="min-h-64 max-h-64 overflow-y-auto">
