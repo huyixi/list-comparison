@@ -7,7 +7,7 @@
         >
             <h2 class="text-base font-medium text-gray-700">{{ title }}</h2>
             <UButton
-                :icon="copied ? 'i-heroicons-check' : 'i-lucide-copy'"
+                :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
                 color="neutral"
                 size="xs"
                 variant="outline"
@@ -62,7 +62,7 @@ const handleCopy = async (content, isCopyAll = false) => {
                 title: "无可复制内容",
                 description: "该名单为空。",
                 color: "blue",
-                icon: "i-heroicons-information-circle",
+                icon: "i-lucide-circle-alert",
             });
             return;
         }
@@ -73,7 +73,7 @@ const handleCopy = async (content, isCopyAll = false) => {
                 title: "无可复制内容",
                 description: "该条目内容为空。",
                 color: "blue",
-                icon: "i-heroicons-information-circle",
+                icon: "i-lucide-circle-alert",
             });
             return;
         }
@@ -91,7 +91,7 @@ const handleCopy = async (content, isCopyAll = false) => {
                 title: "复制成功",
                 description: "内容已复制到剪贴板。",
                 color: "green",
-                icon: "i-heroicons-check-circle",
+                icon: "i-lucide-circle-alert",
             });
         }
     } catch (error) {
@@ -99,7 +99,7 @@ const handleCopy = async (content, isCopyAll = false) => {
             title: "复制失败",
             description: "复制失败，请尝试手动复制。",
             color: "red",
-            icon: "i-heroicons-exclamation-triangle",
+            icon: "i-lucide-circle-alert",
         });
     }
 };

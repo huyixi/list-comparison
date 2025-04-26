@@ -119,7 +119,7 @@
         <div v-if="showResults" class="text-center my-6">
             <UButton
                 @click="exportResults"
-                icon="i-heroicons-arrow-down-tray"
+                icon="i-lucide-download"
                 color="primary"
                 variant="outline"
                 class="px-4 py-2 hover:cursor-pointer"
@@ -226,7 +226,7 @@ const triggerFileUpload = async (event, listType) => {
             title: "不支持的文件类型",
             description: "请上传 .txt 或 .csv 文件。",
             color: "orange",
-            icon: "i-heroicons-exclamation-triangle",
+            icon: "i-lucide-circle-alert",
         });
         resetInput();
         return;
@@ -245,7 +245,7 @@ const triggerFileUpload = async (event, listType) => {
         toast.add({
             title: "读取文件出错",
             color: "red",
-            icon: "i-heroicons-exclamation-triangle",
+            icon: "i-lucide-circle-alert",
         });
         resetInput();
     }
@@ -369,7 +369,7 @@ const exportResults = () => {
             title: "没有可导出的内容",
             description: "没有发现任何可导出的结果",
             color: "blue",
-            icon: "i-heroicons-information-circle",
+            icon: "i-lucide-circle-alert",
         });
         return;
     }
@@ -396,7 +396,7 @@ const exportResults = () => {
         URL.revokeObjectURL(url);
         toast.add({
             title: "导出成功",
-            icon: "i-heroicons-check-circle",
+            icon: "i-lucide-circle-check",
             color: "green",
             timeout: 2000,
         });
@@ -406,7 +406,7 @@ const exportResults = () => {
             title: "导出失败",
             description: "无法生成下载文件",
             color: "red",
-            icon: "i-heroicons-exclamation-triangle",
+            icon: "i-lucide-circle-alert",
         });
     }
 };
@@ -421,7 +421,7 @@ const removeDuplicates = (listType) => {
         toast.add({
             title: `名单 ${listType} 中没有检测到重复姓名`,
             color: "blue",
-            icon: "i-heroicons-information-circle",
+            icon: "i-lucide-circle-alert",
         });
         return;
     }
@@ -435,7 +435,7 @@ const removeDuplicates = (listType) => {
 
     toast.add({
         title: `名单 ${listType} 的重复姓名已移除`,
-        icon: "i-heroicons-check-circle",
+        icon: "i-lucide-circle-alert",
         color: "green",
     });
 };
@@ -450,27 +450,23 @@ const removeInvalidItems = (listType) => {
         toast.add({
             title: `名单 ${listType} 中没有检测到特殊格式姓名`,
             color: "blue",
-            icon: "i-heroicons-information-circle",
+            icon: "i-lucide-circle-alert",
         });
         return;
     }
 
-    // Use helper to get items
     const items = getItemsFromString(currentListRef.value);
     if (items.length === 0) return;
 
-    // Filter out invalid items (keep only valid ones)
     const validItems = items.filter((item) => !isConsideredInvalid(item));
 
-    // Sort the remaining valid items (optional)
     const sortedValidItems = validItems.sort();
 
-    // Update the list ref
     currentListRef.value = sortedValidItems.join("\n");
 
     toast.add({
         title: `名单 ${listType} 的特殊格式姓名已移除`,
-        icon: "i-heroicons-check-circle",
+        icon: "i-lucide-circle-alert",
         color: "green",
     });
 };

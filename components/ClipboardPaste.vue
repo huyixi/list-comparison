@@ -30,7 +30,7 @@ const handlePaste = async () => {
         toast.add({
             title: "无法访问剪贴板",
             color: "red",
-            icon: "i-heroicons-exclamation-triangle",
+            icon: "i-lucide-circle-check",
             timeout: 3000,
         });
     } finally {

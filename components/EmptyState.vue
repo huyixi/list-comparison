@@ -22,7 +22,7 @@
 defineProps({
     icon: {
         type: String,
-        default: "i-heroicons-document-duplicate",
+        default: "i-lucide-file-user",
     },
     title: {
         type: String,

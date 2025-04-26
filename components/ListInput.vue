@@ -8,14 +8,16 @@
             <h2 class="text-base font-medium text-gray-700">{{ title }}</h2>
             <div class="flex items-center gap-2">
                 <slot name="actions"></slot>
-                <UButton
-                    icon="i-heroicons-document-arrow-up"
-                    size="xs"
-                    color="neutral"
-                    variant="outline"
-                    @click="openFilePicker"
-                    aria-label="上传文件"
-                />
+                <UTooltip text="上传文件" :popper="{ placement: 'top' }">
+                    <UButton
+                        icon="i-lucide-file-up"
+                        size="xs"
+                        color="neutral"
+                        variant="outline"
+                        @click="openFilePicker"
+                        aria-label="上传文件"
+                    />
+                </UTooltip>
                 <input
                     ref="fileInput"
                     type="file"
