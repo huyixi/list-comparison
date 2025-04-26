@@ -12,11 +12,7 @@
                         (content) => $emit('clipboard-paste', content)
                     "
                 />
-                <FileUploader
-                    accept=".csv,.txt"
-                    multiple
-                    @file-upload="handleFileUpload"
-                />
+                <FileUploader multiple @file-upload="handleFileUpload" />
             </div>
         </div>
 

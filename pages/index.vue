@@ -1,14 +1,15 @@
 <template>
     <UContainer class="py-8">
         <AppHeader />
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <ListInput
                 v-model="listA"
                 title="名单 A"
                 :total-count="listAInfo.totalEnteredCount"
                 @clipboard-paste="(content) => handlePaste('A', content)"
-                @file-upload="(files) => handleFileUpload('A', files)"
+                @file-upload="
+                    (fileContent) => handleFileUpload('A', fileContent)
+                "
             >
                 <template #stats>
                     <StatPopover
@@ -46,7 +47,9 @@
                 title="名单 B"
                 :total-count="listBInfo.totalEnteredCount"
                 @clipboard-paste="(event) => handlePaste('B', event)"
-                @file-upload="(files) => handleFileUpload('B', files)"
+                @file-upload="
+                    (fileContent) => handleFileUpload('B', fileContent)
+                "
             >
                 <template #stats>
                     <StatPopover
@@ -121,6 +124,7 @@
 </template>
 
 <script setup>
+import { list } from "postcss";
 import { ref, watch, computed } from "vue";
 
 const toast = useToast();
@@ -196,55 +200,6 @@ const parseNameList = (text) => {
 
 const listAInfo = computed(() => parseNameList(listA.value));
 const listBInfo = computed(() => parseNameList(listB.value));
-
-const handleFileUpload = async (listType, files) => {
-    const file = files?.[0];
-    if (!file) return;
-
-    if (!isValidFileType(file)) {
-        console.warn(`Unsupported file type: ${file.type || file.name}`);
-        toast.add({
-            title: "不支持的文件类型",
-            description: "请上传 .txt 或 .csv 文件。",
-            color: "orange",
-            icon: "i-lucide-circle-alert",
-        });
-        return;
-    }
-
-    try {
-        const content = await readFileContent(file);
-        const targetList = listType === "A" ? listA : listB;
-        const separator = targetList.value.length ? "\n" : "";
-        targetList.value += `${separator}${content}`;
-    } catch (error) {
-        console.error("File reading error:", error);
-        toast.add({
-            title: "读取文件出错",
-            color: "red",
-            icon: "i-lucide-circle-alert",
-        });
-    }
-};
-
-const isValidFileType = (file) => {
-    const validTypes = ["text/plain", "text/csv"];
-    const validExtensions = [".txt", ".csv"];
-
-    return (
-        validTypes.includes(file.type) ||
-        validExtensions.some((ext) => file.name.toLowerCase().endsWith(ext))
-    );
-};
-
-const readFileContent = (file) => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result);
-        reader.onerror = (e) => reject(e);
-        reader.readAsText(file);
-    });
-};
 
 const compareNames = () => {
     const namesA = listAInfo.value.allNames;
@@ -439,6 +394,12 @@ const removeInvalidItems = (listType) => {
         icon: "i-lucide-circle-alert",
         color: "green",
     });
+};
+
+const handleFileUpload = (listType, fileContent) => {
+    listType === "A"
+        ? (listA.value += fileContent)
+        : (listB.value += fileContent);
 };
 
 watch(
