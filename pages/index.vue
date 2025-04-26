@@ -7,14 +7,9 @@
                 v-model="listA"
                 title="名单 A"
                 :total-count="listAInfo.totalEnteredCount"
-                @upload="(event) => triggerFileUpload(event, 'A')"
+                @clipboard-paste="(content) => handlePaste('A', content)"
+                @file-upload="(files) => handleFileUpload('A', files)"
             >
-                <template #actions>
-                    <ClipboardPaste
-                        @paste="(content) => handlePaste('A', content)"
-                    />
-                </template>
-
                 <template #stats>
                     <StatPopover
                         title="条有效条目"
@@ -50,14 +45,9 @@
                 v-model="listB"
                 title="名单 B"
                 :total-count="listBInfo.totalEnteredCount"
-                @upload="(event) => triggerFileUpload(event, 'B')"
+                @clipboard-paste="(event) => handlePaste('B', event)"
+                @file-upload="(files) => handleFileUpload('B', files)"
             >
-                <template #actions>
-                    <ClipboardPaste
-                        @paste="(content) => handlePaste('B', content)"
-                    />
-                </template>
-
                 <template #stats>
                     <StatPopover
                         title="条有效条目"
@@ -207,18 +197,9 @@ const parseNameList = (text) => {
 const listAInfo = computed(() => parseNameList(listA.value));
 const listBInfo = computed(() => parseNameList(listB.value));
 
-const triggerFileUpload = async (event, listType) => {
-    console.log("triggerFileUpload", event);
-    if (!event || !event.target) {
-        console.error("Invalid file upload event");
-        return;
-    }
-    const file = event.target.files[0];
+const handleFileUpload = async (listType, files) => {
+    const file = files?.[0];
     if (!file) return;
-
-    const resetInput = () => {
-        event.target.value = "";
-    };
 
     if (!isValidFileType(file)) {
         console.warn(`Unsupported file type: ${file.type || file.name}`);
@@ -228,18 +209,14 @@ const triggerFileUpload = async (event, listType) => {
             color: "orange",
             icon: "i-lucide-circle-alert",
         });
-        resetInput();
         return;
     }
 
     try {
-        const content = await readFileAsText(file);
-        if (listType === "A") {
-            listA.value += content;
-        } else if (listType === "B") {
-            listB.value += content;
-        }
-        resetInput();
+        const content = await readFileContent(file);
+        const targetList = listType === "A" ? listA : listB;
+        const separator = targetList.value.length ? "\n" : "";
+        targetList.value += `${separator}${content}`;
     } catch (error) {
         console.error("File reading error:", error);
         toast.add({
@@ -247,7 +224,6 @@ const triggerFileUpload = async (event, listType) => {
             color: "red",
             icon: "i-lucide-circle-alert",
         });
-        resetInput();
     }
 };
 
@@ -261,7 +237,7 @@ const isValidFileType = (file) => {
     );
 };
 
-const readFileAsText = (file) => {
+const readFileContent = (file) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (e) => resolve(e.target.result);
@@ -300,10 +276,8 @@ const compareNames = () => {
 };
 
 const exportResults = () => {
-    // 收集所有有内容的部分
     const sections = [];
 
-    // 只有在有内容时才添加相应部分
     if (onlyInA.value.length > 0) {
         sections.push({
             title: "--- 仅在名单 A 中存在的条目 ---",
@@ -325,7 +299,6 @@ const exportResults = () => {
         });
     }
 
-    // 添加重复信息（如果有）
     if (listAInfo.value.duplicates.length > 0) {
         const duplicateContent = listAInfo.value.duplicates
             .map((item) => `${item.name} (输入 ${item.count} 次)`)
@@ -348,7 +321,6 @@ const exportResults = () => {
         });
     }
 
-    // 添加"无效格式"提示信息（如果有）
     if (listAInfo.value.invalidNames.length > 0) {
         sections.push({
             title: "--- 名单 A 中检测到的特殊格式或空条目 (仅提示) ---",
@@ -363,7 +335,6 @@ const exportResults = () => {
         });
     }
 
-    // 如果没有任何内容可导出
     if (sections.length === 0) {
         toast.add({
             title: "没有可导出的内容",
@@ -374,7 +345,6 @@ const exportResults = () => {
         return;
     }
 
-    // 合并所有部分，使用两个换行符分隔
     const content = sections
         .map((section) => `${section.title}\n${section.content}`)
         .join("\n\n\n");

@@ -7,22 +7,15 @@
         >
             <h2 class="text-base font-medium text-gray-700">{{ title }}</h2>
             <div class="flex items-center gap-2">
-                <slot name="actions"></slot>
-                <UTooltip text="上传文件" :popper="{ placement: 'top' }">
-                    <UButton
-                        icon="i-lucide-file-up"
-                        size="xs"
-                        color="neutral"
-                        variant="outline"
-                        @click="openFilePicker"
-                        aria-label="上传文件"
-                    />
-                </UTooltip>
-                <input
-                    ref="fileInput"
-                    type="file"
-                    class="hidden"
-                    @change="$emit('upload', $event)"
+                <ClipboardPaste
+                    @clipboard-paste="
+                        (content) => $emit('clipboard-paste', content)
+                    "
+                />
+                <FileUploader
+                    accept=".csv,.txt"
+                    multiple
+                    @file-upload="handleFileUpload"
                 />
             </div>
         </div>
@@ -58,11 +51,13 @@ defineProps({
     totalCount: Number,
 });
 
-defineEmits(["update:modelValue", "upload"]);
+const emit = defineEmits([
+    "update:modelValue",
+    "clipboard-paste",
+    "file-upload",
+]);
 
-const fileInput = ref(null);
-
-const openFilePicker = () => {
-    fileInput.value.click();
+const handleFileUpload = (files) => {
+    emit("file-upload", files);
 };
 </script>
