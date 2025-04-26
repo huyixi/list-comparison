@@ -1,33 +1,26 @@
 <template>
     <UButton
-        :icon="isPasting ? 'i-heroicons-check' : 'i-heroicons-clipboard'"
+        :icon="isPasted ? 'i-lucide-check' : 'i-lucide-clipboard'"
         size="xs"
         color="neutral"
         variant="outline"
         class="hover:cursor-pointer"
         @click="handlePaste"
         aria-label="从剪贴板粘贴"
-        :disabled="isPasting"
+        :disabled="isPasted"
     >
     </UButton>
 </template>
 
 <script setup>
 const toast = useToast();
-// const props = defineProps({
-//     targetList: {
-//         type: String,
-//         required: true,
-//         validator: (value) => ["A", "B"].includes(value),
-//     },
-// });
-
 const emit = defineEmits(["paste"]);
 const { $clipboard } = useNuxtApp();
-const isPasting = ref(false);
+const isPasted = ref(false);
 
 const handlePaste = async () => {
     try {
+        isPasted.value = true;
         const text = await $clipboard.readText();
         if (text && text.trim()) {
             emit("paste", text);
@@ -41,7 +34,9 @@ const handlePaste = async () => {
             timeout: 3000,
         });
     } finally {
-        isPasting.value = false;
+        setTimeout(() => {
+            isPasted.value = false;
+        }, 200);
     }
 };
 </script>

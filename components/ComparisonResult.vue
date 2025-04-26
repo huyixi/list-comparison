@@ -7,11 +7,7 @@
         >
             <h2 class="text-base font-medium text-gray-700">{{ title }}</h2>
             <UButton
-                :icon="
-                    copied
-                        ? 'i-heroicons-check-circle'
-                        : 'i-heroicons-clipboard-document'
-                "
+                :icon="copied ? 'i-heroicons-check' : 'i-lucide-copy'"
                 color="neutral"
                 size="xs"
                 variant="outline"
@@ -89,7 +85,7 @@ const handleCopy = async (content, isCopyAll = false) => {
 
         if (isCopyAll) {
             copied.value = true;
-            setTimeout(() => (copied.value = false), 2000);
+            setTimeout(() => (copied.value = false), 500);
         } else {
             toast.add({
                 title: "复制成功",
