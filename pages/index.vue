@@ -7,7 +7,7 @@
                 v-model="listA"
                 title="名单 A"
                 :total-count="listAInfo.totalEnteredCount"
-                @upload="triggerFileUpload('A')"
+                @upload="(event) => triggerFileUpload(event, 'A')"
             >
                 <template #actions>
                     <ClipboardPaste
@@ -50,7 +50,7 @@
                 v-model="listB"
                 title="名单 B"
                 :total-count="listBInfo.totalEnteredCount"
-                @upload="triggerFileUpload('B')"
+                @upload="(event) => triggerFileUpload(event, 'B')"
             >
                 <template #actions>
                     <ClipboardPaste
@@ -142,9 +142,6 @@ const onlyInB = ref([]);
 const inBoth = ref([]);
 const showResults = ref(false);
 
-const fileInputA = ref(null);
-const fileInputB = ref(null);
-
 const getItemsFromString = (text) => {
     if (!text || typeof text !== "string" || !text.trim()) {
         return [];
@@ -210,17 +207,12 @@ const parseNameList = (text) => {
 const listAInfo = computed(() => parseNameList(listA.value));
 const listBInfo = computed(() => parseNameList(listB.value));
 
-const isValidFileType = (file) => {
-    const validTypes = ["text/plain", "text/csv"];
-    const validExtensions = [".txt", ".csv"];
-
-    return (
-        validTypes.includes(file.type) ||
-        validExtensions.some((ext) => file.name.toLowerCase().endsWith(ext))
-    );
-};
-
-const handleFileUpload = async (event, listType) => {
+const triggerFileUpload = async (event, listType) => {
+    console.log("triggerFileUpload", event);
+    if (!event || !event.target) {
+        console.error("Invalid file upload event");
+        return;
+    }
     const file = event.target.files[0];
     if (!file) return;
 
@@ -243,9 +235,9 @@ const handleFileUpload = async (event, listType) => {
     try {
         const content = await readFileAsText(file);
         if (listType === "A") {
-            listA.value = content;
+            listA.value += content;
         } else if (listType === "B") {
-            listB.value = content;
+            listB.value += content;
         }
         resetInput();
     } catch (error) {
@@ -259,6 +251,16 @@ const handleFileUpload = async (event, listType) => {
     }
 };
 
+const isValidFileType = (file) => {
+    const validTypes = ["text/plain", "text/csv"];
+    const validExtensions = [".txt", ".csv"];
+
+    return (
+        validTypes.includes(file.type) ||
+        validExtensions.some((ext) => file.name.toLowerCase().endsWith(ext))
+    );
+};
+
 const readFileAsText = (file) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -266,13 +268,6 @@ const readFileAsText = (file) => {
         reader.onerror = (e) => reject(e);
         reader.readAsText(file);
     });
-};
-
-const triggerFileUploadA = () => {
-    fileInputA.value?.click();
-};
-const triggerFileUploadB = () => {
-    fileInputB.value?.click();
 };
 
 const compareNames = () => {
@@ -415,10 +410,6 @@ const exportResults = () => {
         });
     }
 };
-
-const onlyInACopied = ref(false);
-const inBothCopied = ref(false);
-const onlyInBCopied = ref(false);
 
 const removeDuplicates = (listType) => {
     let currentListRef = listType === "A" ? listA : listB;

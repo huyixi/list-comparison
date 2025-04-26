@@ -13,8 +13,14 @@
                     size="xs"
                     color="neutral"
                     variant="outline"
-                    @click="$emit('upload')"
+                    @click="openFilePicker"
                     aria-label="上传文件"
+                />
+                <input
+                    ref="fileInput"
+                    type="file"
+                    class="hidden"
+                    @change="$emit('upload', $event)"
                 />
             </div>
         </div>
@@ -51,4 +57,10 @@ defineProps({
 });
 
 defineEmits(["update:modelValue", "upload"]);
+
+const fileInput = ref(null);
+
+const openFilePicker = () => {
+    fileInput.value.click();
+};
 </script>
