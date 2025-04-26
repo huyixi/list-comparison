@@ -9,7 +9,9 @@
         </p>
 
         <template #content>
-            <div class="max-w-sm max-h-72 overflow-y-auto text-xs">
+            <div
+                class="max-w-sm max-h-72 overflow-y-auto text-xs w-48 overflow-x-hidden"
+            >
                 <div
                     class="gap-4 p-2 flex justify-between items-center bg-gray-50 border-b border-gray-200"
                 >
