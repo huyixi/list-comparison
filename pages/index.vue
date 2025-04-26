@@ -120,7 +120,7 @@
             <UButton
                 @click="exportResults"
                 icon="i-heroicons-arrow-down-tray"
-                color="neutral"
+                color="primary"
                 variant="outline"
                 class="px-4 py-2 hover:cursor-pointer"
             >
@@ -416,55 +416,9 @@ const exportResults = () => {
     }
 };
 
-// --- Clipboard (No changes needed here) ---
-
 const onlyInACopied = ref(false);
 const inBothCopied = ref(false);
 const onlyInBCopied = ref(false);
-
-const copyToClipboard = async (items, type) => {
-    if (!items || items.length === 0) {
-        toast.add({
-            title: "无可复制内容",
-            description: "该名单为空。",
-            color: "blue",
-            icon: "i-heroicons-information-circle",
-        });
-        return;
-    }
-    const textToCopy = items.join("\n");
-    try {
-        await navigator.clipboard.writeText(textToCopy);
-        onlyInACopied.value = false;
-        inBothCopied.value = false;
-        onlyInBCopied.value = false;
-        if (type === "only-in-a") onlyInACopied.value = true;
-        else if (type === "in-both") inBothCopied.value = true;
-        else if (type === "only-in-b") onlyInBCopied.value = true;
-        toast.add({
-            title: "已复制到剪贴板!",
-            icon: "i-heroicons-check-circle",
-            color: "green",
-            timeout: 1600,
-        });
-        setTimeout(() => {
-            if (type === "only-in-a") onlyInACopied.value = false;
-            else if (type === "in-both") inBothCopied.value = false;
-            else if (type === "only-in-b") onlyInBCopied.value = false;
-        }, 1600);
-    } catch (err) {
-        console.error("复制失败: ", err);
-        toast.add({
-            title: "复制失败",
-            description: "无法将文本复制到剪贴板。",
-            color: "red",
-            icon: "i-heroicons-exclamation-triangle",
-        });
-        onlyInACopied.value = false;
-        inBothCopied.value = false;
-        onlyInBCopied.value = false;
-    }
-};
 
 const removeDuplicates = (listType) => {
     let currentListRef = listType === "A" ? listA : listB;
