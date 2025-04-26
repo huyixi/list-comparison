@@ -10,13 +10,14 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/ui": "^3.0.1",
+    "@nuxt/ui": "^3.1.0",
     "@tailwindcss/vite": "^4.0.14",
     "nuxt": "^3.16.0",
     "nuxt-og-image": "^5.1.2",
     "nuxt-site-config": "^3.1.9",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.0",
+    "xlsx": "^0.18.5"
   },
   "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee",
   "devDependencies": {
