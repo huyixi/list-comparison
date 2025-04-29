@@ -124,7 +124,6 @@
 </template>
 
 <script setup>
-import { list } from "postcss";
 import { ref, watch, computed } from "vue";
 
 const toast = useToast();
