@@ -43,7 +43,7 @@
             <div class="flex gap-2 items-center">
                 <!-- <UCheckbox
                     label="全选"
-                    :model-value="isAllSelected"
+                    :model-value="selectCurrentColumnAll"
                     @update:model-value="toggleSelectAll"
                 /> -->
 
@@ -90,6 +90,7 @@ const fileType = ref("");
 const selectedSheetIndex = ref(-1);
 const selectedSheetColumns = ref([]);
 const selectedSheetData = ref([]);
+const selectedSheetColumnSelections = ref([]);
 const disabled = ref(true);
 const selectedColumns = ref({});
 const selectCurrentColumnAll = ref(false);
@@ -179,6 +180,25 @@ const sheetOptions = computed(() => {
     }));
 });
 
+const handleSheetColumnSelection = (col) => {
+    if (selectedSheetColumnSelections.value.includes(col)) {
+        selectedSheetColumnSelections.value =
+            selectedSheetColumnSelections.value.filter((item) => item !== col);
+    } else {
+        selectedSheetColumnSelections.value.push(col);
+    }
+
+    console.log("col", col, selectedSheetColumnSelections.value);
+};
+
+// const toggleSelectAll = () => {
+//     if (selectCurrentColumnAll.value) {
+//         selectedSheetColumnSelections.value = [...selectedSheetColumns.value];
+//     } else {
+//         selectedSheetColumnSelections.value = [];
+//     }
+// };
+
 const updateSheetDataAndColumns = () => {
     const selectedSheetAllData = workbookData.value[selectedSheetIndex.value];
     if (!selectedSheetAllData) return;
@@ -188,13 +208,22 @@ const updateSheetDataAndColumns = () => {
             accessorKey: `col${index}`,
             header: () =>
                 h("div", { class: "flex items-center gap-2" }, [
-                    h(UCheckbox),
+                    h(UCheckbox, {
+                        modelValue:
+                            selectedSheetColumnSelections.value.includes(index),
+                        "aria-label": `Select column ${col}`,
+                        onClick: () => handleSheetColumnSelection(index),
+                    }),
                     h("span", col),
                 ]),
             cell: ({ row }) => {
-                console.log("row:", row, "col:", col);
                 return h("div", { class: "flex items-center gap-2" }, [
-                    h(UCheckbox, { disabled: "true" }),
+                    h(UCheckbox, {
+                        disabled: true,
+                        modelValue:
+                            selectedSheetColumnSelections.value.includes(index),
+                        "aria-label": `Select row ${row.id}`,
+                    }),
                     h("span", row.getValue(`col${index}`)),
                 ]);
             },
