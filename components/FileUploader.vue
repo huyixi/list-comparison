@@ -47,14 +47,14 @@
                     @click="toggleSheetColumnsSelectAll"
                 />
 
-                <!-- <UButton
+                <UButton
                     color="primary"
                     variant="solid"
                     size="sm"
                     @click="importSelectedData"
                 >
                     导入
-                </UButton> -->
+                </UButton>
             </div>
         </template>
     </UModal>
@@ -194,8 +194,6 @@ const handleSheetColumnSelection = (col) => {
     } else {
         selectedAllColumns.value = false;
     }
-
-    console.log("col", col, selectedSheetColumnSelections.value);
 };
 
 const toggleSheetColumnsSelectAll = () => {
@@ -266,43 +264,38 @@ watch(
     { immediate: true },
 );
 
-// const importSelectedData = () => {
-//     const sheet = currentSheet.value;
-//     const selected = selectedColumns.value;
+const importSelectedData = () => {
+    const sheet = workbookData.value[selectedSheetIndex.value];
+    const selectedColumns = selectedSheetColumnSelections.value;
+    console.log("selectedColumns", selectedColumns, "sheet", sheet);
 
-//     if (!sheet || selected.length === 0) {
-//         toast.add({ title: "请选择需要导入的列！", color: "warning" });
-//         return;
-//     }
+    if (!sheet || selectedColumns.length === 0) {
+        toast.add({ title: "请选择需要导入的列！", color: "warning" });
+        return;
+    }
 
-//     const columnIndexes = selected
-//         .map((col) => sheet.columns.indexOf(col))
-//         .filter((idx) => idx !== -1);
+    const importedData = sheet.data.map((row) =>
+        selectedColumns.map((colIndex) => row[colIndex]),
+    );
 
-//     if (columnIndexes.length === 0) {
-//         toast.add({
-//             title: "选中的列不存在于原数据中，请检查！",
-//             color: "error",
-//         });
-//         return;
-//     }
+    emit("file-upload", importedData);
+    console.log("importedData", importedData);
+    toast.add({
+        title: `导入成功！共导入 ${importedData.length} 条记录`,
+        color: "success",
+    });
 
-//     const importedData = sheet.data.map((row) =>
-//         columnIndexes.map((i) => row[i]),
-//     );
-
-//     emit("file-upload", importedData);
-//     toast.add({
-//         title: `导入成功！共导入 ${importedData.length} 条记录`,
-//         color: "success",
-//     });
-
-//     isModalOpen.value = false;
-//     resetState();
-// };
+    isModalOpen.value = false;
+    resetState();
+};
 
 const resetState = () => {
     workbookData.value = [];
     selectedSheetIndex.value = -1;
+    selectedSheetColumns.value = [];
+    selectedSheetData.value = [];
+    selectedSheetColumnSelections.value = [];
+    selectedAllColumns.value = false;
+    fileInput.value.value = null;
 };
 </script>

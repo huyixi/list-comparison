@@ -396,9 +396,15 @@ const removeInvalidItems = (listType) => {
 };
 
 const handleFileUpload = (listType, fileContent) => {
-    listType === "A"
-        ? (listA.value += fileContent)
-        : (listB.value += fileContent);
+    if (listType === "A") {
+        listA.value = listA.value
+            ? listA.value + "\n" + fileContent
+            : fileContent;
+    } else {
+        listB.value = listB.value
+            ? listB.value + "\n" + fileContent
+            : fileContent;
+    }
 };
 
 watch(
