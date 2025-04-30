@@ -90,6 +90,7 @@ const fileType = ref("");
 const selectedSheetIndex = ref(-1);
 const selectedSheetColumns = ref([]);
 const selectedSheetData = ref([]);
+const disabled = ref(true);
 const selectedColumns = ref({});
 const selectCurrentColumnAll = ref(false);
 
@@ -190,6 +191,13 @@ const updateSheetDataAndColumns = () => {
                     h(UCheckbox),
                     h("span", col),
                 ]),
+            cell: ({ row }) => {
+                console.log("row:", row, "col:", col);
+                return h("div", { class: "flex items-center gap-2" }, [
+                    h(UCheckbox, { disabled: "true" }),
+                    h("span", row.getValue(`col${index}`)),
+                ]);
+            },
         }),
     );
 
