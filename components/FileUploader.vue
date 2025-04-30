@@ -278,8 +278,13 @@ const importSelectedData = () => {
         selectedColumns.map((colIndex) => row[colIndex]),
     );
 
-    emit("file-upload", importedData);
-    console.log("importedData", importedData);
+    const result = importedData
+        .map((item) => item.join(",")) // 将每个数组 ['name', 'city'] 转换为 'name,city'
+        .join(",");
+    console.log("importedData", typeof importedData.value, importedData);
+
+    emit("file-upload", result);
+    console.log("result", result);
     toast.add({
         title: `导入成功！共导入 ${importedData.length} 条记录`,
         color: "success",

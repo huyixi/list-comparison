@@ -213,20 +213,14 @@ const compareNames = () => {
         return;
     }
 
-    // 使用 Set 来获取每个名单中的 *独一无二* 的条目（包括“无效”条目）
     const setA = new Set(namesA);
     const setB = new Set(namesB);
 
-    // 找出仅在 A 中的独有条目
     onlyInA.value = [...setA].filter((name) => !setB.has(name)).sort();
-
-    // 找出仅在 B 中的独有条目
     onlyInB.value = [...setB].filter((name) => !setA.has(name)).sort();
-
-    // 找出在 A 和 B 中都存在的共有条目
     inBoth.value = [...setA].filter((name) => setB.has(name)).sort();
 
-    showResults.value = true; // 显示结果区
+    showResults.value = true;
 };
 
 const exportResults = () => {
