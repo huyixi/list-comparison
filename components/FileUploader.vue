@@ -61,7 +61,10 @@
 </template>
 
 <script setup>
+import { h, resolveComponent } from "vue";
 import * as XLSX from "xlsx";
+const UCheckbox = resolveComponent("UCheckbox");
+
 const toast = useToast();
 
 const props = defineProps({
@@ -88,6 +91,7 @@ const selectedSheetIndex = ref(-1);
 const selectedSheetColumns = ref([]);
 const selectedSheetData = ref([]);
 const selectedColumns = ref({});
+const selectCurrentColumnAll = ref(false);
 
 const openFilePicker = () => {
     fileInput.value?.click();
@@ -181,7 +185,11 @@ const updateSheetDataAndColumns = () => {
     selectedSheetColumns.value = selectedSheetAllData.columns.map(
         (col, index) => ({
             accessorKey: `col${index}`,
-            header: col,
+            header: () =>
+                h("div", { class: "flex items-center gap-2" }, [
+                    h(UCheckbox),
+                    h("span", col),
+                ]),
         }),
     );
 
