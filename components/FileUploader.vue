@@ -41,11 +41,11 @@
                 class="w-24"
             />
             <div class="flex gap-2 items-center">
-                <!-- <UCheckbox
+                <UCheckbox
                     label="全选"
-                    :model-value="selectCurrentColumnAll"
-                    @update:model-value="toggleSelectAll"
-                /> -->
+                    :model-value="selectedAllColumns"
+                    @click="toggleSheetColumnsSelectAll"
+                />
 
                 <!-- <UButton
                     color="primary"
@@ -91,9 +91,7 @@ const selectedSheetIndex = ref(-1);
 const selectedSheetColumns = ref([]);
 const selectedSheetData = ref([]);
 const selectedSheetColumnSelections = ref([]);
-const disabled = ref(true);
-const selectedColumns = ref({});
-const selectCurrentColumnAll = ref(false);
+const selectedAllColumns = ref(false);
 
 const openFilePicker = () => {
     fileInput.value?.click();
@@ -188,16 +186,30 @@ const handleSheetColumnSelection = (col) => {
         selectedSheetColumnSelections.value.push(col);
     }
 
+    if (
+        selectedSheetColumnSelections.value.length ===
+        selectedSheetColumns.value.length
+    ) {
+        selectedAllColumns.value = true;
+    } else {
+        selectedAllColumns.value = false;
+    }
+
     console.log("col", col, selectedSheetColumnSelections.value);
 };
 
-// const toggleSelectAll = () => {
-//     if (selectCurrentColumnAll.value) {
-//         selectedSheetColumnSelections.value = [...selectedSheetColumns.value];
-//     } else {
-//         selectedSheetColumnSelections.value = [];
-//     }
-// };
+const toggleSheetColumnsSelectAll = () => {
+    if (
+        selectedSheetColumnSelections.value.length ===
+        selectedSheetColumns.value.length
+    ) {
+        selectedSheetColumnSelections.value = [];
+    } else {
+        selectedSheetColumnSelections.value = selectedSheetColumns.value.map(
+            (item, index) => index,
+        );
+    }
+};
 
 const updateSheetDataAndColumns = () => {
     const selectedSheetAllData = workbookData.value[selectedSheetIndex.value];
