@@ -205,7 +205,6 @@ watch(
     () => selectedSheetIndex.value,
     () => {
         updateSheetDataAndColumns();
-        console.log("selectedSheetIndex", selectedSheetIndex.value);
     },
     { immediate: true },
 );
@@ -247,6 +246,6 @@ watch(
 
 const resetState = () => {
     workbookData.value = [];
-    selectedSheetIndex.value = 0;
+    selectedSheetIndex.value = -1;
 };
 </script>
