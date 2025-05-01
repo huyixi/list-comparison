@@ -287,9 +287,7 @@ const importSelectedData = () => {
         selectedColumns.map((colIndex) => row[colIndex]),
     );
 
-    const result = importedData
-        .map((item) => item.join(",")) // 将每个数组 ['name', 'city'] 转换为 'name,city'
-        .join(",");
+    const result = importedData.map((item) => item.join(",")).join(",");
     console.log("importedData", typeof importedData.value, importedData);
 
     emit("file-upload", result);
