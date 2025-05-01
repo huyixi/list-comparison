@@ -26,9 +26,7 @@
         <div
             class="flex justify-between items-center border-t border-gray-200 bg-gray-50 text-xs"
         >
-            <span class="text-gray-700 p-2"
-                >检测到 {{ totalCount }} 个姓名</span
-            >
+            <span class="text-gray-700 p-2">检测到 {{ totalCount }} 项</span>
             <div class="flex items-center justify-end gap-3 p-2">
                 <slot name="stats"></slot>
             </div>
@@ -42,7 +40,7 @@ defineProps({
     modelValue: String,
     placeholder: {
         type: String,
-        default: "输入名单，姓名可用逗号、分号、制表符或换行分隔。",
+        default: "输入名单，每项可用逗号、分号、制表符或换行分隔。",
     },
     totalCount: Number,
 });

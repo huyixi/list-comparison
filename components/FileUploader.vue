@@ -39,18 +39,27 @@
                 :items="sheetOptions"
                 placeholder="请选择Sheet"
                 class="w-24"
+                size="sm"
             />
             <div class="flex gap-2 items-center">
                 <UCheckbox
                     label="全选"
                     :model-value="selectedAllColumns"
+                    size="xs"
+                    variant="card"
                     @click="toggleSheetColumnsSelectAll"
+                    :ui="{
+                        root: 'p-1.25 hover:cursor-pointer',
+                        wrapper: 'ms-1',
+                    }"
+                    indicator="start"
                 />
 
                 <UButton
                     color="primary"
                     variant="solid"
                     size="sm"
+                    class="hover:cursor-pointer"
                     @click="importSelectedData"
                 >
                     导入

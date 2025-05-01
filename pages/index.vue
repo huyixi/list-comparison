@@ -20,7 +20,7 @@
                     />
 
                     <StatPopover
-                        title="个重复姓名"
+                        title="个重复项"
                         :count="listAInfo.duplicateInfoCount"
                         :items="listAInfo.duplicates"
                         status="yellow"
@@ -32,7 +32,7 @@
                     />
 
                     <StatPopover
-                        title="个可能无效姓名"
+                        title="个可能无效项"
                         :count="listAInfo.invalidCount"
                         :items="listAInfo.invalidNames"
                         status="red"
@@ -60,7 +60,7 @@
                     />
 
                     <StatPopover
-                        title="个重复姓名"
+                        title="个重复项"
                         :count="listBInfo.duplicateInfoCount"
                         :items="listBInfo.duplicates"
                         status="yellow"
@@ -72,7 +72,7 @@
                     />
 
                     <StatPopover
-                        title="个可能无效姓名"
+                        title="个可能无效项"
                         :count="listBInfo.invalidCount"
                         :items="listBInfo.invalidNames"
                         status="red"
@@ -98,7 +98,7 @@
             <ComparisonResult
                 title="同时存在于 A 和 B"
                 :items="inBoth"
-                empty-text="没有找到共同条目。"
+                empty-text="A 和 B 中没有共同条目。"
                 suffix="共有"
             />
             <ComparisonResult
@@ -337,7 +337,7 @@ const removeDuplicates = (listType) => {
 
     if (listInfo.duplicateInfoCount === 0) {
         toast.add({
-            title: `名单 ${listType} 中没有检测到重复姓名`,
+            title: `名单 ${listType} 中没有检测到重复项`,
             color: "blue",
             icon: "i-lucide-circle-alert",
         });
@@ -352,7 +352,7 @@ const removeDuplicates = (listType) => {
     currentListRef.value = uniqueItemsArray.join("\n"); // Update list
 
     toast.add({
-        title: `名单 ${listType} 的重复姓名已移除`,
+        title: `名单 ${listType} 的重复项已移除`,
         icon: "i-lucide-circle-alert",
         color: "green",
     });
@@ -366,7 +366,7 @@ const removeInvalidItems = (listType) => {
 
     if (listInfo.invalidCount === 0) {
         toast.add({
-            title: `名单 ${listType} 中没有检测到特殊格式姓名`,
+            title: `名单 ${listType} 中没有检测到特殊格式项`,
             color: "blue",
             icon: "i-lucide-circle-alert",
         });
@@ -383,7 +383,7 @@ const removeInvalidItems = (listType) => {
     currentListRef.value = sortedValidItems.join("\n");
 
     toast.add({
-        title: `名单 ${listType} 的特殊格式姓名已移除`,
+        title: `名单 ${listType} 的特殊格式项已移除`,
         icon: "i-lucide-circle-alert",
         color: "green",
     });
