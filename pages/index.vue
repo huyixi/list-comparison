@@ -249,22 +249,22 @@ const exportResults = () => {
 
     if (listAInfo.value.duplicates.length > 0) {
         const duplicateContent = listAInfo.value.duplicates
-            .map((item) => `${item.name} (输入 ${item.count} 次)`)
+            .map((item) => `${item.name} (出现 ${item.count} 次)`)
             .join("\n");
 
         sections.push({
-            title: "--- 名单 A 中的重复输入 ---",
+            title: "--- 名单 A 中的重复条目 ---",
             content: duplicateContent,
         });
     }
 
     if (listBInfo.value.duplicates.length > 0) {
         const duplicateContent = listBInfo.value.duplicates
-            .map((item) => `${item.name} (输入 ${item.count} 次)`)
+            .map((item) => `${item.name} (出现 ${item.count} 次)`)
             .join("\n");
 
         sections.push({
-            title: "--- 名单 B 中的重复输入 ---",
+            title: "--- 名单 B 中的重复条目 ---",
             content: duplicateContent,
         });
     }
