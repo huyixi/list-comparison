@@ -291,7 +291,6 @@ watch(
 const importSelectedData = () => {
     const sheet = workbookData.value[selectedSheetIndex.value];
     const selectedColumns = selectedSheetColumnSelections.value;
-    console.log("selectedColumns", selectedColumns, "sheet", sheet);
 
     if (!sheet || selectedColumns.length === 0) {
         toast.add({ title: "请选择需要导入的列！", color: "warning" });
@@ -303,10 +302,8 @@ const importSelectedData = () => {
     );
 
     const result = importedData.map((item) => item.join(",")).join(",");
-    console.log("importedData", typeof importedData.value, importedData);
 
     emit("file-upload", result);
-    console.log("result", result);
     toast.add({
         title: `导入成功！共导入 ${importedData.length} 条记录`,
         color: "success",
