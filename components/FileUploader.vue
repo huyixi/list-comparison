@@ -22,16 +22,28 @@
 
     <UModal
         v-model:open="isModalOpen"
-        :ui="{ footer: 'justify-between' }"
+        :ui="{ body: 'p-4 sm:p-4', footer: 'justify-between p-4 sm:p-4' }"
         title="导入数据"
     >
         <template #body>
-            <UTable
-                :key="selectedSheetIndex"
-                :data="selectedSheetData"
-                :columns="selectedSheetColumns"
+            <UCard
+                :ui="{
+                    body: 'p-0 sm:p-0',
+                }"
             >
-            </UTable>
+                <UTable
+                    :key="selectedSheetIndex"
+                    :data="selectedSheetData"
+                    :columns="selectedSheetColumns"
+                    :ui="{
+                        root: 'max-h-[50vh] overflow-auto',
+                        th: 'p-2',
+                        td: 'p-2',
+                        tbody: 'bg-(--ui-bg-muted) hover:cursor-not-allowed',
+                    }"
+                >
+                </UTable>
+            </UCard>
         </template>
         <template #footer>
             <USelect
@@ -232,6 +244,9 @@ const updateSheetDataAndColumns = () => {
                             selectedSheetColumnSelections.value.includes(index),
                         "aria-label": `Select column ${col}`,
                         onClick: () => handleSheetColumnSelection(index),
+                        ui: {
+                            root: "hover:cursor-pointer",
+                        },
                     }),
                     h("span", col),
                 ]),

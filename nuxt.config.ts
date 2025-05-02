@@ -9,7 +9,7 @@ export default defineNuxtConfig({
     description: "比对两份名单列表，找出各自独有及共有的项。",
   },
   compatibilityDate: "2024-11-01",
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   css: ["~/assets/css/main.css"],
   vite: {
     plugins: [tailwindcss()],
