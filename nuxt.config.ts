@@ -17,6 +17,6 @@ export default defineNuxtConfig({
   ui: {
     colorMode: false,
   },
-  modules: ["@nuxt/ui", "nuxt-site-config", "nuxt-og-image"],
+  modules: ["@nuxt/ui", "nuxt-site-config"],
   plugins: [{ src: "~/plugins/clipboard.js", mode: "client" }],
 });
