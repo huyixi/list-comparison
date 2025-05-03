@@ -3,7 +3,6 @@ export const useCopy = () => {
   const toast = useToast();
 
   const handleCopy = async (content: string) => {
-    // console.log("CopyContent", typeof content, content);
     if (!content) {
       toast.add({
         title: "无可复制内容",

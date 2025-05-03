@@ -11,7 +11,7 @@
                 color="neutral"
                 size="sm"
                 variant="ghost"
-                @click="handleCopy(items, true)"
+                @click="handleListCopy(items)"
                 :aria-label="`复制${title}`"
                 class="hover:cursor-pointer"
                 :ui="{
@@ -27,7 +27,7 @@
                     v-for="(name, index) in items"
                     :key="index"
                     class="px-3 py-1.5 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 hover:cursor-pointer"
-                    @click="handleCopy(name, false)"
+                    @click="handleCopy(name)"
                 >
                     {{ name }}
                 </li>
@@ -49,6 +49,8 @@
 
 <script setup>
 const toast = useToast();
+const { handleCopy } = useCopy();
+
 const props = defineProps({
     title: String,
     items: Array,
@@ -58,54 +60,12 @@ const props = defineProps({
 
 const copied = ref(false);
 
-const handleCopy = async (content, isCopyAll = false) => {
-    let textToCopy;
-
-    if (Array.isArray(content)) {
-        if (content.length === 0) {
-            toast.add({
-                title: "无可复制内容",
-                description: "该列表为空。",
-                color: "blue",
-                icon: "i-lucide-circle-alert",
-            });
-            return;
-        }
-        textToCopy = content.join("\n");
-    } else {
-        if (typeof content !== "string" || content.trim() === "") {
-            toast.add({
-                title: "无可复制内容",
-                description: "该条目内容为空。",
-                color: "blue",
-                icon: "i-lucide-circle-alert",
-            });
-            return;
-        }
-        textToCopy = content;
-    }
-
-    try {
-        await navigator.clipboard.writeText(textToCopy);
-
-        if (isCopyAll) {
-            copied.value = true;
-            setTimeout(() => (copied.value = false), 500);
-        } else {
-            toast.add({
-                title: "复制成功",
-                description: "内容已复制到剪贴板。",
-                color: "green",
-                icon: "i-lucide-circle-alert",
-            });
-        }
-    } catch (error) {
-        toast.add({
-            title: "复制失败",
-            description: "复制失败，请尝试手动复制。",
-            color: "red",
-            icon: "i-lucide-circle-alert",
-        });
-    }
+const handleListCopy = async (items) => {
+    const textToCopy = items.join("\n");
+    await handleCopy(textToCopy);
+    copied.value = true;
+    setTimeout(() => {
+        copied.value = false;
+    }, 2000);
 };
 </script>
