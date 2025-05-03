@@ -9,12 +9,17 @@
             <UButton
                 :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
                 color="neutral"
-                size="xs"
-                variant="outline"
+                size="sm"
+                variant="ghost"
                 @click="handleCopy(items, true)"
                 :aria-label="`复制${title}`"
                 class="hover:cursor-pointer"
-            />
+                :ui="{
+                    base: 'gap-0.5 px-0.5 py-1',
+                }"
+            >
+                复制
+            </UButton>
         </div>
         <div class="min-h-64 max-h-64 overflow-y-auto">
             <ul class="text-sm">
@@ -60,7 +65,7 @@ const handleCopy = async (content, isCopyAll = false) => {
         if (content.length === 0) {
             toast.add({
                 title: "无可复制内容",
-                description: "该名单为空。",
+                description: "该列表为空。",
                 color: "blue",
                 icon: "i-lucide-circle-alert",
             });

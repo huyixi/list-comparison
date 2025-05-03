@@ -2,13 +2,17 @@
     <UTooltip text="从剪贴板粘贴">
         <UButton
             :icon="isPasted ? 'i-lucide-check' : 'i-lucide-clipboard'"
-            size="xs"
+            size="sm"
             color="neutral"
-            variant="outline"
+            variant="ghost"
             class="hover:cursor-pointer"
             @click="handlePaste"
             aria-label="从剪贴板粘贴"
+            :ui="{
+                base: 'gap-0.5 px-0.5 py-1',
+            }"
         >
+            粘贴
         </UButton>
     </UTooltip>
 </template>

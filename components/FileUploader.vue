@@ -9,7 +9,12 @@
             :aria-label="tooltip"
             class="hover:cursor-pointer"
             @click="openFilePicker"
-        />
+            :ui="{
+                base: 'gap-0.5 px-0.5 py-1',
+            }"
+        >
+            上传文件
+        </UButton>
     </UTooltip>
 
     <input
@@ -95,11 +100,11 @@ const props = defineProps({
             ".txt,.csv,.xlsx,text/plain,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     },
     multiple: false,
-    tooltip: { type: String, default: "上传文件" },
+    tooltip: { type: String, default: "上传 txt,xlsx 文件" },
     icon: { type: String, default: "i-lucide-file-up" },
-    size: { type: String, default: "xs" },
+    size: { type: String, default: "sm" },
     color: { type: String, default: "neutral" },
-    variant: { type: String, default: "outline" },
+    variant: { type: String, default: "ghost" },
 });
 
 const emit = defineEmits(["file-upload"]);

@@ -113,8 +113,8 @@
             <UButton
                 @click="exportResults"
                 icon="i-lucide-download"
-                color="primary"
-                variant="outline"
+                color="info"
+                variant="subtle"
                 class="px-4 py-2 hover:cursor-pointer"
             >
                 导出结果
