@@ -1,3 +1,5 @@
+import { progress } from "#build/ui";
+
 // composables/useCopy.ts
 export const useCopy = () => {
   const toast = useToast();
@@ -8,25 +10,23 @@ export const useCopy = () => {
         title: "无可复制内容",
         color: "neutral",
         icon: "i-lucide-circle-alert",
+        duration: 2000,
       });
-      return;
+      return false;
     }
 
     try {
       await navigator.clipboard.writeText(content);
-      toast.add({
-        title: "复制成功",
-        description: "内容已复制到剪贴板。",
-        color: "primary",
-        icon: "i-lucide-copy-check",
-      });
+      return true;
     } catch (error) {
       toast.add({
         title: "复制失败",
         description: "复制失败，请尝试手动复制。",
         color: "error",
         icon: "i-lucide-copy-x",
+        duration: 2000,
       });
+      return false;
     }
   };
 

@@ -18,4 +18,11 @@ export default defineAppConfig({
     ],
     meta: [{ name: "apple-mobile-web-app-title", content: "名单比对" }],
   },
+  ui: {
+    toast: {
+      slots: {
+        progress: "hidden",
+      },
+    },
+  },
 });

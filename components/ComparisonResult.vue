@@ -18,7 +18,7 @@
                     base: 'gap-0.5 px-0.5 py-1',
                 }"
             >
-                复制
+                {{ copied ? "已复制" : "复制" }}
             </UButton>
         </div>
         <div class="min-h-64 max-h-64 overflow-y-auto">
@@ -62,10 +62,12 @@ const copied = ref(false);
 
 const handleListCopy = async (items) => {
     const textToCopy = items.join("\n");
-    await handleCopy(textToCopy);
-    copied.value = true;
-    setTimeout(() => {
-        copied.value = false;
-    }, 2000);
+    const result = await handleCopy(textToCopy);
+    if (result) {
+        copied.value = true;
+        setTimeout(() => {
+            copied.value = false;
+        }, 2000);
+    }
 };
 </script>

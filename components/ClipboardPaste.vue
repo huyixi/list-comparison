@@ -12,7 +12,7 @@
                 base: 'gap-0.5 px-0.5 py-1',
             }"
         >
-            粘贴
+            {{ isPasted ? "已粘贴" : "粘贴" }}
         </UButton>
     </UTooltip>
 </template>
@@ -45,7 +45,7 @@ const handlePaste = async () => {
     } finally {
         setTimeout(() => {
             isPasted.value = false;
-        }, 200);
+        }, 500);
     }
 };
 </script>
