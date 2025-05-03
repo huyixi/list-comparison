@@ -7,6 +7,7 @@
         >
             <h2 class="text-base font-medium text-gray-700">{{ title }}</h2>
             <UButton
+                v-if="items.length"
                 :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
                 color="neutral"
                 size="sm"
