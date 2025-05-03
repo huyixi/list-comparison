@@ -32,6 +32,7 @@ const validPastePermission = async () => {
         return;
     }
 };
+
 const handlePaste = async () => {
     try {
         await validPastePermission();

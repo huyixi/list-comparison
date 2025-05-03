@@ -163,6 +163,8 @@ const handlePaste = (targetList, content) => {
 
     const separator = listRef.value.endsWith("\n") ? "" : "\n";
     listRef.value += `${separator}${content}`;
+
+    console.log("handlePaste", targetList, content, listRef.value);
 };
 
 const parseNameList = (text) => {
@@ -194,7 +196,6 @@ const parseNameList = (text) => {
         (sum, { count }) => sum + count,
         0,
     );
-    console.log("result:", result);
     return result;
 };
 
