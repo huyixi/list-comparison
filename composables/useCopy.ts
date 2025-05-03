@@ -1,5 +1,3 @@
-import { progress } from "#build/ui";
-
 // composables/useCopy.ts
 export const useCopy = () => {
   const toast = useToast();

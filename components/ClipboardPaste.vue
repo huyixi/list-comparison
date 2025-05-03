@@ -28,25 +28,44 @@ const validPastePermission = async () => {
         name: "clipboard-read",
     });
     if (permission.state === "denied") {
-        toast.add({ title: "请允许剪贴板访问权限", color: "red" });
-        return;
+        toast.add({ title: "请允许剪贴板访问权限", color: "warning" });
+        return false;
     }
+    return true;
 };
 
 const handlePaste = async () => {
     try {
-        await validPastePermission();
+        const permissionGranted = await validPastePermission();
+        if (!permissionGranted) return;
+
         isPasted.value = true;
+
         const text = await $clipboard.readText();
         if (text && text.trim()) {
             emit("clipboard-paste", text);
+        } else {
+            fallbackPaste();
         }
     } catch (error) {
         console.error("粘贴失败:", error);
+        toast.add({ title: "粘贴失败", color: "red" });
     } finally {
         setTimeout(() => {
             isPasted.value = false;
         }, 500);
+    }
+};
+
+const fallbackPaste = () => {
+    try {
+        const text = document.execCommand("paste");
+        if (text && text.trim()) {
+            emit("clipboard-paste", text);
+        }
+    } catch (fallbackError) {
+        console.error("回退到 `execCommand` 粘贴失败:", fallbackError);
+        toast.add({ title: "粘贴失败", color: "red" });
     }
 };
 </script>
