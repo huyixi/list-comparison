@@ -41,7 +41,7 @@
                         v-for="(item, index) in items"
                         :key="index"
                         class="px-1.5 py-1 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 hover:cursor-pointer"
-                        @click="handleCopy(item.name)"
+                        @click="handleCopy(item.name || item)"
                     >
                         <span
                             class="w-2 h-2 rounded-full mr-1 inline-block"

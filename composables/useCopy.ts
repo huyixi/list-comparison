@@ -17,6 +17,12 @@ export const useCopy = () => {
 
     try {
       await navigator.clipboard.writeText(content);
+      toast.add({
+        title: "复制成功",
+        color: "success",
+        icon: "i-lucide-copy-check",
+        duration: 1000,
+      });
       return true;
     } catch (error) {
       toast.add({

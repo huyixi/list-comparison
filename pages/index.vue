@@ -194,6 +194,7 @@ const parseNameList = (text) => {
         (sum, { count }) => sum + count,
         0,
     );
+    console.log("result:", result);
     return result;
 };
 
