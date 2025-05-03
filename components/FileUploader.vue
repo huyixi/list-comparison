@@ -270,14 +270,6 @@ const updateSheetDataAndColumns = () => {
             return row;
         }, {}),
     );
-
-    console.log(
-        "selectedSheetData",
-        selectedSheetData.value,
-        typeof selectedSheetData.value,
-        "selectedSheetColumns",
-        selectedSheetColumns.value,
-    );
 };
 
 watch(
@@ -312,6 +304,10 @@ const importSelectedData = () => {
     isModalOpen.value = false;
     resetState();
 };
+
+watch(isModalOpen, (newValue) => {
+    if (!newValue) resetState();
+});
 
 const resetState = () => {
     workbookData.value = [];
