@@ -28,17 +28,20 @@
                         icon="i-heroicons-trash"
                         size="2xs"
                         color="neutral"
-                        variant="outline"
+                        variant="ghost"
                         class="hover:cursor-pointer p-1"
                         @click="$emit('clean')"
-                    />
+                    >
+                        清除
+                    </UButton>
                 </div>
 
                 <ul class="space-y-0.5">
                     <li
                         v-for="(item, index) in items"
                         :key="index"
-                        class="px-1.5 py-1 border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
+                        class="px-1.5 py-1 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 hover:cursor-pointer"
+                        @click="handleCopy(item.name)"
                     >
                         <span
                             class="w-2 h-2 rounded-full mr-1 inline-block"
@@ -53,7 +56,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+const { handleCopy } = useCopy();
 
 const props = defineProps({
     title: String,
