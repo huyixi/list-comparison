@@ -21,6 +21,8 @@
             @input="$emit('update:modelValue', $event.target.value)"
             class="w-full min-h-80 p-3 border-0 focus:ring-0 resize-none flex-1"
             :placeholder="placeholder"
+            rows="1"
+            cols="1"
         ></textarea>
 
         <div
