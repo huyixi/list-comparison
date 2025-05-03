@@ -35,6 +35,10 @@ const validPastePermission = async () => {
 };
 
 const handlePaste = async () => {
+    console.log(
+        "handlePaste",
+        $clipboard.readText() || document.execCommand("paste"),
+    );
     try {
         const permissionGranted = await validPastePermission();
         if (!permissionGranted) return;
@@ -49,7 +53,7 @@ const handlePaste = async () => {
         }
     } catch (error) {
         console.error("粘贴失败:", error);
-        toast.add({ title: "粘贴失败", color: "red" });
+        toast.add({ title: "粘贴失败", color: "error" });
     } finally {
         setTimeout(() => {
             isPasted.value = false;
