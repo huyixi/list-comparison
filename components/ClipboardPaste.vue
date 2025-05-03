@@ -35,10 +35,7 @@ const validPastePermission = async () => {
 };
 
 const handlePaste = async () => {
-    console.log(
-        "handlePaste",
-        $clipboard.readText() || document.execCommand("paste"),
-    );
+    console.log("handlePaste", $clipboard.readText() || "");
     try {
         const permissionGranted = await validPastePermission();
         if (!permissionGranted) return;
@@ -64,6 +61,7 @@ const handlePaste = async () => {
 const fallbackPaste = () => {
     try {
         const text = document.execCommand("paste");
+        console.log("fallbackPaste", text);
         if (text && text.trim()) {
             emit("clipboard-paste", text);
         }
