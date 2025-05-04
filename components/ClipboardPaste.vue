@@ -9,7 +9,7 @@
             @click="handlePaste"
             aria-label="从剪贴板粘贴"
             :ui="{
-                base: 'gap-0.5 py-1 px-1.5',
+                base: 'gap-0.5 px-1.5 py-1',
             }"
         >
             {{ isPasted ? "已粘贴" : "粘贴" }}
