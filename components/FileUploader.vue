@@ -13,7 +13,7 @@
                 base: 'gap-0.5 px-0.5 py-1',
             }"
         >
-            上传文件
+            导入文件
         </UButton>
     </UTooltip>
 
