@@ -17,7 +17,7 @@
                     :aria-label="`复制${title}`"
                     class="hover:cursor-pointer"
                     :ui="{
-                        base: 'gap-0.5 p-1.5',
+                        base: 'gap-0.5 p-0',
                     }"
                 >
                     {{ copied ? "已复制" : "复制" }}
