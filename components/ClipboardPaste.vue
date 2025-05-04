@@ -47,7 +47,7 @@ const handlePaste = async () => {
             emit("clipboard-paste", text.trim());
         }
     } catch (error) {
-        console.error("剪贴板访问失败,尝试使用回退方案:", error);
+        console.error("粘贴失败，尝试使用回退方案:", error);
         await fallbackPaste();
     } finally {
         setTimeout(() => (isPasted.value = false), 500);
