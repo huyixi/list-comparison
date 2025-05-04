@@ -10,7 +10,7 @@
             class="hover:cursor-pointer"
             @click="openFilePicker"
             :ui="{
-                base: 'gap-0.5 px-1.5 py-1',
+                base: 'gap-0.5 p-1.5',
             }"
         >
             导入文件
