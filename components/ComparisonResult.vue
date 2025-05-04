@@ -6,21 +6,23 @@
             class="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50"
         >
             <h2 class="text-base font-medium text-gray-700">{{ title }}</h2>
-            <UButton
-                v-if="items.length"
-                :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
-                color="neutral"
-                size="sm"
-                variant="ghost"
-                @click="handleListCopy(items)"
-                :aria-label="`复制${title}`"
-                class="hover:cursor-pointer"
-                :ui="{
-                    base: 'gap-0.5 px-0.5 py-1',
-                }"
-            >
-                {{ copied ? "已复制" : "复制" }}
-            </UButton>
+            <UTooltip :text="items.length ? '无可复制内容' : '复制整列条目'">
+                <UButton
+                    :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
+                    color="neutral"
+                    size="sm"
+                    variant="ghost"
+                    :disabled="items.length"
+                    @click="handleListCopy(items)"
+                    :aria-label="`复制${title}`"
+                    class="hover:cursor-pointer"
+                    :ui="{
+                        base: 'gap-0.5 px-0.5 py-1',
+                    }"
+                >
+                    {{ copied ? "已复制" : "复制" }}
+                </UButton>
+            </UTooltip>
         </div>
         <div class="min-h-64 max-h-64 overflow-y-auto">
             <ul class="text-sm">
