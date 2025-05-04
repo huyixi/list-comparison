@@ -356,7 +356,7 @@ const removeDuplicates = (listType) => {
 
     const uniqueItemsSet = new Set(items);
     const uniqueItemsArray = Array.from(uniqueItemsSet).sort();
-    currentListRef.value = uniqueItemsArray.join("\n"); // Update list
+    currentListRef.value = uniqueItemsArray.join("\n");
 
     toast.add({
         title: `名单 ${listType} 的重复项已移除`,
