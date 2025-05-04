@@ -104,7 +104,7 @@ const props = defineProps({
     icon: { type: String, default: "i-lucide-file-up" },
     size: { type: String, default: "sm" },
     color: { type: String, default: "neutral" },
-    variant: { type: String, default: "outline" },
+    variant: { type: String, default: "ghost" },
 });
 
 const emit = defineEmits(["file-upload"]);

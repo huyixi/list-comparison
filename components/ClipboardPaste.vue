@@ -4,7 +4,7 @@
             :icon="isPasted ? 'i-lucide-check' : 'i-lucide-clipboard'"
             size="sm"
             color="neutral"
-            variant="outline"
+            variant="ghost"
             class="hover:cursor-pointer"
             @click="handlePaste"
             aria-label="从剪贴板粘贴"

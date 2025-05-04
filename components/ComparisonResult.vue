@@ -11,7 +11,7 @@
                     :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
                     color="neutral"
                     size="sm"
-                    variant="outline"
+                    variant="ghost"
                     :disabled="!items.length"
                     @click="handleListCopy(items)"
                     :aria-label="`复制${title}`"
