@@ -8,6 +8,7 @@
             <h2 class="text-base font-medium text-gray-700">{{ title }}</h2>
             <div class="flex items-center gap-2">
                 <ClipboardPaste
+                    @request-focus="focusTextarea"
                     @clipboard-paste="
                         (content) => $emit('clipboard-paste', content)
                     "
@@ -37,12 +38,7 @@
 
 <script setup>
 const textareaRef = ref(null);
-const focusTextarea = () => {
-    textareaRef.value?.focus();
-};
-defineExpose({
-    focusTextarea,
-});
+
 defineProps({
     title: String,
     modelValue: String,
@@ -62,4 +58,11 @@ const emit = defineEmits([
 const handleFileUpload = (files) => {
     emit("file-upload", files);
 };
+
+const focusTextarea = () => {
+    textareaRef.value?.focus();
+};
+defineExpose({
+    focusTextarea,
+});
 </script>

@@ -19,55 +19,61 @@
 
 <script setup>
 const toast = useToast();
-const emit = defineEmits(["clipboard-paste"]);
-const { $clipboard } = useNuxtApp();
+const emit = defineEmits(["clipboard-paste", "request-focus"]);
 const isPasted = ref(false);
 
 const validPastePermission = async () => {
-    const permission = await navigator.permissions.query({
-        name: "clipboard-read",
-    });
-    if (permission.state === "denied") {
-        toast.add({ title: "请允许剪贴板访问权限", color: "warning" });
+    try {
+        await navigator.clipboard.readText();
+        return true;
+    } catch (error) {
+        console.error("剪贴板访问权限错误", error);
+        if (error.name === "NotAllowedError") {
+            toast.add({ title: "请允许剪贴板访问权限", color: "warning" });
+        }
         return false;
     }
-    return true;
 };
 
 const handlePaste = async () => {
-    console.log("handlePaste000", $clipboard.readText() || "");
     try {
+        emit("request-focus");
         const permissionGranted = await validPastePermission();
         if (!permissionGranted) return;
 
         isPasted.value = true;
-
-        const text = await $clipboard.readText();
-        if (text && text.trim()) {
-            emit("clipboard-paste", text);
-        } else {
-            fallbackPaste();
+        const text = await navigator.clipboard.readText();
+        if (text?.trim()) {
+            emit("clipboard-paste", text.trim());
         }
     } catch (error) {
-        console.error("粘贴失败:", error);
-        toast.add({ title: "粘贴失败", color: "error" });
+        console.error("剪贴板访问失败,尝试使用回退方案:", error);
+        await fallbackPaste();
     } finally {
-        setTimeout(() => {
-            isPasted.value = false;
-        }, 500);
+        setTimeout(() => (isPasted.value = false), 500);
     }
 };
 
-const fallbackPaste = () => {
+const fallbackPaste = async () => {
     try {
-        const text = document.execCommand("paste");
-        console.log("fallbackPaste", text);
-        if (text && text.trim()) {
-            emit("clipboard-paste", text);
+        const activeElement = document.activeElement;
+        if (!activeElement.isContentEditable) {
+            await new Promise((resolve) => setTimeout(resolve, 50));
         }
-    } catch (fallbackError) {
-        console.error("回退到 `execCommand` 粘贴失败:", fallbackError);
-        toast.add({ title: "粘贴失败", color: "red" });
+
+        const success = document.execCommand("paste");
+        if (success) {
+            const text = window.getSelection().toString();
+            if (text?.trim()) {
+                emit("clipboard-paste", text.trim());
+            }
+        }
+    } catch (error) {
+        toast.add({
+            title: "粘贴失败",
+            description: "请尝试手动粘贴 (Ctrl+V)",
+            color: "red",
+        });
     }
 };
 </script>
