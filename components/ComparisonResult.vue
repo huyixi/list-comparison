@@ -51,7 +51,6 @@
 </template>
 
 <script setup>
-const toast = useToast();
 const { handleCopy } = useCopy();
 
 const props = defineProps({
