@@ -6,7 +6,7 @@
             class="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50"
         >
             <h2 class="text-base font-medium text-gray-700">{{ title }}</h2>
-            <UTooltip :text="items.length ? '复制该列' : '无可复制内容'">
+            <UTooltip :text="items.length ? '复制该列内容' : '无可复制内容'">
                 <UButton
                     :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
                     color="neutral"
