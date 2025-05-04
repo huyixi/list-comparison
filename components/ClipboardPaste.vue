@@ -35,7 +35,7 @@ const validPastePermission = async () => {
 };
 
 const handlePaste = async () => {
-    console.log("handlePaste", $clipboard.readText() || "");
+    console.log("handlePaste000", $clipboard.readText() || "");
     try {
         const permissionGranted = await validPastePermission();
         if (!permissionGranted) return;

@@ -18,6 +18,7 @@
 
         <textarea
             :value="modelValue"
+            ref="textareaRef"
             @input="$emit('update:modelValue', $event.target.value)"
             class="w-full min-h-80 p-3 border-0 focus:ring-0 resize-none flex-1"
             :placeholder="placeholder"
@@ -35,6 +36,13 @@
 </template>
 
 <script setup>
+const textareaRef = ref(null);
+const focusTextarea = () => {
+    textareaRef.value?.focus();
+};
+defineExpose({
+    focusTextarea,
+});
 defineProps({
     title: String,
     modelValue: String,

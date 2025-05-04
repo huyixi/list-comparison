@@ -4,6 +4,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <ListInput
                 v-model="listA"
+                ref="listARef"
                 title="名单 A"
                 :total-count="listAInfo.totalEnteredCount"
                 @clipboard-paste="(content) => handlePaste('A', content)"
@@ -45,6 +46,7 @@
             <ListInput
                 v-model="listB"
                 title="名单 B"
+                ref="listBRef"
                 :total-count="listBInfo.totalEnteredCount"
                 @clipboard-paste="(event) => handlePaste('B', event)"
                 @file-upload="
@@ -130,6 +132,8 @@ const toast = useToast();
 
 const listA = ref("");
 const listB = ref("");
+const listARef = ref(null);
+const listBRef = ref(null);
 const onlyInA = ref([]);
 const onlyInB = ref([]);
 const inBoth = ref([]);
@@ -154,17 +158,20 @@ const isConsideredInvalid = (name) => {
 };
 
 const handlePaste = (targetList, content) => {
-    const listRef = targetList === "A" ? listA : listB;
+    const currentValue = targetList === "A" ? listA.value : listB.value;
 
-    if (!listRef.value) {
-        listRef.value = content;
-        return;
+    const separator = currentValue && !currentValue.endsWith("\n") ? "\n" : "";
+
+    if (targetList === "A") {
+        listA.value = `${currentValue}${separator}${content}`;
+    } else {
+        listB.value = `${currentValue}${separator}${content}`;
     }
 
-    const separator = listRef.value.endsWith("\n") ? "" : "\n";
-    listRef.value += `${separator}${content}`;
-
-    console.log("handlePaste", targetList, content, listRef.value);
+    const listInputRef = targetList === "A" ? listARef : listBRef;
+    nextTick(() => {
+        listInputRef.value?.focusTextarea();
+    });
 };
 
 const parseNameList = (text) => {
