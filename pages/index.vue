@@ -158,6 +158,9 @@ const isConsideredInvalid = (name) => {
 };
 
 const handlePaste = (targetList, content) => {
+    const listInputRef = targetList === "A" ? listARef : listBRef;
+    listInputRef.value?.focusTextarea();
+
     const currentValue = targetList === "A" ? listA.value : listB.value;
 
     const separator = currentValue && !currentValue.endsWith("\n") ? "\n" : "";
@@ -167,11 +170,6 @@ const handlePaste = (targetList, content) => {
     } else {
         listB.value = `${currentValue}${separator}${content}`;
     }
-
-    const listInputRef = targetList === "A" ? listARef : listBRef;
-    nextTick(() => {
-        listInputRef.value?.focusTextarea();
-    });
 };
 
 const parseNameList = (text) => {
