@@ -43,7 +43,7 @@
             </ul>
         </div>
         <div
-            class="p-2 border-t border-gray-200 bg-gray-50 text-xs text-gray-500"
+            class="py-2 px-3 border-t border-gray-200 bg-gray-50 text-xs text-gray-500"
         >
             {{ items.length }} 条{{ suffix }}
         </div>
