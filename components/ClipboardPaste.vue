@@ -4,12 +4,12 @@
             :icon="isPasted ? 'i-lucide-check' : 'i-lucide-clipboard'"
             size="sm"
             color="neutral"
-            variant="ghost"
+            variant="outline"
             class="hover:cursor-pointer"
             @click="handlePaste"
             aria-label="从剪贴板粘贴"
             :ui="{
-                base: 'gap-0.5 px-0.5 py-1',
+                base: 'gap-0.5 py-1 px-1.5',
             }"
         >
             {{ isPasted ? "已粘贴" : "粘贴" }}

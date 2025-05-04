@@ -115,7 +115,7 @@
             <UButton
                 @click="exportResults"
                 icon="i-lucide-download"
-                color="info"
+                color="primary"
                 variant="subtle"
                 class="px-4 py-2 hover:cursor-pointer"
             >

@@ -10,7 +10,7 @@
             class="hover:cursor-pointer"
             @click="openFilePicker"
             :ui="{
-                base: 'gap-0.5 px-0.5 py-1',
+                base: 'gap-0.5 px-1 py-1.5',
             }"
         >
             导入文件
@@ -104,7 +104,7 @@ const props = defineProps({
     icon: { type: String, default: "i-lucide-file-up" },
     size: { type: String, default: "sm" },
     color: { type: String, default: "neutral" },
-    variant: { type: String, default: "ghost" },
+    variant: { type: String, default: "outline" },
 });
 
 const emit = defineEmits(["file-upload"]);
