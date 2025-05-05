@@ -41,9 +41,10 @@
                     :data="previewSheetData"
                     :columns="selectedSheetColumns"
                     :ui="{
+                        table: 'table-fixed w-full',
+                        th: 'p-2 max-w-[6rem] truncate whitespace-nowrap',
+                        td: 'p-2 max-w-[6rem] truncate whitespace-nowrap',
                         root: 'max-h-[50vh] overflow-auto',
-                        th: 'p-2',
-                        td: 'p-2',
                         tbody: 'bg-(--ui-bg-muted) hover:cursor-not-allowed',
                     }"
                 >
@@ -242,27 +243,42 @@ const updateSheetDataAndColumns = () => {
 
     selectedSheetColumns.value = sheet.columns.map((col, index) => ({
         accessorKey: `col${index}`,
+
         header: () =>
-            h("div", { class: "flex items-center gap-2" }, [
-                h(UCheckbox, {
-                    modelValue:
-                        selectedSheetColumnSelections.value.includes(index),
-                    "aria-label": `Select column ${col}`,
-                    onClick: () => handleSheetColumnSelection(index),
-                    ui: { root: "hover:cursor-pointer" },
-                }),
-                h("span", col),
-            ]),
+            h(resolveComponent("UTooltip"), { text: col }, () =>
+                h("div", { class: "flex items-center gap-2" }, [
+                    h(UCheckbox, {
+                        modelValue:
+                            selectedSheetColumnSelections.value.includes(index),
+                        "aria-label": `Select column ${col}`,
+                        onClick: () => handleSheetColumnSelection(index),
+                        ui: { root: "hover:cursor-pointer" },
+                    }),
+                    h("span", { class: "truncate max-w-[12rem]" }, col),
+                ]),
+            ),
+
         cell: ({ row }) =>
-            h("div", { class: "flex items-center gap-2" }, [
-                h(UCheckbox, {
-                    disabled: true,
-                    modelValue:
-                        selectedSheetColumnSelections.value.includes(index),
-                    "aria-label": `Select row ${row.id}`,
-                }),
-                h("span", row.getValue(`col${index}`)),
-            ]),
+            h(
+                resolveComponent("UTooltip"),
+                { text: row.getValue(`col${index}`) },
+                () =>
+                    h("div", { class: "flex items-center gap-2" }, [
+                        h(UCheckbox, {
+                            disabled: true,
+                            modelValue:
+                                selectedSheetColumnSelections.value.includes(
+                                    index,
+                                ),
+                            "aria-label": `Select row ${row.id}`,
+                        }),
+                        h(
+                            "span",
+                            { class: "truncate max-w-[12rem]" },
+                            row.getValue(`col${index}`),
+                        ),
+                    ]),
+            ),
     }));
 
     selectedSheetData.value = sheet.data.map((row) =>
