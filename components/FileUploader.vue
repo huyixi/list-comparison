@@ -63,7 +63,6 @@
                     label="全选"
                     :model-value="selectedAllColumns"
                     size="xs"
-                    variant="card"
                     @click="toggleSheetColumnsSelectAll"
                     :ui="{
                         root: 'p-1.25 hover:cursor-pointer',
