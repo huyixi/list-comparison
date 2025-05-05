@@ -38,7 +38,7 @@
             >
                 <UTable
                     :key="selectedSheetIndex"
-                    :data="selectedSheetData"
+                    :data="previewSheetData"
                     :columns="selectedSheetColumns"
                     :ui="{
                         root: 'max-h-[50vh] overflow-auto',
@@ -117,7 +117,9 @@ const selectedSheetColumns = ref([]);
 const selectedSheetData = ref([]);
 const selectedSheetColumnSelections = ref([]);
 const selectedAllColumns = ref(false);
-
+const previewSheetData = ref([]);
+const PREVIEW_ROWS = 8;
+const ELLIPSIS = "…";
 const openFilePicker = () => {
     fileInput.value?.click();
 };
@@ -235,47 +237,53 @@ const toggleSheetColumnsSelectAll = () => {
 };
 
 const updateSheetDataAndColumns = () => {
-    const selectedSheetAllData = workbookData.value[selectedSheetIndex.value];
-    if (!selectedSheetAllData) return;
+    const sheet = workbookData.value[selectedSheetIndex.value];
+    if (!sheet) return;
 
-    selectedSheetColumns.value = selectedSheetAllData.columns.map(
-        (col, index) => ({
-            accessorKey: `col${index}`,
-            header: () =>
-                h("div", { class: "flex items-center gap-2" }, [
-                    h(UCheckbox, {
-                        modelValue:
-                            selectedSheetColumnSelections.value.includes(index),
-                        "aria-label": `Select column ${col}`,
-                        onClick: () => handleSheetColumnSelection(index),
-                        ui: {
-                            root: "hover:cursor-pointer",
-                        },
-                    }),
-                    h("span", col),
-                ]),
-            cell: ({ row }) => {
-                return h("div", { class: "flex items-center gap-2" }, [
-                    h(UCheckbox, {
-                        disabled: true,
-                        modelValue:
-                            selectedSheetColumnSelections.value.includes(index),
-                        "aria-label": `Select row ${row.id}`,
-                    }),
-                    h("span", row.getValue(`col${index}`)),
-                ]);
-            },
-        }),
-    );
+    selectedSheetColumns.value = sheet.columns.map((col, index) => ({
+        accessorKey: `col${index}`,
+        header: () =>
+            h("div", { class: "flex items-center gap-2" }, [
+                h(UCheckbox, {
+                    modelValue:
+                        selectedSheetColumnSelections.value.includes(index),
+                    "aria-label": `Select column ${col}`,
+                    onClick: () => handleSheetColumnSelection(index),
+                    ui: { root: "hover:cursor-pointer" },
+                }),
+                h("span", col),
+            ]),
+        cell: ({ row }) =>
+            h("div", { class: "flex items-center gap-2" }, [
+                h(UCheckbox, {
+                    disabled: true,
+                    modelValue:
+                        selectedSheetColumnSelections.value.includes(index),
+                    "aria-label": `Select row ${row.id}`,
+                }),
+                h("span", row.getValue(`col${index}`)),
+            ]),
+    }));
 
-    selectedSheetData.value = selectedSheetAllData.data.map((item) =>
-        selectedSheetAllData.columns.reduce((row, col, index) => {
-            row[`col${index}`] = item[index];
-            return row;
+    selectedSheetData.value = sheet.data.map((row) =>
+        sheet.columns.reduce((acc, _c, idx) => {
+            acc[`col${idx}`] = row[idx];
+            return acc;
         }, {}),
     );
-};
 
+    const preview = selectedSheetData.value.slice(0, PREVIEW_ROWS);
+
+    if (selectedSheetData.value.length > PREVIEW_ROWS) {
+        const ellipsisRow = sheet.columns.reduce((acc, _c, idx) => {
+            acc[`col${idx}`] = "…";
+            return acc;
+        }, {});
+        preview.push(ellipsisRow);
+    }
+
+    previewSheetData.value = preview;
+};
 watch(
     () => selectedSheetIndex.value,
     () => {
