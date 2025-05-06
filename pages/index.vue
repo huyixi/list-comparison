@@ -144,7 +144,7 @@ const getItemsFromString = (text) => {
         return [];
     }
     return text
-        .split(/[\n,.;、。；\t]+/)
+        .split(/[\n,.;、，。；\t]+/)
         .map((name) => name.trim())
         .filter((name) => name !== "");
 };
