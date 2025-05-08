@@ -14,7 +14,7 @@
             >
                 <template #stats>
                     <StatPopover
-                        title="条有效条目"
+                        title="个有效项"
                         :count="listAInfo.allUniqueNames.length"
                         :items="listAInfo.allUniqueNames"
                         status="green"
@@ -27,7 +27,7 @@
                         status="yellow"
                         :show-clean="true"
                         :display-formatter="
-                            (item) => `${item.name} (重复 ${item.count} 次)`
+                            (item) => `[${item.count} 次]${item.name}`
                         "
                         @clean="removeDuplicates('A')"
                     />
@@ -55,7 +55,7 @@
             >
                 <template #stats>
                     <StatPopover
-                        title="条有效条目"
+                        title="个有效项"
                         :count="listBInfo.allUniqueNames.length"
                         :items="listBInfo.allUniqueNames"
                         status="green"
@@ -68,7 +68,7 @@
                         status="yellow"
                         :show-clean="true"
                         :display-formatter="
-                            (item) => `${item.name} (重复 ${item.count} 次)`
+                            (item) => `[${item.count} 次]${item.name}`
                         "
                         @clean="removeDuplicates('B')"
                     />

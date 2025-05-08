@@ -10,10 +10,10 @@
 
         <template #content>
             <div
-                class="max-w-sm max-h-72 overflow-y-auto text-xs w-48 overflow-x-hidden"
+                class="max-w-sm max-h-72 overflow-y-auto text-xs w-40 overflow-x-hidden"
             >
                 <div
-                    class="gap-4 p-2 flex justify-between items-center bg-gray-50 border-b border-gray-200"
+                    class="gap-4 p-1.5 flex justify-between items-center bg-gray-50 border-b border-gray-200"
                 >
                     <p class="font-medium">
                         <span
@@ -43,11 +43,7 @@
                         class="px-1.5 py-1 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 hover:cursor-pointer"
                         @click="handleCopy(item.name || item)"
                     >
-                        <span
-                            class="w-2 h-2 rounded-full mr-1 inline-block"
-                            :style="{ backgroundColor: statusColor }"
-                        ></span>
-                        <span>{{ displayFormatter(item) }}</span>
+                        {{ displayFormatter(item) }}
                     </li>
                 </ul>
             </div>
