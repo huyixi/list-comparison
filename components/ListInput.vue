@@ -14,7 +14,11 @@
                     "
                 />
                 <FileUploader @file-upload="handleFileUpload" />
+<<<<<<< Updated upstream
                 <CustomSeperator />
+=======
+                <SeperatorPopover />
+>>>>>>> Stashed changes
             </div>
         </div>
 

@@ -173,7 +173,7 @@ const handlePaste = (targetList, content) => {
     }
 };
 
-const parseNameList = (text) => {
+const parseList = (text) => {
     const result = {};
     const items = getItemsFromString(text);
     result.totalEnteredCount = items.length;
@@ -205,8 +205,8 @@ const parseNameList = (text) => {
     return result;
 };
 
-const listAInfo = computed(() => parseNameList(listA.value));
-const listBInfo = computed(() => parseNameList(listB.value));
+const listAInfo = computed(() => parseList(listA.value));
+const listBInfo = computed(() => parseList(listB.value));
 
 const compareNames = () => {
     const namesA = listAInfo.value.allNames;
