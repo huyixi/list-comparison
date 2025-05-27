@@ -5,7 +5,7 @@
             <ListInput
                 v-model="listA"
                 ref="listARef"
-                title="名单 A"
+                title="列表 A"
                 :total-count="listAInfo.totalEnteredCount"
                 @clipboard-paste="(content) => handlePaste('A', content)"
                 @file-upload="
@@ -48,7 +48,7 @@
 
             <ListInput
                 v-model="listB"
-                title="名单 B"
+                title="列表 B"
                 ref="listBRef"
                 :total-count="listBInfo.totalEnteredCount"
                 @clipboard-paste="(event) => handlePaste('B', event)"
@@ -98,9 +98,9 @@
             class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6"
         >
             <ComparisonResult
-                title="仅在名单 A"
+                title="仅在列表 A"
                 :items="onlyInA"
-                empty-text="名单 A 中没有独有条目。"
+                empty-text="列表 A 中没有独有条目。"
                 suffix="独有"
             />
             <ComparisonResult
@@ -110,9 +110,9 @@
                 suffix="共有"
             />
             <ComparisonResult
-                title="仅在名单 B"
+                title="仅在列表 B"
                 :items="onlyInB"
-                empty-text="名单 B 中没有独有条目。"
+                empty-text="列表 B 中没有独有条目。"
                 suffix="独有"
             />
         </div>
@@ -172,7 +172,6 @@ const copyToClipboard = async (copyText, listName) => {
 
     if (result) {
         const copiedRef = listName === "A" ? listACopied : listBCopied;
-        console.log(copyText, listName, "Copied to clipboard", copiedRef);
         if (copiedRef) {
             copiedRef.value = true;
             setTimeout(() => {
@@ -260,21 +259,21 @@ const exportResults = () => {
 
     if (onlyInA.value.length > 0) {
         sections.push({
-            title: "--- 仅在名单 A 中存在的条目 ---",
+            title: "--- 仅在列表 A 中存在的条目 ---",
             content: onlyInA.value.join("\n"),
         });
     }
 
     if (inBoth.value.length > 0) {
         sections.push({
-            title: "--- 同时存在于名单 A 和 B 中的条目 ---",
+            title: "--- 同时存在于列表 A 和 B 中的条目 ---",
             content: inBoth.value.join("\n"),
         });
     }
 
     if (onlyInB.value.length > 0) {
         sections.push({
-            title: "--- 仅在名单 B 中存在的条目 ---",
+            title: "--- 仅在列表 B 中存在的条目 ---",
             content: onlyInB.value.join("\n"),
         });
     }
@@ -285,7 +284,7 @@ const exportResults = () => {
             .join("\n");
 
         sections.push({
-            title: "--- 名单 A 中的重复条目 ---",
+            title: "--- 列表 A 中的重复条目 ---",
             content: duplicateContent,
         });
     }
@@ -296,21 +295,21 @@ const exportResults = () => {
             .join("\n");
 
         sections.push({
-            title: "--- 名单 B 中的重复条目 ---",
+            title: "--- 列表 B 中的重复条目 ---",
             content: duplicateContent,
         });
     }
 
     if (listAInfo.value.invalidNames.length > 0) {
         sections.push({
-            title: "--- 名单 A 中检测到的特殊格式或空条目 (仅提示) ---",
+            title: "--- 列表 A 中检测到的特殊格式或空条目 (仅提示) ---",
             content: listAInfo.value.invalidNames.join("\n"),
         });
     }
 
     if (listBInfo.value.invalidNames.length > 0) {
         sections.push({
-            title: "--- 名单 B 中检测到的特殊格式或空条目 (仅提示) ---",
+            title: "--- 列表 B 中检测到的特殊格式或空条目 (仅提示) ---",
             content: listBInfo.value.invalidNames.join("\n"),
         });
     }
@@ -369,7 +368,7 @@ const removeDuplicates = (listType) => {
 
     if (listInfo.duplicateInfoCount === 0) {
         toast.add({
-            title: `名单 ${listType} 中没有检测到重复项`,
+            title: `列表 ${listType} 中没有检测到重复项`,
             color: "blue",
             icon: "i-lucide-circle-alert",
         });
@@ -384,7 +383,7 @@ const removeDuplicates = (listType) => {
     currentListRef.value = uniqueItemsArray.join("\n");
 
     toast.add({
-        title: `名单 ${listType} 的重复项已移除`,
+        title: `列表 ${listType} 的重复项已移除`,
         icon: "i-lucide-circle-alert",
         color: "green",
     });
@@ -398,7 +397,7 @@ const removeInvalidItems = (listType) => {
 
     if (listInfo.invalidCount === 0) {
         toast.add({
-            title: `名单 ${listType} 中没有检测到特殊格式项`,
+            title: `列表 ${listType} 中没有检测到特殊格式项`,
             color: "blue",
             icon: "i-lucide-circle-alert",
         });
@@ -415,7 +414,7 @@ const removeInvalidItems = (listType) => {
     currentListRef.value = sortedValidItems.join("\n");
 
     toast.add({
-        title: `名单 ${listType} 的特殊格式项已移除`,
+        title: `列表 ${listType} 的特殊格式项已移除`,
         icon: "i-lucide-circle-alert",
         color: "green",
     });

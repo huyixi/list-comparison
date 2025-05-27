@@ -16,7 +16,7 @@ export default defineAppConfig({
       },
       { rel: "manifest", href: "/site.webmanifest" },
     ],
-    meta: [{ name: "apple-mobile-web-app-title", content: "名单比对" }],
+    meta: [{ name: "apple-mobile-web-app-title", content: "列表比对" }],
   },
   ui: {
     toast: {

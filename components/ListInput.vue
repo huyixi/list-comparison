@@ -44,7 +44,7 @@ defineProps({
     modelValue: String,
     placeholder: {
         type: String,
-        default: "输入名单，每项可用逗号、分号、制表符或换行分隔。",
+        default: "输入列表，每项可用逗号、分号、制表符或换行分隔。",
     },
     totalCount: Number,
 });

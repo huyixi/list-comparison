@@ -30,7 +30,7 @@ defineProps({
     },
     description: {
         type: String,
-        default: "在上方区域输入或上传名单以查看它们之间的差异和相同之处。",
+        default: "在上方区域输入或上传列表文件以查看它们之间的差异和相同之处。",
     },
 });
 </script>

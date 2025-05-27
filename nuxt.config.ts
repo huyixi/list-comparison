@@ -5,8 +5,8 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   site: {
     url: "https://list.huyixi.com",
-    name: "名单比对",
-    description: "比对两份名单列表，找出各自独有及共有的项。",
+    name: "列表比对",
+    description: "比对两个列表，找出各自独有及共有的项。",
   },
   compatibilityDate: "2024-11-01",
   devtools: { enabled: false },
