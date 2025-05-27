@@ -215,7 +215,7 @@ const compareNames = () => {
     onlyInB.value = [];
     inBoth.value = [];
 
-    if (namesA.length === 0 || namesB.length === 0) {
+    if (namesA.length === 0 && namesB.length === 0) {
         showResults.value = false;
         return;
     }
