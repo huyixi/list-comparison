@@ -18,6 +18,9 @@
                         :count="listAInfo.allUniqueNames.length"
                         :items="listAInfo.allUniqueNames"
                         status="green"
+                        :show-copy="true"
+                        @copy="copyToClipboard(listAInfo.allUniqueNames, 'A')"
+                        :copied="listACopied"
                     />
 
                     <StatPopover
@@ -59,6 +62,9 @@
                         :count="listBInfo.allUniqueNames.length"
                         :items="listBInfo.allUniqueNames"
                         status="green"
+                        :show-copy="true"
+                        @copy="copyToClipboard(listBInfo.allUniqueNames, 'B')"
+                        :copied="listBCopied"
                     />
 
                     <StatPopover
@@ -127,6 +133,7 @@
 
 <script setup>
 import { ref, watch, computed } from "vue";
+const { handleCopy } = useCopy();
 
 const toast = useToast();
 
@@ -138,6 +145,8 @@ const onlyInA = ref([]);
 const onlyInB = ref([]);
 const inBoth = ref([]);
 const showResults = ref(false);
+const listACopied = ref(false);
+const listBCopied = ref(false);
 
 const getItemsFromString = (text) => {
     if (!text || typeof text !== "string" || !text.trim()) {
@@ -155,6 +164,22 @@ const isConsideredInvalid = (name) => {
     if (trimmedName === "") return true;
     const validCharPattern = /[\p{L}\p{N}\p{Script=Han}]/u;
     return !validCharPattern.test(trimmedName);
+};
+
+const copyToClipboard = async (copyText, listName) => {
+    const textToCopy = copyText.join("\n");
+    const result = await handleCopy(textToCopy);
+
+    if (result) {
+        const copiedRef = listName === "A" ? listACopied : listBCopied;
+        console.log(copyText, listName, "Copied to clipboard", copiedRef);
+        if (copiedRef) {
+            copiedRef.value = true;
+            setTimeout(() => {
+                copiedRef.value = false;
+            }, 1000);
+        }
+    }
 };
 
 const handlePaste = (targetList, content) => {

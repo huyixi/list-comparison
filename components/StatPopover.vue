@@ -24,6 +24,17 @@
                         {{ title }}
                     </p>
                     <UButton
+                        v-if="showCopy"
+                        :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
+                        size="2xs"
+                        color="neutral"
+                        variant="ghost"
+                        class="hover:cursor-pointer p-1"
+                        @click="$emit('copy')"
+                    >
+                        复制
+                    </UButton>
+                    <UButton
                         v-if="showClean"
                         icon="i-heroicons-trash"
                         size="2xs"
@@ -64,10 +75,12 @@ const props = defineProps({
         validator: (value) => ["red", "yellow", "green"].includes(value),
     },
     showClean: Boolean,
+    showCopy: Boolean,
     displayFormatter: {
         type: Function,
         default: (item) => item,
     },
+    copied: Boolean,
 });
 
 const statusColor = computed(() => {
@@ -79,5 +92,5 @@ const statusColor = computed(() => {
     return colors[props.status] || colors.green;
 });
 
-defineEmits(["clean"]);
+defineEmits(["clean", "copy"]);
 </script>
