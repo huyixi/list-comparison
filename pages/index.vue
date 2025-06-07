@@ -1,13 +1,14 @@
 <template>
     <UContainer class="py-8">
-        <CustomSeperator />
         <AppHeader />
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <ListInput
                 v-model="listA"
                 ref="listARef"
                 title="名单 A"
                 :total-count="listAInfo.totalEnteredCount"
+                :separators="listASeparators"
                 @clipboard-paste="(content) => handlePaste('A', content)"
                 @file-upload="
                     (fileContent) => handleFileUpload('A', fileContent)
@@ -49,6 +50,7 @@
                 title="名单 B"
                 ref="listBRef"
                 :total-count="listBInfo.totalEnteredCount"
+                :separators="listBSeparators"
                 @clipboard-paste="(event) => handlePaste('B', event)"
                 @file-upload="
                     (fileContent) => handleFileUpload('B', fileContent)
@@ -139,6 +141,8 @@ const onlyInA = ref([]);
 const onlyInB = ref([]);
 const inBoth = ref([]);
 const showResults = ref(false);
+const listASeparators = ref([]);
+const listBSeparators = ref([]);
 
 const getItemsFromString = (text) => {
     if (!text || typeof text !== "string" || !text.trim()) {

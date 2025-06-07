@@ -14,11 +14,7 @@
                     "
                 />
                 <FileUploader @file-upload="handleFileUpload" />
-<<<<<<< Updated upstream
-                <CustomSeperator />
-=======
-                <SeperatorPopover />
->>>>>>> Stashed changes
+                <SeperatorPopover @updateSeparators="handleSeparators" />
             </div>
         </div>
 
@@ -43,6 +39,7 @@
 
 <script setup>
 const textareaRef = ref(null);
+const separatorsForInput = ref<string[]>([]);
 
 defineProps({
     title: String,
@@ -52,6 +49,7 @@ defineProps({
         default: "输入名单，每项可用逗号、分号、制表符或换行分隔。",
     },
     totalCount: Number,
+    separators: [],
 });
 
 const emit = defineEmits([
@@ -67,6 +65,11 @@ const handleFileUpload = (files) => {
 const focusTextarea = () => {
     textareaRef.value?.focus();
 };
+
+const handleSeparators = (newSeparators) => {
+  separatorsForInput.value = newSeparators;
+};
+
 defineExpose({
     focusTextarea,
 });
