@@ -95,7 +95,6 @@ const {
     separators,
     selectedSeparatorIds,
     separatorQuery,
-    selectedSeparatorLabels,
     isCustom,
     addCustomSeparator,
     removeCustomSeparator,

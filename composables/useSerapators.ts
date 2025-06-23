@@ -1,9 +1,5 @@
 import { ref, computed } from "vue";
-import type {
-  SeparatorItem,
-  CustomSeparator,
-  BuiltInSeparatorId,
-} from "@/types/index";
+import type { SeparatorItem, CustomSeparator } from "@/types/index";
 import { initialSeparators } from "@/types/index";
 
 const separators = ref<SeparatorItem[]>([...initialSeparators]);
