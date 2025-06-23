@@ -12,6 +12,7 @@ export const initialSeparators = [
   { label: "|", description: "竖线", id: "pipe" },
   { label: "/", description: "斜杠", id: "slash" },
   { label: "\\", description: "反斜杠", id: "backslash" },
+  { label: "\n", description: "换行", id: "newline" },
 ] as const;
 
 export type BuiltInSeparator = (typeof initialSeparators)[number];
