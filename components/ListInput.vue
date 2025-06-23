@@ -14,7 +14,6 @@
                     "
                 />
                 <FileUploader @file-upload="handleFileUpload" />
-                <SeperatorPopover @updateSeparators="handleSeparators" />
             </div>
         </div>
 
@@ -29,7 +28,7 @@
         <div
             class="flex justify-between items-center border-t border-gray-200 bg-gray-50 text-xs"
         >
-            <span class="text-gray-700 p-2">检测到 {{ totalCount }} 项</span>
+            <SeperatorModal :totalCount="totalCount"></SeperatorModal>
             <div class="flex items-center justify-end gap-3 p-2">
                 <slot name="stats"></slot>
             </div>
@@ -39,7 +38,6 @@
 
 <script setup>
 const textareaRef = ref(null);
-const separatorsForInput = ref<string[]>([]);
 
 defineProps({
     title: String,
@@ -64,10 +62,6 @@ const handleFileUpload = (files) => {
 
 const focusTextarea = () => {
     textareaRef.value?.focus();
-};
-
-const handleSeparators = (newSeparators) => {
-  separatorsForInput.value = newSeparators;
 };
 
 defineExpose({
