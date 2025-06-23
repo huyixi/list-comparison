@@ -63,6 +63,12 @@
                 </UBadge>
             </div>
         </template>
+        <template #footer>
+            <div class="flex items-center hover:cursor-pointer px-6 py-2 gap-1">
+                <UIcon name="i-lucide-rotate-cw" class="size-3" />
+                <span class="text-sm"> 重置 </span>
+            </div>
+        </template>
     </UModal>
 </template>
 
