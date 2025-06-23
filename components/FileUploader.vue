@@ -258,27 +258,23 @@ const updateSheetDataAndColumns = () => {
                 ]),
             ),
 
-        cell: ({ row }) =>
-            h(
-                resolveComponent("UTooltip"),
-                { text: row.getValue(`col${index}`) },
-                () =>
-                    h("div", { class: "flex items-center gap-2" }, [
-                        h(UCheckbox, {
-                            disabled: true,
-                            modelValue:
-                                selectedSheetColumnSelections.value.includes(
-                                    index,
-                                ),
-                            "aria-label": `Select row ${row.id}`,
-                        }),
-                        h(
-                            "span",
-                            { class: "truncate max-w-[12rem]" },
-                            row.getValue(`col${index}`),
-                        ),
-                    ]),
-            ),
+        cell: ({ row }) => {
+            const value = row.getValue(`col${index}`);
+            const isSelected =
+                selectedSheetColumnSelections.value.includes(index);
+
+            return h(resolveComponent("UTooltip"), { text: value }, () =>
+                h("div", { class: "flex items-center gap-2" }, [
+                    h(UCheckbox, {
+                        disabled: true,
+                        modelValue: isSelected,
+                        "aria-label": `Select row ${row.id}`,
+                        class: !isSelected ? "opacity-50" : "",
+                    }),
+                    h("span", { class: "truncate max-w-[12rem]" }, value),
+                ]),
+            );
+        },
     }));
 
     selectedSheetData.value = sheet.data.map((row) =>
@@ -300,6 +296,7 @@ const updateSheetDataAndColumns = () => {
 
     previewSheetData.value = preview;
 };
+
 watch(
     () => selectedSheetIndex.value,
     () => {
