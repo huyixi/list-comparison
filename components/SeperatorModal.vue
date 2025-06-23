@@ -125,9 +125,8 @@ const filteredSeparators = computed(() => {
         }
 
         const descriptionMatch = sep.description?.toLowerCase().includes(query);
-        const idMatch = sep.id.toLowerCase().includes(query);
 
-        return labelMatch || descriptionMatch || idMatch;
+        return labelMatch || descriptionMatch;
     });
 });
 </script>
