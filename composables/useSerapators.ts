@@ -87,7 +87,7 @@ export function useSeparators() {
     selectedSeparatorIds.value = initialSeparators.map((s) => s.id);
   };
 
-  const selectedSeparatorLabels = computed(() =>
+  const selectedSeparators = computed(() =>
     separators.value
       .filter((s) => selectedSeparatorIds.value.includes(s.id))
       .map((s) => s.label),
@@ -96,7 +96,7 @@ export function useSeparators() {
   return {
     separators,
     selectedSeparatorIds,
-    selectedSeparatorLabels,
+    selectedSeparators,
     separatorQuery,
     isCustom,
     addCustomSeparator,

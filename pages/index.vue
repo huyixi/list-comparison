@@ -8,7 +8,6 @@
                 ref="listARef"
                 title="名单 A"
                 :total-count="listAInfo.totalEnteredCount"
-                :separators="listASeparators"
                 @clipboard-paste="(content) => handlePaste('A', content)"
                 @file-upload="
                     (fileContent) => handleFileUpload('A', fileContent)
@@ -50,7 +49,6 @@
                 title="名单 B"
                 ref="listBRef"
                 :total-count="listBInfo.totalEnteredCount"
-                :separators="listBSeparators"
                 @clipboard-paste="(event) => handlePaste('B', event)"
                 @file-upload="
                     (fileContent) => handleFileUpload('B', fileContent)
@@ -129,7 +127,12 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from "vue";
+import {
+    parseList,
+    getItemsFromString,
+    isConsideredInvalid,
+} from "@/utils/listUtils";
+import { exportResultsToFile } from "@/utils/exportUtils";
 
 const toast = useToast();
 
@@ -141,26 +144,6 @@ const onlyInA = ref([]);
 const onlyInB = ref([]);
 const inBoth = ref([]);
 const showResults = ref(false);
-const listASeparators = ref([]);
-const listBSeparators = ref([]);
-
-const getItemsFromString = (text) => {
-    if (!text || typeof text !== "string" || !text.trim()) {
-        return [];
-    }
-    return text
-        .split(/[\n,.;、，。；\t ]+/)
-        .map((name) => name.trim())
-        .filter((name) => name !== "");
-};
-
-const isConsideredInvalid = (name) => {
-    if (!name || typeof name !== "string") return true;
-    const trimmedName = name.trim();
-    if (trimmedName === "") return true;
-    const validCharPattern = /[\p{L}\p{N}\p{Script=Han}]/u;
-    return !validCharPattern.test(trimmedName);
-};
 
 const handlePaste = (targetList, content) => {
     const listInputRef = targetList === "A" ? listARef : listBRef;
@@ -177,40 +160,21 @@ const handlePaste = (targetList, content) => {
     }
 };
 
-const parseList = (text) => {
-    const result = {};
-    const items = getItemsFromString(text);
-    result.totalEnteredCount = items.length;
-    result.allNames = items;
-    const nameCountMap = {};
-    const allNamesSet = new Set();
-    const tempInvalidNames = [];
-    items.forEach((name) => {
-        if (isConsideredInvalid(name)) {
-            tempInvalidNames.push(name);
-        }
-        nameCountMap[name] = (nameCountMap[name] || 0) + 1;
-        allNamesSet.add(name);
-    });
-    result.allUniqueNames = Array.from(allNamesSet).sort();
-    result.invalidNames = tempInvalidNames;
-    result.invalidCount = result.invalidNames.length;
-    const duplicateEntries = Object.entries(nameCountMap)
-        .filter(([_, count]) => count > 1)
-        .map(([name, count]) => ({ name, count }))
-        .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
-
-    result.duplicates = duplicateEntries;
-
-    result.duplicateInfoCount = duplicateEntries.reduce(
-        (sum, { count }) => sum + count,
-        0,
-    );
-    return result;
+const handleFileUpload = (listType, fileContent) => {
+    if (listType === "A") {
+        listA.value = listA.value
+            ? listA.value + "\n" + fileContent
+            : fileContent;
+    } else {
+        listB.value = listB.value
+            ? listB.value + "\n" + fileContent
+            : fileContent;
+    }
 };
 
-const listAInfo = computed(() => parseList(listA.value));
-const listBInfo = computed(() => parseList(listB.value));
+const separators = useSeparators().selectedSeparators;
+const listAInfo = computed(() => parseList(listA.value, separators.value));
+const listBInfo = computed(() => parseList(listB.value, separators.value));
 
 const compareNames = () => {
     const namesA = listAInfo.value.allNames;
@@ -305,40 +269,7 @@ const exportResults = () => {
         return;
     }
 
-    const content = sections
-        .map((section) => `${section.title}\n${section.content}`)
-        .join("\n\n\n");
-
-    try {
-        const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        const timestamp = new Date()
-            .toISOString()
-            .slice(0, 16)
-            .replace("T", "_")
-            .replace(":", "-");
-        link.download = `比对结果_${timestamp}.txt`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        toast.add({
-            title: "导出成功",
-            icon: "i-lucide-circle-check",
-            color: "green",
-            timeout: 2000,
-        });
-    } catch (error) {
-        console.error("导出失败:", error);
-        toast.add({
-            title: "导出失败",
-            description: "无法生成下载文件",
-            color: "red",
-            icon: "i-lucide-circle-alert",
-        });
-    }
+    exportResultsToFile(sections);
 };
 
 const removeDuplicates = (listType) => {
@@ -399,18 +330,6 @@ const removeInvalidItems = (listType) => {
         icon: "i-lucide-circle-alert",
         color: "green",
     });
-};
-
-const handleFileUpload = (listType, fileContent) => {
-    if (listType === "A") {
-        listA.value = listA.value
-            ? listA.value + "\n" + fileContent
-            : fileContent;
-    } else {
-        listB.value = listB.value
-            ? listB.value + "\n" + fileContent
-            : fileContent;
-    }
 };
 
 watch(
