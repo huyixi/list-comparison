@@ -52,19 +52,6 @@ export const useCopy = () => {
       return false;
     }
 
-    // const handleListCopy = async (items) => {
-    //     const textToCopy = items.join("\n");
-    //     const result = await handleCopy(textToCopy);
-    //     if (result) {
-    //         copied.value = true;
-    //         setTimeout(() => {
-    //             copied.value = false;
-    //         }, 2000);
-    //     }
-    // };
-
-    console.log("contenat11111", typeof content, content);
-
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(content);
