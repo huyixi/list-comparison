@@ -67,7 +67,6 @@ export function parseList(text: string, separators: string[]) {
   };
 
   const items = getItemsFromString(text, separators);
-  console.log("items", items, separators);
   result.totalEnteredCount = items.length;
   result.allNames = items;
 
