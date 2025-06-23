@@ -1,6 +1,6 @@
 import { ref, computed, watch } from "vue";
-import type { SeparatorItem, CustomSeparator } from "@/types/index";
-import { initialSeparators } from "@/types/index";
+import type { SeparatorItem, CustomSeparator } from "~/types/separators";
+import { initialSeparators } from "~/types/separators";
 
 const STORAGE_KEYS = {
   custom: "custom-separators",
@@ -12,8 +12,8 @@ const selectedSeparatorIds = ref<string[]>(initialSeparators.map((s) => s.id));
 const separatorQuery = ref("");
 let isInitialized = false;
 
-const isCustom = (s: SeparatorItem): s is CustomSeparator =>
-  s.id.startsWith("custom-");
+export const isCustom = (s: SeparatorItem): s is CustomSeparator =>
+  s.type === "custom";
 
 export function useSeparators() {
   if (process.client && !isInitialized) {
@@ -54,6 +54,7 @@ export function useSeparators() {
     if (!exists) {
       const newId = `custom-${Date.now()}`;
       separators.value.push({
+        type: "custom",
         label: trimmed,
         description: "Custom Separator",
         id: newId,

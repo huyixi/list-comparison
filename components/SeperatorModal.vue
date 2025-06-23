@@ -29,7 +29,7 @@
             />
             <div class="flex flex-wrap gap-2 px-6 py-4">
                 <UBadge
-                    v-for="separator in separators"
+                    v-for="separator in filteredSeparators"
                     :key="separator.id"
                     size="lg"
                     :variant="
@@ -44,7 +44,6 @@
                         <span>
                             {{ separator.label }}
                         </span>
-
                         <span
                             v-if="
                                 separator.description &&
@@ -61,6 +60,12 @@
                         />
                     </div>
                 </UBadge>
+                <p
+                    v-if="filteredSeparators.length === 0"
+                    class="text-sm text-gray-400"
+                >
+                    回车添加此分隔符。
+                </p>
             </div>
         </template>
         <template #footer>
@@ -84,6 +89,7 @@
 
 <script setup lang="ts">
 import { useSeparators } from "~/composables/useSerapators";
+import type { SeparatorItem } from "~/types/separators";
 
 const props = defineProps({
     totalCount: Number,
@@ -106,7 +112,22 @@ const openSeparatorPopover = () => {
     isModalOpen.value = true;
 };
 
-const emit = defineEmits<{
-    (e: "updateSeparators", value: string[]): void;
-}>();
+const filteredSeparators = computed(() => {
+    const query = separatorQuery.value.trim().toLowerCase();
+
+    if (!query) return separators.value;
+
+    return separators.value.filter((sep: SeparatorItem) => {
+        const labelMatch = sep.label.toLowerCase().includes(query);
+
+        if (isCustom(sep)) {
+            return labelMatch;
+        }
+
+        const descriptionMatch = sep.description?.toLowerCase().includes(query);
+        const idMatch = sep.id.toLowerCase().includes(query);
+
+        return labelMatch || descriptionMatch || idMatch;
+    });
+});
 </script>
