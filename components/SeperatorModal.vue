@@ -64,106 +64,50 @@
             </div>
         </template>
         <template #footer>
-            <div class="flex items-center hover:cursor-pointer px-6 py-2 gap-1">
-                <UIcon name="i-lucide-rotate-cw" class="size-3" />
-                <span class="text-sm"> 重置 </span>
+            <div class="px-6 py-2">
+                <UButton
+                    variant="ghost"
+                    color="neutral"
+                    leading-icon="i-lucide-rotate-cw"
+                    :ui="{
+                        base: 'p-0 gap-1 hover:cursor-pointer',
+                        leadingIcon: 'size-3',
+                    }"
+                    @click="resetSeparators"
+                >
+                    重置
+                </UButton>
             </div>
         </template>
     </UModal>
 </template>
 
 <script setup lang="ts">
-import type { SeparatorItem } from "@/types/index";
+import { useSeparators } from "~/composables/useSerapators";
+
 const props = defineProps({
-    totalCount: {
-        type: Number,
-        required: true,
-    },
+    totalCount: Number,
 });
 
 const isModalOpen = ref(true);
-const separatorQuery = ref("");
 
-const separators = ref([
-    { label: ",", description: "英文逗号", id: "comma" },
-    { label: ".", description: "英文句点", id: "dot" },
-    { label: " ", description: "空格", id: "space" },
-    { label: ";", description: "英文分号", id: "semicolon" },
-    { label: ":", description: "英文冒号", id: "colon" },
-
-    { label: "，", description: "中文逗号", id: "ch-comma" },
-    { label: "。", description: "中文句号", id: "ch-dot" },
-    { label: "　", description: "全角空格", id: "full-space" },
-    { label: "；", description: "中文分号", id: "ch-semicolon" },
-    { label: "：", description: "中文冒号", id: "ch-colon" },
-
-    { label: "|", description: "竖线", id: "pipe" },
-    { label: "/", description: "斜杠", id: "slash" },
-    { label: "\\", description: "反斜杠", id: "backslash" },
-] as { label: string; description: string; id: string }[]);
-
-const selectedSeparatorIds = ref<string[]>(separators.value.map((s) => s.id));
+const {
+    separators,
+    selectedSeparatorIds,
+    separatorQuery,
+    selectedSeparatorLabels,
+    isCustom,
+    addCustomSeparator,
+    removeCustomSeparator,
+    handleSeparatorClick,
+    resetSeparators,
+} = useSeparators();
 
 const openSeparatorPopover = () => {
     isModalOpen.value = true;
 };
 
-const addCustomSeparator = () => {
-    console.log("Add Custom Separator", selectedSeparatorIds.value);
-    const trimmed = separatorQuery.value.trim();
-    if (!trimmed) return;
-
-    const exists = separators.value.some((s) => s.label === trimmed);
-    if (!exists) {
-        const newId = `custom-${Date.now()}`;
-        separators.value.push({
-            label: trimmed,
-            description: "Custom Separator",
-            id: newId,
-        });
-
-        selectedSeparatorIds.value.push(newId);
-    } else {
-        console.log("Separator already exists");
-    }
-
-    separatorQuery.value = "";
-};
-
-const removeCustomSeparator = (separator: SeparatorItem) => {
-    if (!isCustom(separator)) return;
-
-    separators.value = separators.value.filter((s) => s.id !== separator.id);
-    selectedSeparatorIds.value = selectedSeparatorIds.value.filter(
-        (id) => id !== separator.id,
-    );
-};
-
-const isCustom = (separator: SeparatorItem) =>
-    separator.id.startsWith("custom-");
-
-const handleSeparatorClick = (separator: {
-    label: string;
-    description?: string;
-    id: string;
-}) => {
-    console.log("handleSeparatorClick", separator, selectedSeparatorIds);
-    if (selectedSeparatorIds.value.includes(separator.id)) {
-        selectedSeparatorIds.value = selectedSeparatorIds.value.filter(
-            (id) => id !== separator.id,
-        );
-    } else {
-        selectedSeparatorIds.value.push(separator.id);
-    }
-};
-
 const emit = defineEmits<{
     (e: "updateSeparators", value: string[]): void;
 }>();
-
-const selectedSeparatorLabels = computed(() =>
-    separators.value
-        .filter((s) => selectedSeparatorIds.value.includes(s.id))
-        .map((s) => s.label),
-);
 </script>
