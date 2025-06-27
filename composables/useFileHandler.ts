@@ -3,6 +3,28 @@ import * as XLSX from "xlsx";
 import type { WorkBook } from "xlsx";
 import type { Sheet } from "~/types/sheet";
 
+type FileCategory = "text" | "spreadsheet" | "image";
+
+const validFileTypes: Record<
+  FileCategory,
+  { exts: string[]; mimes: string[] }
+> = {
+  text: {
+    exts: ["txt", "csv"],
+    mimes: ["text/plain", "text/csv"],
+  },
+  spreadsheet: {
+    exts: ["xlsx"],
+    mimes: [
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ],
+  },
+  image: {
+    exts: ["jpg", "jpeg", "png"],
+    mimes: ["image/jpeg", "image/png"],
+  },
+};
+
 /**
  * 文件处理工具组合
  */
@@ -14,23 +36,26 @@ export const useFileHandler = () => {
     file.name.toLowerCase().split(".").pop() || "";
 
   /**
+   *
+   */
+  const getFileCategory = (file: File): FileCategory | null => {
+    const ext = getFileExtension(file);
+    for (const [category, { exts }] of Object.entries(validFileTypes)) {
+      if (exts.includes(ext)) return category as FileCategory;
+    }
+    return null;
+  };
+
+  /**
    * 校验文件类型是否合法
    */
   const isValidFileType = (file: File): boolean => {
     const ext = getFileExtension(file);
     const mime = file.type;
-
-    const validExts = ["txt", "csv", "xlsx"];
-    const validMimes = [
-      "text/plain",
-      "text/csv",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "",
-    ];
-
-    const isValid = validExts.includes(ext) && validMimes.includes(mime);
-
-    return isValid;
+    return Object.values(validFileTypes).some(
+      ({ exts, mimes }) =>
+        exts.includes(ext) && (mimes.includes(mime) || mime === ""),
+    );
   };
 
   /**
@@ -106,5 +131,6 @@ export const useFileHandler = () => {
     parseFile,
     parseWorkbook,
     getFileExtension,
+    getFileCategory,
   };
 };
