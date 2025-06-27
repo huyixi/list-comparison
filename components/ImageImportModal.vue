@@ -1,11 +1,7 @@
 <template>
     <UModal title="图片预览">
         <template #body>
-            <img
-                v-if="src"
-                :src="src"
-                class="max-w-full max-h-[60vh] mx-auto"
-            />
+            <img ref="imageRef" v-if="src" :src="src" @load="onImageLoad" />
             <p v-else class="text-center text-gray-500">无图片内容</p>
         </template>
         <template #footer>
@@ -20,4 +16,15 @@
 defineProps<{
     src: string | null;
 }>();
+
+const imageRef = ref<HTMLImageElement | null>(null);
+const Cropper = useCropper();
+
+let cropperInstance: InstanceType<typeof Cropper> | null = null;
+
+const onImageLoad = () => {
+    if (imageRef.value && Cropper) {
+        cropperInstance = new Cropper(imageRef.value);
+    }
+};
 </script>
