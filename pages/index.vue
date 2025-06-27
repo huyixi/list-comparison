@@ -217,17 +217,17 @@ const exportResults = () => {
         });
     }
 
-    if (inBoth.value.length > 0) {
-        sections.push({
-            title: "--- 同时存在于列表 A 和 B 中的条目 ---",
-            content: inBoth.value.join("\n"),
-        });
-    }
-
     if (onlyInB.value.length > 0) {
         sections.push({
             title: "--- 仅在列表 B 中存在的条目 ---",
             content: onlyInB.value.join("\n"),
+        });
+    }
+
+    if (inBoth.value.length > 0) {
+        sections.push({
+            title: "--- 同时存在于列表 A 和 B 中的条目 ---",
+            content: inBoth.value.join("\n"),
         });
     }
 
