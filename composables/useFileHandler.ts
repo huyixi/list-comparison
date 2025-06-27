@@ -43,7 +43,7 @@ export const useFileHandler = () => {
         header: 1,
         blankrows: false,
         defval: "",
-        raw: true,
+        raw: false,
       });
 
       if (!jsonData.length) {

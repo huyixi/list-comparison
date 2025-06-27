@@ -16,10 +16,9 @@
                     :columns="selectedSheetColumns"
                     :ui="{
                         root: 'max-h-[50vh] overflow-auto',
-                        base: 'table-fixed w-full',
                         tbody: 'bg-(--ui-bg-muted) hover:cursor-not-allowed',
-                        th: 'p-2 max-w-[8rem] truncate whitespace-nowrap',
-                        td: 'p-2 max-w-[8rem] truncate whitespace-nowrap',
+                        th: 'p-2 max-w-[6rem] truncate whitespace-nowrap',
+                        td: 'p-2 max-w-[6rem] truncate whitespace-nowrap',
                     }"
                 >
                 </UTable>
@@ -84,13 +83,6 @@ const previewSheetData = ref<any[]>([]);
 const PREVIEW_ROWS = 8;
 
 const sheetOptions = computed(() => {
-    console.log(
-        "workbookData:",
-        props.workbookData.map((item, index) => ({
-            label: item.name,
-            value: index,
-        })),
-    );
     return props.workbookData.map((item, index) => ({
         label: item.name,
         value: index,
@@ -126,42 +118,52 @@ const toggleSheetColumnsSelectAll = () => {
 
 const updateSheetDataAndColumns = () => {
     const sheet = props.workbookData[selectedSheetIndex.value];
-    console.log("sheet.data", sheet.data); // 看看二维数组是否正常
-    console.log("selectedSheetData", selectedSheetData.value); // 最终传给 table 的 row 是不是有问题
     if (!sheet) return;
 
     selectedSheetColumns.value = sheet.columns.map((col, index) => ({
-        key: `col${index}`,
-        id: `col${index}`,
-        label: col,
+        accessorKey: `col${index}`,
         header: () =>
-            h(resolveComponent("UTooltip"), { text: col }, () =>
-                h("div", { class: "flex items-center gap-2" }, [
-                    h(UCheckbox, {
-                        modelValue:
-                            selectedSheetColumnSelections.value.includes(index),
-                        "aria-label": `Select column ${col}`,
+            h(resolveComponent("UTooltip"), { text: String(col) }, () =>
+                h(
+                    "div",
+                    {
+                        class: "flex items-center gap-2 hover:cursor-pointer",
                         onClick: () => handleSheetColumnSelection(index),
-                        ui: { root: "hover:cursor-pointer" },
-                    }),
-                    h("span", { class: "truncate max-w-[12rem]" }, col),
-                ]),
+                    },
+                    [
+                        h(UCheckbox, {
+                            modelValue:
+                                selectedSheetColumnSelections.value.includes(
+                                    index,
+                                ),
+                            "aria-label": `Select column ${col}`,
+                        }),
+                        h("span", { class: "truncate max-w-[12rem]" }, col),
+                    ],
+                ),
             ),
-        cell: ({ row }: { row: Record<string, any> }) => {
-            const value = row[`col${index}`];
+        cell: ({ row }) => {
+            const value = row.getValue(`col${index}`);
             const isSelected =
                 selectedSheetColumnSelections.value.includes(index);
 
-            return h(resolveComponent("UTooltip"), { text: value }, () =>
-                h("div", { class: "flex items-center gap-2" }, [
-                    h(UCheckbox, {
-                        disabled: true,
-                        modelValue: isSelected,
-                        "aria-label": `Select row ${row.id}`,
-                        class: !isSelected ? "opacity-50" : "",
-                    }),
-                    h("span", { class: "truncate max-w-[12rem]" }, value),
-                ]),
+            return h(
+                resolveComponent("UTooltip"),
+                { text: String(value) },
+                () =>
+                    h("div", { class: "flex items-center gap-2" }, [
+                        h(UCheckbox, {
+                            disabled: true,
+                            modelValue: isSelected,
+                            "aria-label": `Select row ${row.id}`,
+                            class: !isSelected ? "opacity-50" : "",
+                        }),
+                        h(
+                            "span",
+                            { class: "truncate max-w-[12rem]" },
+                            String(value),
+                        ),
+                    ]),
             );
         },
     }));
@@ -223,10 +225,6 @@ const importSelectedData = () => {
     const result = importedData.map((item) => item.join(",")).join("\n");
 
     emit("import-data", result);
-    toast.add({
-        title: `导入成功！共导入 ${importedData.length} 条记录`,
-        color: "success",
-    });
 
     isModalOpen.value = false;
 };

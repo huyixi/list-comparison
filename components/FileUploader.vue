@@ -77,7 +77,6 @@ const handleFileChange = async (e: Event) => {
         const fileContent = await parseFile(file);
         if (ext === "xlsx") {
             workbookData.value = fileContent as Sheet[];
-            console.log("workbookData.value:", workbookData.value);
             isModalOpen.value = true;
         } else {
             emit("file-upload", fileContent as string);
