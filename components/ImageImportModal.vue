@@ -1,7 +1,13 @@
 <template>
-    <UModal title="图片预览">
+    <UModal
+        title="图片预览"
+        :ui="{
+            body: 'overflow-auto max-h-[80vh] p-4',
+        }"
+    >
         <template #body>
-            <img ref="imageRef" v-if="src" :src="src" @load="onImageLoad" />
+            <img ref="imageRef" :src="src" v-if="src" @load="onImageLoad" />
+            <img :src="src" v-if="src" />
             <p v-else class="text-center text-gray-500">无图片内容</p>
         </template>
         <template #footer>
@@ -24,7 +30,12 @@ let cropperInstance: InstanceType<typeof Cropper> | null = null;
 
 const onImageLoad = () => {
     if (imageRef.value && Cropper) {
-        cropperInstance = new Cropper(imageRef.value);
+        cropperInstance = new Cropper(imageRef.value, {
+            viewMode: 1,
+            autoCropArea: 1,
+            responsive: true,
+            background: false,
+        });
     }
 };
 </script>
