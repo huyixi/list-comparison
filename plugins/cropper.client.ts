@@ -1,10 +1,5 @@
 // plugins/cropper.client.ts
-import Cropper from "cropperjs";
+import "cropperjs";
+import "@cropper/element";
 
-export default defineNuxtPlugin(() => {
-  return {
-    provide: {
-      cropper: Cropper,
-    },
-  };
-});
+export default defineNuxtPlugin(() => {});

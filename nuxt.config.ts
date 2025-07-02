@@ -1,5 +1,4 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-// https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
@@ -13,6 +12,13 @@ export default defineNuxtConfig({
   css: ["~/assets/css/main.css"],
   vite: {
     plugins: [tailwindcss()],
+    vue: {
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag.startsWith("cropper-"),
+        },
+      },
+    },
   },
   ui: {
     colorMode: false,

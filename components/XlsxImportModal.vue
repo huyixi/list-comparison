@@ -142,7 +142,7 @@ const updateSheetDataAndColumns = () => {
                     ],
                 ),
             ),
-        cell: ({ row }) => {
+        cell: ({ row }: { row: any }) => {
             const value = row.getValue(`col${index}`);
             const isSelected =
                 selectedSheetColumnSelections.value.includes(index);

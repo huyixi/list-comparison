@@ -2,13 +2,13 @@
     <UModal
         title="图片预览"
         :ui="{
-            body: 'overflow-auto max-h-[80vh] p-4',
+            content: 'max-w-full',
+            body: 'max-w-full',
+            wrapper: 'max-w-full',
         }"
     >
         <template #body>
-            <img ref="imageRef" :src="src" v-if="src" @load="onImageLoad" />
-            <img :src="src" v-if="src" />
-            <p v-else class="text-center text-gray-500">无图片内容</p>
+            <ImageCropper :src="props.src" />
         </template>
         <template #footer>
             <div class="flex flex-1 justify-end">
@@ -19,23 +19,7 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
     src: string | null;
 }>();
-
-const imageRef = ref<HTMLImageElement | null>(null);
-const Cropper = useCropper();
-
-let cropperInstance: InstanceType<typeof Cropper> | null = null;
-
-const onImageLoad = () => {
-    if (imageRef.value && Cropper) {
-        cropperInstance = new Cropper(imageRef.value, {
-            viewMode: 1,
-            autoCropArea: 1,
-            responsive: true,
-            background: false,
-        });
-    }
-};
 </script>

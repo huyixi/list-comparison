@@ -32,7 +32,7 @@
         @close="closeXlsxImportModal"
     />
 
-    <ImageImportModal v-model:open="isImageModalOpen" :src="imagePreviewUrl" />
+    <ImageImportModal v-model:open="isImageModalOpen" :src="imageUrl" />
 </template>
 
 <script setup lang="ts">
@@ -41,6 +41,8 @@ import { useFileHandler } from "~/composables/useFileHandler";
 
 const toast = useToast();
 const { parseFile, getFileCategory } = useFileHandler();
+const { blobUrl, setBlob } = useBlobURL();
+const { base64ToBlob, blobToBase64 } = useBlobBase64();
 
 const emit = defineEmits<{
     (e: "import-data", data: Sheet[]): void;
@@ -50,8 +52,8 @@ const emit = defineEmits<{
 const fileInput = ref<HTMLInputElement | null>(null);
 const isModalOpen = ref(false);
 const isImageModalOpen = ref(false);
+const imageUrl = ref<string | null>(null);
 const workbookData = ref<Sheet[]>([]);
-const imagePreviewUrl = ref<string | null>(null);
 const TOOLTIPTEXT = "上传 txt / xlsx / 图片";
 const ACCEPTFILETYPE =
     ".txt,.csv,.xlsx,.png,.jpg,.jpeg,.webp," +
@@ -88,7 +90,10 @@ const handleFileChange = async (e: Event) => {
         } else if (category === "image") {
             const reader = new FileReader();
             reader.onload = () => {
-                imagePreviewUrl.value = reader.result as string;
+                const imageBase64 = reader.result as string;
+                // const imageBlob = base64ToBlob(imageBase64);
+                // setBlob(imageBlob);
+                imageUrl.value = imageBase64;
                 isImageModalOpen.value = true;
             };
             reader.readAsDataURL(file);
@@ -119,10 +124,8 @@ const closeXlsxImportModal = () => {
         fileInput.value.value = "";
     }
 };
-const closeImageModal = () => {
-    isImageModalOpen.value = false;
-    if (fileInput.value) {
-        fileInput.value.value = "";
-    }
-};
+
+watch(isImageModalOpen, (newValue) => {
+    console.log("isImageModalOpen", newValue);
+});
 </script>
