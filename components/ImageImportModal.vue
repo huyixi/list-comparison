@@ -1,14 +1,9 @@
 <template>
-    <UModal
-        title="图片预览"
-        :ui="{
-            content: 'max-w-full',
-            body: 'max-w-full',
-            wrapper: 'max-w-full',
-        }"
-    >
+    <UModal title="图片预览" :ui="{ body: 'p-0 sm:p-0' }">
         <template #body>
-            <ImageCropper :src="props.src" />
+            <div class="flex justify-center">
+                <ImageCropper :src="props.src" />
+            </div>
         </template>
         <template #footer>
             <div class="flex flex-1 justify-end">

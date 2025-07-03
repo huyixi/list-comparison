@@ -1,6 +1,5 @@
 <template>
     <UModal
-        v-model:open="isModalOpen"
         :ui="{ body: 'p-4 sm:p-4', footer: 'justify-between p-4 sm:p-4' }"
         title="导入数据"
     >
@@ -68,11 +67,10 @@ const props = defineProps<{
     workbookData: Sheet[];
 }>();
 
-const emit = defineEmits(["import-data", "close"]);
+const emit = defineEmits(["import-data"]);
 
 const toast = useToast();
 
-const isModalOpen = ref(true);
 const selectedSheetIndex = ref(0);
 const selectedSheetColumns = ref<any[]>([]);
 const selectedSheetData = ref<any[]>([]);
@@ -204,11 +202,18 @@ watch(
     { immediate: true },
 );
 
-watch(isModalOpen, (newValue) => {
-    if (!newValue) {
-        emit("close");
-    }
-});
+watch(
+    () => props.workbookData,
+    (newVal) => {
+        if (newVal && newVal.length > 0) {
+            selectedSheetIndex.value = 0;
+            selectedSheetColumnSelections.value = [];
+            selectedAllColumns.value = false;
+            updateSheetDataAndColumns();
+        }
+    },
+    { immediate: true },
+);
 
 const importSelectedData = () => {
     const sheet = props.workbookData[selectedSheetIndex.value];
@@ -225,7 +230,5 @@ const importSelectedData = () => {
     const result = importedData.map((item) => item.join(",")).join("\n");
 
     emit("import-data", result);
-
-    isModalOpen.value = false;
 };
 </script>

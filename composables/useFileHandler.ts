@@ -38,7 +38,7 @@ export const useFileHandler = () => {
   /**
    *
    */
-  const getFileCategory = (file: File): FileCategory | null => {
+  const getFileType = (file: File): FileCategory | null => {
     const ext = getFileExtension(file);
     for (const [category, { exts }] of Object.entries(validFileTypes)) {
       if (exts.includes(ext)) return category as FileCategory;
@@ -131,6 +131,6 @@ export const useFileHandler = () => {
     parseFile,
     parseWorkbook,
     getFileExtension,
-    getFileCategory,
+    getFileType,
   };
 };

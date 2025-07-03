@@ -1,12 +1,12 @@
 <template>
-    <UTooltip :text="TOOLTIPTEXT">
+    <UTooltip :text="TOOLTIP_TEXT">
         <UButton
             type="button"
             icon="i-lucide-file-up"
             size="sm"
             color="neutral"
             variant="ghost"
-            :aria-label="TOOLTIPTEXT"
+            :aria-label="TOOLTIP_TEXT"
             class="hover:cursor-pointer"
             @click="openFilePicker"
             :ui="{
@@ -21,15 +21,15 @@
         ref="fileInput"
         type="file"
         class="hidden"
-        :accept="ACCEPTFILETYPE"
-        @change="handleFileChange"
+        :accept="inputAccept"
+        :multiple="inputMultiple"
+        @change="processSelectedFiles"
     />
 
     <XlsxImportModal
-        v-if="isModalOpen"
+        v-model:open="isXlsxModalOpen"
         :workbook-data="workbookData"
         @import-data="handleImportedData"
-        @close="closeXlsxImportModal"
     />
 
     <ImageImportModal v-model:open="isImageModalOpen" :src="imageUrl" />
@@ -40,9 +40,7 @@ import type { Sheet } from "~/types/sheet";
 import { useFileHandler } from "~/composables/useFileHandler";
 
 const toast = useToast();
-const { parseFile, getFileCategory } = useFileHandler();
-const { blobUrl, setBlob } = useBlobURL();
-const { base64ToBlob, blobToBase64 } = useBlobBase64();
+const { parseFile, getFileType } = useFileHandler();
 
 const emit = defineEmits<{
     (e: "import-data", data: Sheet[]): void;
@@ -50,82 +48,105 @@ const emit = defineEmits<{
 }>();
 
 const fileInput = ref<HTMLInputElement | null>(null);
-const isModalOpen = ref(false);
+const isXlsxModalOpen = ref(false);
 const isImageModalOpen = ref(false);
 const imageUrl = ref<string | null>(null);
 const workbookData = ref<Sheet[]>([]);
-const TOOLTIPTEXT = "上传 txt / xlsx / 图片";
-const ACCEPTFILETYPE =
-    ".txt,.csv,.xlsx,.png,.jpg,.jpeg,.webp," +
-    "text/plain,text/csv," +
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet," +
-    "image/png,image/jpeg,image/webp";
+const TOOLTIP_TEXT = "上传 txt / xlsx / 图片";
+const ACCEPT_FILE_TYPES = [
+    ".txt",
+    ".csv",
+    ".xlsx",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp",
+    "text/plain",
+    "text/csv",
+    "image/png",
+    "image/jpeg",
+    "image/webp",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+].join(",");
+const inputAccept = ref("");
+const inputMultiple = ref(true);
 
 const openFilePicker = () => {
-    fileInput.value?.click();
+    inputAccept.value = ACCEPT_FILE_TYPES;
+    inputMultiple.value = true;
+
+    nextTick(() => {
+        fileInput.value?.click();
+    });
 };
 
-const handleFileChange = async (e: Event) => {
-    const target = e.target as HTMLInputElement;
-    const file = target.files?.[0];
-    if (!file) return;
+const processSelectedFiles = async (e: Event) => {
+    const input = e.target as HTMLInputElement;
+    const files = input.files;
+    if (!files || files.length === 0) return;
 
-    const category = getFileCategory(file);
+    const fileArray = Array.from(files);
+    const fileTypes = fileArray.map(getFileType).filter(Boolean) as string[];
+    const uniqueTypes = Array.from(new Set(fileTypes));
 
-    if (!category) {
-        target.value = "";
-        toast.add({
-            title: "不支持该文件类型",
-            description: "请上传 txt / csv / xlsx / 图片格式文件",
-            color: "warning",
-        });
-        return;
+    if (fileArray.length > 1) {
+        if (uniqueTypes.includes("spreadsheet")) {
+            toast.add({
+                title: "一次仅支持上传一个 .xlsx 文件",
+                color: "warning",
+            });
+            input.value = "";
+            return;
+        }
+        if (uniqueTypes.includes("image") && uniqueTypes.includes("text")) {
+            toast.add({
+                title: "不能同时上传图片和文本",
+                color: "warning",
+            });
+            input.value = "";
+            return;
+        }
     }
 
     try {
-        if (category === "spreadsheet") {
-            const fileContent = await parseFile(file);
-            workbookData.value = fileContent as Sheet[];
-            isModalOpen.value = true;
-        } else if (category === "image") {
+        if (uniqueTypes[0] === "spreadsheet") {
+            const parsedSheets = await parseFile(fileArray[0]);
+            workbookData.value = parsedSheets as Sheet[];
+            isXlsxModalOpen.value = true;
+        } else if (uniqueTypes[0] === "image") {
+            const file = fileArray[0];
             const reader = new FileReader();
             reader.onload = () => {
-                const imageBase64 = reader.result as string;
-                // const imageBlob = base64ToBlob(imageBase64);
-                // setBlob(imageBlob);
-                imageUrl.value = imageBase64;
+                imageUrl.value = reader.result as string;
                 isImageModalOpen.value = true;
             };
             reader.readAsDataURL(file);
-        } else if (category === "text") {
-            const fileContent = await parseFile(file);
-            emit("file-upload", fileContent as string);
-            target.value = "";
+        } else if (uniqueTypes[0] === "text") {
+            for (const file of fileArray) {
+                const content = await parseFile(file);
+                emit("file-upload", content as string);
+            }
+        } else {
+            toast.add({
+                title: "不支持的文件类型",
+                description: "请上传 .xlsx、.jpg、.png、.txt 等文件",
+                color: "warning",
+            });
         }
     } catch (error) {
-        console.error("Error parsing file:", error);
-        toast.add({
-            title: "文件解析失败",
-            color: "error",
-        });
+        console.error("文件处理失败", error);
+        toast.add({ title: "文件解析失败", color: "error" });
+    } finally {
+        input.value = "";
     }
 };
 
 const handleImportedData = (data: string) => {
     emit("file-upload", data);
-    isModalOpen.value = false;
+    isXlsxModalOpen.value = false;
+    isImageModalOpen.value = false;
     if (fileInput.value) {
         fileInput.value.value = "";
     }
 };
-const closeXlsxImportModal = () => {
-    isModalOpen.value = false;
-    if (fileInput.value) {
-        fileInput.value.value = "";
-    }
-};
-
-watch(isImageModalOpen, (newValue) => {
-    console.log("isImageModalOpen", newValue);
-});
 </script>
