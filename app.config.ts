@@ -24,5 +24,10 @@ export default defineAppConfig({
         progress: "hidden",
       },
     },
+    button: {
+      slots: {
+        base: "hover:cursor-pointer",
+      },
+    },
   },
 });

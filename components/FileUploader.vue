@@ -32,7 +32,11 @@
         @import-data="handleImportedData"
     />
 
-    <ImageImportModal v-model:open="isImageModalOpen" :src="imageUrl" />
+    <ImageImportModal
+        v-model:open="isImageModalOpen"
+        :imageFiles="imageFiles"
+        @add-image="openImageFilePicker"
+    />
 </template>
 
 <script setup lang="ts">
@@ -50,7 +54,7 @@ const emit = defineEmits<{
 const fileInput = ref<HTMLInputElement | null>(null);
 const isXlsxModalOpen = ref(false);
 const isImageModalOpen = ref(false);
-const imageUrl = ref<string | null>(null);
+const imageFiles = ref<File[]>([]);
 const workbookData = ref<Sheet[]>([]);
 const TOOLTIP_TEXT = "上传 txt / xlsx / 图片";
 const ACCEPT_FILE_TYPES = [
@@ -68,6 +72,17 @@ const ACCEPT_FILE_TYPES = [
     "image/webp",
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 ].join(",");
+const ACCEPT_IMAGE_TYPES = [
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp",
+    "image/png",
+    "image/jpeg",
+    "image/webp",
+].join(",");
+const MAX_FILE_COUNT = 9;
+
 const inputAccept = ref("");
 const inputMultiple = ref(true);
 
@@ -80,6 +95,43 @@ const openFilePicker = () => {
     });
 };
 
+const openImageFilePicker = () => {
+    inputAccept.value = ACCEPT_IMAGE_TYPES;
+    inputMultiple.value = true;
+
+    nextTick(() => {
+        fileInput.value?.click();
+    });
+};
+
+const checkFileUploadConstraints = (
+    files: File[],
+    existingImages: File[] = [],
+): string | null => {
+    const fileTypes = getFileType(files[0]);
+    const uniqueTypes = [...new Set(fileTypes)];
+
+    let totalCount = files.length;
+    if (uniqueTypes.some((type) => type === "image")) {
+        totalCount += existingImages.length;
+    }
+
+    if (totalCount > MAX_FILE_COUNT) {
+        return `文件上传数量超出限制，最多上传 ${MAX_FILE_COUNT} 个文件`;
+    }
+
+    if (files.length > 1) {
+        if (uniqueTypes.includes("spreadsheet")) {
+            return "一次仅支持上传一个 .xlsx 文件";
+        }
+        if (uniqueTypes.includes("image") && uniqueTypes.includes("text")) {
+            return "不能同时上传图片和文本";
+        }
+    }
+
+    return null;
+};
+
 const processSelectedFiles = async (e: Event) => {
     const input = e.target as HTMLInputElement;
     const files = input.files;
@@ -88,24 +140,12 @@ const processSelectedFiles = async (e: Event) => {
     const fileArray = Array.from(files);
     const fileTypes = fileArray.map(getFileType).filter(Boolean) as string[];
     const uniqueTypes = Array.from(new Set(fileTypes));
+    const resetInput = () => (input.value = "");
 
-    if (fileArray.length > 1) {
-        if (uniqueTypes.includes("spreadsheet")) {
-            toast.add({
-                title: "一次仅支持上传一个 .xlsx 文件",
-                color: "warning",
-            });
-            input.value = "";
-            return;
-        }
-        if (uniqueTypes.includes("image") && uniqueTypes.includes("text")) {
-            toast.add({
-                title: "不能同时上传图片和文本",
-                color: "warning",
-            });
-            input.value = "";
-            return;
-        }
+    const error = checkFileUploadConstraints(fileArray, imageFiles.value);
+    if (error) {
+        toast.add({ title: error, color: "warning" });
+        return resetInput();
     }
 
     try {
@@ -114,13 +154,8 @@ const processSelectedFiles = async (e: Event) => {
             workbookData.value = parsedSheets as Sheet[];
             isXlsxModalOpen.value = true;
         } else if (uniqueTypes[0] === "image") {
-            const file = fileArray[0];
-            const reader = new FileReader();
-            reader.onload = () => {
-                imageUrl.value = reader.result as string;
-                isImageModalOpen.value = true;
-            };
-            reader.readAsDataURL(file);
+            imageFiles.value = [...imageFiles.value, ...fileArray];
+            isImageModalOpen.value = true;
         } else if (uniqueTypes[0] === "text") {
             for (const file of fileArray) {
                 const content = await parseFile(file);
@@ -149,4 +184,10 @@ const handleImportedData = (data: string) => {
         fileInput.value.value = "";
     }
 };
+
+watch(isImageModalOpen, () => {
+    if (!isImageModalOpen.value) {
+        imageFiles.value = [];
+    }
+});
 </script>
