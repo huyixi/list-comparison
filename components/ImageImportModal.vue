@@ -11,7 +11,7 @@
             <div class="flex flex-1 justify-end gap-2">
                 <UTooltip text="添加更多图片">
                     <UButton
-                        v-if="imageCount < 8"
+                        v-if="imageCount < 9"
                         icon="i-lucide-plus"
                         size="sm"
                         variant="outline"
