@@ -1,6 +1,6 @@
 <template>
     <div
-        class="grid gap-2 w-full h-full"
+        class="grid gap-0.5 w-full h-full"
         :class="getGridTemplate(imageFiles.length)"
     >
         <div
