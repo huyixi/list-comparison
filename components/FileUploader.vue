@@ -36,6 +36,7 @@
         v-model:open="isImageModalOpen"
         :imageFiles="imageFiles"
         @add-image="openImageFilePicker"
+        @delete-image="handleImageDelete"
     />
 </template>
 
@@ -190,4 +191,12 @@ watch(isImageModalOpen, () => {
         imageFiles.value = [];
     }
 });
+
+const handleImageDelete = (index: number) => {
+    console.log("handleImageDelete", index);
+    imageFiles.value.splice(index, 1);
+    if (imageFiles.value.length === 0) {
+        isImageModalOpen.value = false;
+    }
+};
 </script>

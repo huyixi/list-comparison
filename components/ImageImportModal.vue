@@ -5,7 +5,10 @@
     >
         <template #body>
             <!-- <ImageCropper :src="props.src" /> -->
-            <ImagePreviewGrid :imageFiles="props.imageFiles" />
+            <ImagePreviewGrid
+                :imageFiles="props.imageFiles"
+                @delete-image="handleDeleteImage"
+            />
         </template>
         <template #footer>
             <div class="flex flex-1 justify-end gap-2">
@@ -40,10 +43,15 @@ const props = defineProps<{
     imageFiles: File[];
 }>();
 
-const emit = defineEmits(["add-image"]);
+const emit = defineEmits(["add-image", "delete-image"]);
 
 const handleAddImage = () => {
     emit("add-image");
+};
+
+const handleDeleteImage = (index: number) => {
+    emit("delete-image", index);
+    console.log("Image deleted,import:", index);
 };
 
 const imageCount = computed(() => props.imageFiles.length);
