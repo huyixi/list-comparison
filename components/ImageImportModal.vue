@@ -23,6 +23,7 @@
                         icon="i-custom-scan-text"
                         size="sm"
                         :ui="{
+                            base: 'text-white',
                             leadingIcon: 'text-white',
                         }"
                     >

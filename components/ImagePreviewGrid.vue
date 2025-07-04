@@ -6,7 +6,7 @@
         <div
             v-for="(img, i) in imageFiles"
             :key="i"
-            class="overflow-hidden"
+            class="relative group overflow-hidden hover:cursor-pointer"
             :style="{
                 gridColumn: `span ${imageLayout[i].colSpan} / span ${imageLayout[i].colSpan}`,
                 gridRow: `span ${imageLayout[i].rowSpan} / span ${imageLayout[i].rowSpan}`,
@@ -17,6 +17,11 @@
                 alt="preview"
                 class="w-full h-full object-cover"
             />
+            <div
+                class="absolute flex items-center justify-center inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+                <UIcon name="i-lucide-eye" class="size-5 text-white" />
+            </div>
         </div>
     </div>
 </template>
