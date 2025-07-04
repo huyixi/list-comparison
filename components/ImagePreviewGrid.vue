@@ -11,6 +11,7 @@
                 gridColumn: `span ${imageLayout[i].colSpan} / span ${imageLayout[i].colSpan}`,
                 gridRow: `span ${imageLayout[i].rowSpan} / span ${imageLayout[i].rowSpan}`,
             }"
+            @click="openPreview(i)"
         >
             <img
                 :src="urls[i]"
@@ -22,12 +23,20 @@
             >
                 <UIcon name="i-lucide-eye" class="size-5 text-white" />
             </div>
+
+            <ImagePreview
+                v-model:open="previewOpen"
+                :selectedImageUrl="urls[i]"
+            />
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 const props = defineProps<{ imageFiles: File[] }>();
+
+const previewOpen = ref(false);
+const selectedImageUrl = ref("");
 
 const getUrl = (file: File) => URL.createObjectURL(file);
 const urls = computed(() => {
@@ -109,4 +118,14 @@ const layoutMap: Record<number, GridLayoutItem[]> = {
 const imageLayout = computed(() => {
     return layoutMap[props.imageFiles.length] || layoutMap[9];
 });
+
+const openPreview = (index: number) => {
+    console.log("Open preview for image at index:", index);
+
+    selectedImageUrl.value = getUrl(props.imageFiles[index]);
+
+    previewOpen.value = true;
+
+    // Open the image preview modal with the selected image
+};
 </script>
