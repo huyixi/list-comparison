@@ -23,7 +23,7 @@
                 </UTooltip>
                 <UTooltip text="识别图片中的文字并导入">
                     <UButton
-                        icon="i-custom-scan-text"
+                        icon="i-lucide-scan-text"
                         size="sm"
                         :ui="{
                             base: 'text-white',
@@ -51,7 +51,6 @@ const handleAddImage = () => {
 
 const handleDeleteImage = (index: number) => {
     emit("delete-image", index);
-    console.log("Image deleted,import:", index);
 };
 
 const imageCount = computed(() => props.imageFiles.length);
