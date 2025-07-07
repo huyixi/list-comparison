@@ -44,18 +44,16 @@
                         清除
                     </UButton>
                 </div>
-                <div class="overflow-y-auto">
-                    <ul class="space-y-0.5">
-                        <li
-                            v-for="(item, index) in items"
-                            :key="index"
-                            class="px-1.5 py-1 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 hover:cursor-pointer"
-                            @click="handleCopy(item.name || item)"
-                        >
-                            {{ displayFormatter(item) }}
-                        </li>
-                    </ul>
-                </div>
+                <ul class="overflow-y-auto space-y-0.5">
+                    <li
+                        v-for="(item, index) in items"
+                        :key="index"
+                        class="px-1.5 py-1 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 hover:cursor-pointer"
+                        @click="handleCopy(item.name || item)"
+                    >
+                        {{ displayFormatter(item) }}
+                    </li>
+                </ul>
             </div>
         </template>
     </UPopover>
