@@ -293,7 +293,7 @@ const removeDuplicateItems = (listType) => {
         return;
     }
 
-    currentRef.value = info.allUniqueNames.join("\n");
+    currentRef.value = info.orderedUniqueNames.join("\n");
 
     toast.add({
         title: `列表 ${listType} 的重复项已移除`,
