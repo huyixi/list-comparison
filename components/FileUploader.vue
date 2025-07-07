@@ -50,7 +50,10 @@ const isModalOpen = ref(false);
 const workbookData = ref<Sheet[]>([]);
 const TOOLTIPTEXT = "上传 txt,xlsx 文件";
 const ACCEPTFILETYPE =
-    ".txt,.csv,.xlsx,text/plain,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    ".txt,.csv,.xlsx,.png,.jpg,.jpeg,.webp," +
+    "text/plain,text/csv," +
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet," +
+    "image/png,image/jpeg,image/webp";
 
 const openFilePicker = () => {
     fileInput.value?.click();
@@ -76,6 +79,9 @@ const handleFileChange = async (e: Event) => {
     try {
         const fileContent = await parseFile(file);
         if (ext === "xlsx") {
+            workbookData.value = fileContent as Sheet[];
+            isModalOpen.value = true;
+        } else if (ext === "csv") {
             workbookData.value = fileContent as Sheet[];
             isModalOpen.value = true;
         } else {

@@ -25,7 +25,9 @@ export const useFileHandler = () => {
       "text/plain",
       "text/csv",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "",
+      "image/jpeg",
+      "image/png",
+      "image/webp",
     ];
 
     const isValid = validExts.includes(ext) && validMimes.includes(mime);

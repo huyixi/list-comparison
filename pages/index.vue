@@ -33,7 +33,7 @@
                         :display-formatter="
                             (item) => `[${item.count} 次]${item.name}`
                         "
-                        @clean="removeDuplicates('A')"
+                        @clean="removeDuplicateItems('A')"
                     />
 
                     <StatPopover
@@ -77,7 +77,7 @@
                         :display-formatter="
                             (item) => `[${item.count} 次]${item.name}`
                         "
-                        @clean="removeDuplicates('B')"
+                        @clean="removeDuplicateItems('B')"
                     />
 
                     <StatPopover
@@ -280,62 +280,50 @@ const exportResults = () => {
     exportResultsToFile(sections);
 };
 
-const removeDuplicates = (listType) => {
-    let currentListRef = listType === "A" ? listA : listB;
-    let listInfo = listType === "A" ? listAInfo.value : listBInfo.value;
+const removeDuplicateItems = (listType) => {
+    const info = listType === "A" ? listAInfo.value : listBInfo.value;
+    const currentRef = listType === "A" ? listA : listB;
 
-    if (!currentListRef || !listInfo) return;
-
-    if (listInfo.duplicateInfoCount === 0) {
+    if (!info.duplicates.length) {
         toast.add({
-            title: `列表 ${listType} 中没有检测到重复项`,
-            color: "blue",
+            title: `列表 ${listType} 中没有重复项`,
             icon: "i-lucide-circle-alert",
+            color: "blue",
         });
         return;
     }
 
-    const items = getItemsFromString(currentListRef.value);
-    if (items.length === 0) return;
-
-    const uniqueItemsSet = new Set(items);
-    const uniqueItemsArray = Array.from(uniqueItemsSet).sort();
-    currentListRef.value = uniqueItemsArray.join("\n");
+    currentRef.value = info.allUniqueNames.join("\n");
 
     toast.add({
         title: `列表 ${listType} 的重复项已移除`,
-        icon: "i-lucide-circle-alert",
+        icon: "i-lucide-check-circle",
         color: "green",
     });
 };
 
 const removeInvalidItems = (listType) => {
-    let currentListRef = listType === "A" ? listA : listB;
-    let listInfo = listType === "A" ? listAInfo.value : listBInfo.value;
+    const info = listType === "A" ? listAInfo.value : listBInfo.value;
+    const currentRef = listType === "A" ? listA : listB;
 
-    if (!currentListRef || !listInfo) return;
-
-    if (listInfo.invalidCount === 0) {
+    if (!info.invalidNames.length) {
         toast.add({
-            title: `列表 ${listType} 中没有检测到特殊格式项`,
-            color: "blue",
+            title: `列表 ${listType} 中没有无效项`,
             icon: "i-lucide-circle-alert",
+            color: "blue",
         });
         return;
     }
 
-    const items = getItemsFromString(currentListRef.value);
-    if (items.length === 0) return;
+    const validItems = info.allNames.filter(
+        (item) => !info.invalidNames.includes(item),
+    );
 
-    const validItems = items.filter((item) => !isConsideredInvalid(item));
-
-    const sortedValidItems = validItems.sort();
-
-    currentListRef.value = sortedValidItems.join("\n");
+    currentRef.value = validItems.join("\n");
 
     toast.add({
-        title: `列表 ${listType} 的特殊格式项已移除`,
-        icon: "i-lucide-circle-alert",
+        title: `列表 ${listType} 的无效项已移除`,
+        icon: "i-lucide-check-circle",
         color: "green",
     });
 };
