@@ -41,7 +41,7 @@ export default defineNuxtPlugin(() => {
         toast.add({
           title: "读取剪贴板失败",
           description: "已尝试使用回退方案",
-          color: "warning",
+          color: "error",
         });
       }
 

@@ -271,7 +271,7 @@ const exportResults = () => {
         toast.add({
             title: "没有可导出的内容",
             description: "没有发现任何可导出的结果",
-            color: "blue",
+            color: "warning",
             icon: "i-lucide-circle-alert",
         });
         return;
@@ -288,7 +288,6 @@ const removeDuplicateItems = (listType) => {
         toast.add({
             title: `列表 ${listType} 中没有重复项`,
             icon: "i-lucide-circle-alert",
-            color: "blue",
         });
         return;
     }
@@ -297,8 +296,8 @@ const removeDuplicateItems = (listType) => {
 
     toast.add({
         title: `列表 ${listType} 的重复项已移除`,
-        icon: "i-lucide-check-circle",
-        color: "green",
+        icon: "i-lucide-list-check",
+        color: "neutral",
     });
 };
 
@@ -310,7 +309,7 @@ const removeInvalidItems = (listType) => {
         toast.add({
             title: `列表 ${listType} 中没有无效项`,
             icon: "i-lucide-circle-alert",
-            color: "blue",
+            color: "neutral",
         });
         return;
     }
@@ -323,8 +322,8 @@ const removeInvalidItems = (listType) => {
 
     toast.add({
         title: `列表 ${listType} 的无效项已移除`,
-        icon: "i-lucide-check-circle",
-        color: "green",
+        icon: "i-lucide-list-check",
+        color: "neutral",
     });
 };
 

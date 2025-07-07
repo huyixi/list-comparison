@@ -72,7 +72,7 @@ const fallbackPaste = async () => {
         toast.add({
             title: "粘贴失败",
             description: "请尝试手动粘贴 (Ctrl+V)",
-            color: "red",
+            color: "error",
         });
     }
 };
