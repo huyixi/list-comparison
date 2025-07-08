@@ -62,8 +62,12 @@
     </UPopover>
 </template>
 
-<script setup>
-const { handleCopy } = useCopy();
+<script setup lang="ts">
+const clipboard = useClipboard();
+
+const handleCopy = (text) => {
+    clipboard.writeText(text);
+};
 
 const props = defineProps({
     title: String,

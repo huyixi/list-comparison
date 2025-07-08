@@ -64,7 +64,6 @@ export default defineNuxtPlugin(() => {
       toast.add({
         title: "复制成功",
         icon: "i-lucide-copy-check",
-        color: "neutral",
       });
     } catch (err) {
       toast.add({

@@ -27,12 +27,12 @@
         <div class="min-h-64 max-h-64 overflow-y-auto">
             <ul class="text-sm">
                 <li
-                    v-for="(name, index) in items"
+                    v-for="(item, index) in items"
                     :key="index"
                     class="px-3 py-1.5 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 hover:cursor-pointer"
-                    @click="handleCopy(name)"
+                    @click="handleCopy(item)"
                 >
-                    {{ name }}
+                    {{ item }}
                 </li>
                 <li
                     v-if="!items.length"
@@ -51,7 +51,11 @@
 </template>
 
 <script setup>
-const { handleCopy } = useCopy();
+const clipboard = useClipboard();
+
+const handleCopy = (text) => {
+    clipboard.writeText(text);
+};
 
 const props = defineProps({
     title: String,

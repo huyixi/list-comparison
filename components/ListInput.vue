@@ -22,7 +22,7 @@
             ref="textareaRef"
             @input="$emit('update:modelValue', $event.target.value)"
             class="w-full min-h-80 p-3 border-0 focus:ring-0 resize-none flex-1"
-            :placeholder="placeholder"
+            placeholder="输入列表，每项可用逗号、分号、制表符或换行分隔。"
         ></textarea>
 
         <div
@@ -40,14 +40,16 @@
 const textareaRef = ref(null);
 
 defineProps({
-    title: String,
-    modelValue: String,
-    placeholder: {
+    modelValue: {
         type: String,
-        default: "输入列表，每项可用逗号、分号、制表符或换行分隔。",
+        default: "",
     },
+    title: String,
     totalCount: Number,
-    separators: [],
+    separators: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const emit = defineEmits([
