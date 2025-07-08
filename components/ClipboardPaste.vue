@@ -18,62 +18,18 @@
 </template>
 
 <script setup>
-const toast = useToast();
 const emit = defineEmits(["clipboard-paste", "request-focus"]);
 const isPasted = ref(false);
-
-const validPastePermission = async () => {
-    try {
-        await navigator.clipboard.readText();
-        return true;
-    } catch (error) {
-        console.error("剪贴板访问权限错误", error);
-        if (error.name === "NotAllowedError") {
-            toast.add({ title: "请允许剪贴板访问权限", color: "warning" });
-        }
-        return false;
-    }
-};
+const clipboard = useClipboard();
 
 const handlePaste = async () => {
-    try {
-        emit("request-focus");
-        const permissionGranted = await validPastePermission();
-        if (!permissionGranted) return;
+    emit("request-focus");
 
-        isPasted.value = true;
-        const text = await navigator.clipboard.readText();
-        if (text?.trim()) {
-            emit("clipboard-paste", text.trim());
-        }
-    } catch (error) {
-        console.error("粘贴失败，尝试使用回退方案:", error);
-        await fallbackPaste();
-    } finally {
-        setTimeout(() => (isPasted.value = false), 500);
+    isPasted.value = true;
+    const text = await clipboard.readText();
+    if (text?.trim()) {
+        emit("clipboard-paste", text.trim());
     }
-};
-
-const fallbackPaste = async () => {
-    try {
-        const activeElement = document.activeElement;
-        if (!activeElement.isContentEditable) {
-            await new Promise((resolve) => setTimeout(resolve, 50));
-        }
-
-        const success = document.execCommand("paste");
-        if (success) {
-            const text = window.getSelection().toString();
-            if (text?.trim()) {
-                emit("clipboard-paste", text.trim());
-            }
-        }
-    } catch (error) {
-        toast.add({
-            title: "粘贴失败",
-            description: "请尝试手动粘贴 (Ctrl+V)",
-            color: "red",
-        });
-    }
+    setTimeout(() => (isPasted.value = false), 500);
 };
 </script>

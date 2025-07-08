@@ -3,7 +3,7 @@ export default defineNuxtPlugin(() => {
   const toast = useToast();
 
   const readText = async (): Promise<string> => {
-    if (!process.client) throw new Error("仅支持客户端剪贴板读取");
+    if (!import.meta.client) throw new Error("仅支持客户端剪贴板读取");
 
     const fallback = async (): Promise<string> => {
       try {
@@ -15,7 +15,7 @@ export default defineNuxtPlugin(() => {
         throw new Error("回退读取失败");
       } catch (err) {
         toast.add({
-          title: "读取失败",
+          title: "粘贴失败",
           description: "请尝试手动粘贴（Ctrl+V）",
           color: "error",
         });
@@ -39,8 +39,8 @@ export default defineNuxtPlugin(() => {
         });
       } else {
         toast.add({
-          title: "读取剪贴板失败",
-          description: "已尝试使用回退方案",
+          title: "粘贴失败",
+          description: "请尝试手动粘贴（Ctrl+V）",
           color: "warning",
         });
       }
@@ -50,7 +50,7 @@ export default defineNuxtPlugin(() => {
   };
 
   const writeText = async (text: string): Promise<void> => {
-    if (!process.client) throw new Error("仅支持客户端剪贴板写入");
+    if (!import.meta.client) throw new Error("仅支持客户端剪贴板写入");
 
     try {
       if (!navigator?.clipboard?.writeText) {
