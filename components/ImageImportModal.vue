@@ -11,12 +11,12 @@
             />
         </template>
         <template #footer>
-            <div class="flex flex-1 justify-end gap-2">
+            <div class="flex flex-1 justify-end gap-3">
                 <UTooltip text="添加更多图片">
                     <UButton
                         v-if="imageCount < 9"
                         icon="i-lucide-plus"
-                        size="sm"
+                        size="md"
                         variant="outline"
                         @click="handleAddImage"
                     ></UButton>
@@ -24,7 +24,7 @@
                 <UTooltip text="识别图片中的文字并导入">
                     <UButton
                         icon="i-lucide-scan-text"
-                        size="sm"
+                        size="md"
                         :ui="{
                             base: 'text-white',
                             leadingIcon: 'text-white',

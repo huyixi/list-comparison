@@ -35,9 +35,9 @@
                     @click.stop="handleDelete(i)"
                 >
                     <button
-                        class="bg-black/60 hover:bg-red-600 hover:cursor-pointer rounded-full text-white p-2 transition w-8 h-8 flex items-center justify-center"
+                        class="hover:bg-red-600 hover:cursor-pointer rounded-md text-white p-2 transition w-8 h-8 flex items-center justify-center"
                     >
-                        <UIcon name="i-lucide-x" class="size-5" />
+                        <UIcon name="i-lucide-trash" class="size-5" />
                     </button>
                 </div>
             </div>
