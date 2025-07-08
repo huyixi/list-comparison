@@ -20,7 +20,7 @@
                         :items="listAInfo.allUniqueNames"
                         status="green"
                         :show-copy="true"
-                        @copy="copyToClipboard(listAInfo.allUniqueNames, 'A')"
+                        @copy="handleCopy(listAInfo.allUniqueNames.join('\n'))"
                         :copied="listACopied"
                     />
 
@@ -64,7 +64,7 @@
                         :items="listBInfo.allUniqueNames"
                         status="green"
                         :show-copy="true"
-                        @copy="copyToClipboard(listBInfo.allUniqueNames, 'B')"
+                        @copy="handleCopy(listBInfo.allUniqueNames.join('\n'))"
                         :copied="listBCopied"
                     />
 
@@ -141,6 +141,7 @@ import {
 import { exportResultsToFile } from "@/utils/exportUtils";
 
 const toast = useToast();
+const clipboard = useClipboard();
 
 const listA = ref("");
 const listB = ref("");
@@ -166,6 +167,10 @@ const handlePaste = (targetList, content) => {
     } else {
         listB.value = `${currentValue}${separator}${content}`;
     }
+};
+
+const handleCopy = (content) => {
+    clipboard.writeText(content);
 };
 
 const handleFileUpload = (listType, fileContent) => {
