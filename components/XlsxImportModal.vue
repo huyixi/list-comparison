@@ -6,7 +6,8 @@
         <template #body>
             <UCard
                 :ui="{
-                    body: 'p-0 sm:p-0',
+                    root: 'overflow-hidden',
+                    body: 'p-0 sm:p-0 ',
                 }"
             >
                 <UTable
@@ -29,25 +30,27 @@
                 :items="sheetOptions"
                 placeholder="请选择Sheet"
                 class="w-24"
-                size="sm"
+                size="md"
             />
             <div class="flex gap-2 items-center">
                 <UCheckbox
                     label="全选"
                     :model-value="selectedAllColumns"
-                    size="xs"
+                    size="md"
                     @click="toggleSheetColumnsSelectAll"
                     :ui="{
-                        root: 'p-1.25 hover:cursor-pointer',
-                        wrapper: 'ms-1',
+                        root: 'p-2 hover:cursor-pointer',
+                        base: 'size-4 hover:cursor-pointer',
+                        wrapper: 'ms-1 hover:cursor-pointer',
+                        label: 'hover:cursor-pointer',
                     }"
                 />
 
                 <UButton
                     color="primary"
                     variant="solid"
-                    size="sm"
-                    class="hover:cursor-pointer"
+                    size="md"
+                    class="px-4"
                     @click="importSelectedData"
                 >
                     导入
@@ -220,7 +223,11 @@ const importSelectedData = () => {
     const selectedColumns = selectedSheetColumnSelections.value;
 
     if (!sheet || selectedColumns.length === 0) {
-        toast.add({ title: "请选择需要导入的列！", color: "warning" });
+        toast.add({
+            title: "未选择任何数据",
+            description: "请从表格中选择你想导入的列。",
+            color: "warning",
+        });
         return;
     }
     const importedData = sheet.data.map((row) =>
