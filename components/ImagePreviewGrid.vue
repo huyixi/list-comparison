@@ -44,7 +44,7 @@
 
             <ImagePreview
                 v-model:open="previewOpen"
-                :selectedImageUrl="urls[i]"
+                :selectedImageUrl="selectedImageUrl"
             />
         </div>
     </div>
