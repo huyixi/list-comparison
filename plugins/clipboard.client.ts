@@ -18,7 +18,7 @@ export default defineNuxtPlugin(() => {
           title: "粘贴失败",
           description: "请尝试手动粘贴（Ctrl+V）",
           color: "error",
-          icon: "i-lucide-circle-alert",
+          icon: "i-lucide-clipboard-x",
         });
         throw err;
       }
@@ -37,14 +37,14 @@ export default defineNuxtPlugin(() => {
           title: "无法访问剪贴板",
           description: "请允许浏览器访问剪贴板",
           color: "warning",
-          icon: "i-lucide-circle-alert",
+          icon: "i-lucide-clipboard-x",
         });
       } else {
         toast.add({
           title: "粘贴失败",
           description: "请尝试手动粘贴（Ctrl+V）",
           color: "warning",
-          icon: "i-lucide-circle-alert",
+          icon: "i-lucide-copy-x",
         });
       }
 
@@ -63,7 +63,7 @@ export default defineNuxtPlugin(() => {
       await navigator.clipboard.writeText(text);
       toast.add({
         title: "复制成功",
-        icon: "i-lucide-check",
+        icon: "i-lucide-copy-check",
         color: "neutral",
       });
     } catch (err) {
@@ -71,7 +71,7 @@ export default defineNuxtPlugin(() => {
         title: "复制失败",
         description: "请尝试手动复制（Ctrl+C）",
         color: "error",
-        icon: "i-lucide-circle-alert",
+        icon: "i-lucide-copy-x",
       });
       throw err;
     }
