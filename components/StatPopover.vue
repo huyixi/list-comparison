@@ -1,5 +1,5 @@
 <template>
-    <UPopover v-if="count > 0">
+    <UPopover v-if="count > 0" :ui="{ content: 'overflow-hidden' }">
         <p class="flex items-center hover:cursor-pointer">
             <span
                 class="w-2 h-2 rounded-full mr-1"
@@ -9,11 +9,9 @@
         </p>
 
         <template #content>
-            <div
-                class="max-w-sm max-h-72 overflow-y-auto text-xs w-40 overflow-x-hidden"
-            >
+            <div class="flex flex-col max-h-72 text-xs w-40">
                 <div
-                    class="gap-4 p-1.5 flex justify-between items-center bg-gray-50 border-b border-gray-200"
+                    class="sticky top-0 z-10 p-1.5 flex justify-between items-center bg-gray-50 border-b border-gray-200"
                 >
                     <p class="font-medium">
                         <span
@@ -46,8 +44,7 @@
                         清除
                     </UButton>
                 </div>
-
-                <ul class="space-y-0.5">
+                <ul class="overflow-y-auto space-y-0.5">
                     <li
                         v-for="(item, index) in items"
                         :key="index"

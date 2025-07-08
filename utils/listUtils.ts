@@ -45,13 +45,13 @@ export function isConsideredInvalid(name: string): boolean {
  * 解析文本列表，返回统计信息（总数、唯一列表、重复、无效项）
  * @param text 输入字符串
  * @param separators 分隔符数组
- * @returns 解析结果对象
  */
 export function parseList(text: string, separators: string[]) {
   const result: {
     totalEnteredCount: number;
     allNames: string[];
     allUniqueNames: string[];
+    orderedUniqueNames: string[];
     duplicates: { name: string; count: number }[];
     duplicateInfoCount: number;
     invalidNames: string[];
@@ -60,6 +60,7 @@ export function parseList(text: string, separators: string[]) {
     totalEnteredCount: 0,
     allNames: [],
     allUniqueNames: [],
+    orderedUniqueNames: [],
     duplicates: [],
     duplicateInfoCount: 0,
     invalidNames: [],
@@ -71,18 +72,25 @@ export function parseList(text: string, separators: string[]) {
   result.allNames = items;
 
   const nameCountMap: Record<string, number> = {};
-  const allNamesSet = new Set<string>();
+  const uniqueSet = new Set<string>();
+  const orderedUnique: string[] = [];
   const tempInvalidNames: string[] = [];
 
   items.forEach((name) => {
     if (isConsideredInvalid(name)) {
       tempInvalidNames.push(name);
     }
+
     nameCountMap[name] = (nameCountMap[name] || 0) + 1;
-    allNamesSet.add(name);
+
+    if (!uniqueSet.has(name)) {
+      uniqueSet.add(name);
+      orderedUnique.push(name);
+    }
   });
 
-  result.allUniqueNames = Array.from(allNamesSet).sort();
+  result.orderedUniqueNames = orderedUnique;
+  result.allUniqueNames = Array.from(uniqueSet).sort();
   result.invalidNames = tempInvalidNames;
   result.invalidCount = tempInvalidNames.length;
 
