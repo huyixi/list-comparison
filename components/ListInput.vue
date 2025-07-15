@@ -3,10 +3,10 @@
         class="bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden"
     >
         <div
-            class="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50"
+            class="flex items-center justify-between border-b border-gray-200 bg-gray-50 ps-3 pe-1"
         >
-            <h2 class="text-base font-medium text-gray-700">{{ title }}</h2>
-            <div class="flex items-center gap-2">
+            <h2 class="text-xl font-medium text-gray-700">{{ title }}</h2>
+            <div class="flex items-center gap-0">
                 <ClipboardPaste
                     @request-focus="focusTextarea"
                     @clipboard-paste="
@@ -26,7 +26,7 @@
         ></textarea>
 
         <div
-            class="flex justify-between items-center border-t border-gray-200 bg-gray-50 text-xs"
+            class="flex justify-between items-center border-t border-gray-200 bg-gray-50 text-sm"
         >
             <SeperatorModal :totalCount="totalCount"></SeperatorModal>
             <div class="flex items-center justify-end gap-3 p-2">

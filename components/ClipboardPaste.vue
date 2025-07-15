@@ -2,14 +2,14 @@
     <UTooltip text="从剪贴板粘贴">
         <UButton
             :icon="isPasted ? 'i-lucide-check' : 'i-lucide-clipboard'"
-            size="sm"
+            size="md"
             color="neutral"
             variant="ghost"
             class="hover:cursor-pointer"
             @click="handlePaste"
             aria-label="从剪贴板粘贴"
             :ui="{
-                base: 'gap-0.5 p-0',
+                base: 'gap-0.5 pe-1 py-3',
             }"
         >
             {{ isPasted ? "已粘贴" : "粘贴" }}

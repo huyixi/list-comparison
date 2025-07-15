@@ -3,21 +3,21 @@
         class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col"
     >
         <div
-            class="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50"
+            class="flex items-center justify-between border-b border-gray-200 bg-gray-50"
         >
-            <h2 class="text-base font-medium text-gray-700">{{ title }}</h2>
+            <h2 class="text-lg font-medium text-gray-700 ps-3">{{ title }}</h2>
             <UTooltip :text="items.length ? '复制该列内容' : '无可复制内容'">
                 <UButton
                     :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
                     color="neutral"
-                    size="sm"
+                    size="md"
                     variant="ghost"
                     :disabled="!items.length"
                     @click="handleListCopy(items)"
                     :aria-label="`复制${title}`"
                     class="hover:cursor-pointer"
                     :ui="{
-                        base: 'gap-0.5 p-0',
+                        base: 'gap-0.5 p-3',
                     }"
                 >
                     {{ copied ? "已复制" : "复制" }}
@@ -43,7 +43,7 @@
             </ul>
         </div>
         <div
-            class="py-2 px-3 border-t border-gray-200 bg-gray-50 text-xs text-gray-500"
+            class="py-2 px-3 border-t border-gray-200 bg-gray-50 text-sm text-gray-500"
         >
             {{ items.length }} 条{{ suffix }}
         </div>

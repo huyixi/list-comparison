@@ -3,14 +3,14 @@
         <UButton
             type="button"
             icon="i-lucide-file-up"
-            size="sm"
+            size="md"
             color="neutral"
             variant="ghost"
             :aria-label="TOOLTIP_TEXT"
             class="hover:cursor-pointer"
             @click="openFilePicker"
             :ui="{
-                base: 'gap-0.5 p-0',
+                base: 'gap-0.5 ps-1 py-3',
             }"
         >
             导入文件
