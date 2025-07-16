@@ -1,0 +1,13 @@
+/* assets/css/ocr.css */
+@keyframes flash-success {
+    0% {
+        box-shadow: 0 0 0 3px limegreen;
+    }
+    100% {
+        box-shadow: 0 0 0 0 transparent;
+    }
+}
+
+.flash-ocr {
+    animation: flash-success 2s ease-out;
+}

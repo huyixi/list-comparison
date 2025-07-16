@@ -8,6 +8,9 @@
             v-for="(img, i) in imageItems"
             :key="img.file.name || i"
             class="relative group overflow-hidden hover:cursor-pointer"
+            :class="{
+                'flash-ocr': img.__flashOCR,
+            }"
             :style="{
                 gridColumn: `span ${imageLayout[i].colSpan} / span ${imageLayout[i].colSpan}`,
                 gridRow: `span ${imageLayout[i].rowSpan} / span ${imageLayout[i].rowSpan}`,
@@ -41,6 +44,36 @@
                         <UIcon name="i-lucide-trash" class="size-5" />
                     </button>
                 </div>
+            </div>
+            <div
+                class="absolute bottom-0 left-0 flex items-center gap-1 bg-black/60 text-white text-xs px-2 py-1 rounded-tr"
+            >
+                <UIcon
+                    v-if="img.ocrStatus === 'pending'"
+                    name="i-lucide-loader"
+                    class="animate-spin size-3"
+                />
+                <UIcon
+                    v-else-if="img.ocrStatus === 'success'"
+                    name="i-lucide-check-circle"
+                    class="text-green-400 size-3"
+                />
+                <UIcon
+                    v-else-if="img.ocrStatus === 'error'"
+                    name="i-lucide-alert-circle"
+                    class="text-red-400 size-3"
+                />
+                <span>
+                    {{
+                        img.ocrStatus === "pending"
+                            ? "识别中"
+                            : img.ocrStatus === "success"
+                              ? "完成"
+                              : img.ocrStatus === "error"
+                                ? "失败"
+                                : "未识别"
+                    }}
+                </span>
             </div>
         </div>
 
@@ -131,4 +164,13 @@ const layoutMap: Record<number, GridLayoutItem[]> = {
 const imageLayout = computed(() => {
     return layoutMap[imageItems.value.length] || layoutMap[9];
 });
+
+const flashIndex = ref<number | null>(null);
+
+function triggerFlash(index: number) {
+    flashIndex.value = index;
+    setTimeout(() => {
+        flashIndex.value = null;
+    }, 1000); // 动画持续时间后清除
+}
 </script>

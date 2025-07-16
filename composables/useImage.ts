@@ -3,8 +3,8 @@
 import type { Ref } from "vue";
 import type { ImageItem } from "~/types";
 import type { Cropper } from "vue-advanced-cropper";
+import { performOCR } from "~/utils/ocr";
 
-const toast = useToast();
 const imageItems = ref<ImageItem[]>([]);
 const selectedIndex = ref<number | null>(null);
 const previewOpen = ref(false);
@@ -81,12 +81,33 @@ const cropSelectedImage = (
   };
 
   updateImageAt(index, newItem);
-  toast.add({
-    title: "裁剪成功",
-    icon: "i-lucide-badge-check",
-    color: "success",
-  });
+
   closePreview();
+};
+
+const performAllOCR = async () => {
+  for (let i = 0; i < imageItems.value.length; i++) {
+    const item = imageItems.value[i];
+
+    updateImageAt(i, { ...item, ocrStatus: "pending" });
+
+    const updated = await performOCR(item);
+
+    // 可加上 flash 标记
+    updateImageAt(i, {
+      ...updated,
+      __flashOCR: true, // 可用于触发 CSS 动画
+    });
+
+    // 延迟移除 flash 标记
+    setTimeout(() => {
+      const current = imageItems.value[i];
+      if (current) {
+        const { __flashOCR, ...rest } = current;
+        updateImageAt(i, rest);
+      }
+    }, 1000);
+  }
 };
 
 export function useImage() {
@@ -101,5 +122,6 @@ export function useImage() {
     deleteImageAt,
     clearImages,
     cropSelectedImage,
+    performAllOCR,
   };
 }

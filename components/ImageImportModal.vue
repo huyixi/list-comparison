@@ -5,11 +5,7 @@
         :ui="{ body: 'p-0 sm:p-0 h-[60dvh] aspect-square' }"
     >
         <template #body>
-            <ImagePreviewGrid
-                :imageItems="props.imageItems"
-                @delete-image="handleDeleteImage"
-                @crop-image="handleCropImage"
-            />
+            <ImagePreviewGrid />
         </template>
         <template #footer>
             <div class="flex flex-1 justify-end gap-3">
@@ -30,6 +26,7 @@
                             base: 'text-white',
                             leadingIcon: 'text-white',
                         }"
+                        @click="handleOcrAllImages"
                     >
                         文字识别
                     </UButton>
@@ -40,26 +37,18 @@
 </template>
 
 <script setup lang="ts">
-import type { ImageItem } from "~/types/file";
+import { useImage } from "~/composables/useImage";
+const { imageItems, performAllOCR } = useImage();
+const imageCount = computed(() => imageItems.value.length);
 
-const props = defineProps<{
-    imageItems: ImageItem[];
-}>();
-
-const emit = defineEmits(["add-image", "delete-image", "crop-image"]);
+const emit = defineEmits(["add-image"]);
 
 const handleAddImage = () => {
     emit("add-image");
 };
 
-const handleDeleteImage = (index: number) => {
-    emit("delete-image", index);
-};
-
-const imageCount = computed(() => props.imageItems.length);
-
-const handleCropImage = (index: number, imageItem: ImageItem) => {
-    emit("crop-image", index, imageItem);
-    console.log("import modal:", index, imageItem);
+const handleOcrAllImages = () => {
+    console.log("111");
+    performAllOCR();
 };
 </script>
