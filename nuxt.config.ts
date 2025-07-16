@@ -15,13 +15,6 @@ export default defineNuxtConfig({
   },
   vite: {
     plugins: [tailwindcss()],
-    vue: {
-      template: {
-        compilerOptions: {
-          isCustomElement: (tag) => tag.startsWith("cropper-"),
-        },
-      },
-    },
   },
   ui: {
     colorMode: false,

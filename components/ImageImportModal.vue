@@ -1,13 +1,14 @@
+<!-- ./components/ImageImportModal.vue -->
 <template>
     <UModal
         title="图片预览"
         :ui="{ body: 'p-0 sm:p-0 h-[60dvh] aspect-square' }"
     >
         <template #body>
-            <!-- <ImageCropper :src="props.src" /> -->
             <ImagePreviewGrid
-                :imageFiles="props.imageFiles"
+                :imageItems="props.imageItems"
                 @delete-image="handleDeleteImage"
+                @crop-image="handleCropImage"
             />
         </template>
         <template #footer>
@@ -39,11 +40,13 @@
 </template>
 
 <script setup lang="ts">
+import type { ImageItem } from "~/types/file";
+
 const props = defineProps<{
-    imageFiles: File[];
+    imageItems: ImageItem[];
 }>();
 
-const emit = defineEmits(["add-image", "delete-image"]);
+const emit = defineEmits(["add-image", "delete-image", "crop-image"]);
 
 const handleAddImage = () => {
     emit("add-image");
@@ -53,5 +56,10 @@ const handleDeleteImage = (index: number) => {
     emit("delete-image", index);
 };
 
-const imageCount = computed(() => props.imageFiles.length);
+const imageCount = computed(() => props.imageItems.length);
+
+const handleCropImage = (index: number, imageItem: ImageItem) => {
+    emit("crop-image", index, imageItem);
+    console.log("import modal:", index, imageItem);
+};
 </script>

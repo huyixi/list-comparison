@@ -1,11 +1,12 @@
+<!-- components/ImagePreviewGrid.vue -->
 <template>
     <div
         class="grid gap-0.5 w-full h-full"
-        :class="getGridTemplate(imageFiles.length)"
+        :class="getGridTemplate(imageItems.length)"
     >
         <div
-            v-for="(img, i) in imageFiles"
-            :key="i"
+            v-for="(img, i) in imageItems"
+            :key="img.file.name || i"
             class="relative group overflow-hidden hover:cursor-pointer"
             :style="{
                 gridColumn: `span ${imageLayout[i].colSpan} / span ${imageLayout[i].colSpan}`,
@@ -14,7 +15,7 @@
             @click="openPreview(i)"
         >
             <img
-                :src="urls[i]"
+                :src="img.croppedBase64 || img.base64"
                 alt="preview"
                 class="w-full h-full object-cover"
             />
@@ -32,7 +33,7 @@
 
                 <div
                     class="absolute top-0 right-0 p-2"
-                    @click.stop="handleDelete(i)"
+                    @click.stop="deleteImageAt(i)"
                 >
                     <button
                         class="hover:bg-red-600 hover:cursor-pointer rounded-md text-white p-2 transition w-8 h-8 flex items-center justify-center"
@@ -41,34 +42,16 @@
                     </button>
                 </div>
             </div>
-
-            <ImagePreview
-                v-model:open="previewOpen"
-                :selectedImageUrl="selectedImageUrl"
-            />
         </div>
+
+        <ImagePreview v-model:open="previewOpen" @close="closePreview" />
     </div>
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ imageFiles: File[] }>();
-const emit = defineEmits(["delete-image"]);
-
-const previewOpen = ref(false);
-const selectedImageUrl = ref("");
-
-const getUrl = (file: File) => URL.createObjectURL(file);
-const urls = computed(() => {
-    return props.imageFiles.map(getUrl);
-});
-onUnmounted(() => {
-    props.imageFiles.forEach((f) => URL.revokeObjectURL(getUrl(f)));
-});
-
-const handleDelete = (index: number) => {
-    console.log("delete image grid preview", index);
-    emit("delete-image", index);
-};
+import { useImage } from "~/composables/useImage";
+const { imageItems, previewOpen, openPreview, closePreview, deleteImageAt } =
+    useImage();
 
 const getGridTemplate = (count: number) => {
     if (count <= 1) return "grid-cols-1 grid-rows-1";
@@ -89,6 +72,12 @@ const layoutMap: Record<number, GridLayoutItem[]> = {
     ],
     3: [
         { colSpan: 1, rowSpan: 2 },
+        { colSpan: 1, rowSpan: 1 },
+        { colSpan: 1, rowSpan: 1 },
+    ],
+    4: [
+        { colSpan: 1, rowSpan: 1 },
+        { colSpan: 1, rowSpan: 1 },
         { colSpan: 1, rowSpan: 1 },
         { colSpan: 1, rowSpan: 1 },
     ],
@@ -140,16 +129,6 @@ const layoutMap: Record<number, GridLayoutItem[]> = {
 };
 
 const imageLayout = computed(() => {
-    return layoutMap[props.imageFiles.length] || layoutMap[9];
+    return layoutMap[imageItems.value.length] || layoutMap[9];
 });
-
-const openPreview = (index: number) => {
-    console.log("Open preview for image at index:", index);
-
-    selectedImageUrl.value = getUrl(props.imageFiles[index]);
-
-    previewOpen.value = true;
-
-    // Open the image preview modal with the selected image
-};
 </script>

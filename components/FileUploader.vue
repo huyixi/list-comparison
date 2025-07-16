@@ -34,7 +34,7 @@
 
     <ImageImportModal
         v-model:open="isImageModalOpen"
-        :imageFiles="imageFiles"
+        :imageItems="imageItems"
         @add-image="openImageFilePicker"
         @delete-image="handleImageDelete"
     />
@@ -42,7 +42,12 @@
 
 <script setup lang="ts">
 import type { Sheet } from "~/types/sheet";
+import type { ImageItem } from "~/types/file";
 import { useFileHandler } from "~/composables/useFileHandler";
+import { useImage } from "~/composables/useImage";
+
+const { imageItems, addImages, updateImageAt, deleteImageAt, clearImages } =
+    useImage();
 
 const toast = useToast();
 const { parseFile, getFileType } = useFileHandler();
@@ -55,7 +60,6 @@ const emit = defineEmits<{
 const fileInput = ref<HTMLInputElement | null>(null);
 const isXlsxModalOpen = ref(false);
 const isImageModalOpen = ref(false);
-const imageFiles = ref<File[]>([]);
 const workbookData = ref<Sheet[]>([]);
 const TOOLTIP_TEXT = "上传 txt / xlsx / 图片";
 const ACCEPT_FILE_TYPES = [
@@ -107,7 +111,7 @@ const openImageFilePicker = () => {
 
 const checkFileUploadConstraints = (
     files: File[],
-    existingImages: File[] = [],
+    existingImages: ImageItem[] = [],
 ): string | null => {
     const fileTypes = getFileType(files[0]);
     const uniqueTypes = [...new Set(fileTypes)];
@@ -129,7 +133,6 @@ const checkFileUploadConstraints = (
             return "不能同时上传图片和文本";
         }
     }
-
     return null;
 };
 
@@ -143,7 +146,7 @@ const processSelectedFiles = async (e: Event) => {
     const uniqueTypes = Array.from(new Set(fileTypes));
     const resetInput = () => (input.value = "");
 
-    const error = checkFileUploadConstraints(fileArray, imageFiles.value);
+    const error = checkFileUploadConstraints(fileArray, imageItems.value);
     if (error) {
         toast.add({ title: error, color: "warning" });
         return resetInput();
@@ -155,7 +158,7 @@ const processSelectedFiles = async (e: Event) => {
             workbookData.value = parsedSheets as Sheet[];
             isXlsxModalOpen.value = true;
         } else if (uniqueTypes[0] === "image") {
-            imageFiles.value = [...imageFiles.value, ...fileArray];
+            await processImageFiles(fileArray);
             isImageModalOpen.value = true;
         } else if (uniqueTypes[0] === "text") {
             for (const file of fileArray) {
@@ -177,6 +180,30 @@ const processSelectedFiles = async (e: Event) => {
     }
 };
 
+const processImageFiles = async (files: File[]) => {
+    try {
+        const newItems: ImageItem[] = [];
+
+        for (const file of files) {
+            const base64 = await imageFileToBase64(file);
+            newItems.push({
+                file,
+                base64,
+                croppedBase64: "",
+                ocrText: "",
+                ocrStatus: "idle",
+            });
+        }
+        imageItems.value.push(...newItems);
+        console.log("Image items:", imageItems.value);
+    } catch (error) {
+        console.error("图片处理失败", error);
+        toast.add({ title: "图片解析失败", color: "error" });
+    } finally {
+        if (fileInput.value) fileInput.value.value = "";
+    }
+};
+
 const handleImportedData = (data: string) => {
     emit("file-upload", data);
     isXlsxModalOpen.value = false;
@@ -188,14 +215,13 @@ const handleImportedData = (data: string) => {
 
 watch(isImageModalOpen, () => {
     if (!isImageModalOpen.value) {
-        imageFiles.value = [];
+        imageItems.value = [];
     }
 });
 
 const handleImageDelete = (index: number) => {
-    console.log("handleImageDelete", index);
-    imageFiles.value.splice(index, 1);
-    if (imageFiles.value.length === 0) {
+    deleteImageAt(index);
+    if (imageItems.value.length === 0) {
         isImageModalOpen.value = false;
     }
 };

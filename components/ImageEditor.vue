@@ -1,90 +1,62 @@
-<script setup>
-import { ref, watch } from "vue";
-import VueCropper from "vue-cropperjs";
-import "cropperjs/dist/cropper.css";
-
-const props = defineProps({
-    src: {
-        type: String,
-        required: true,
-    },
-});
-
-const emit = defineEmits(["update:cropped", "close"]);
-
-const cropper = ref();
-const cropImg = ref("");
-const imageSrc = ref(props.src);
-
-watch(
-    () => props.src,
-    (val) => {
-        imageSrc.value = val;
-        if (val && cropper.value) {
-            cropper.value.replace(val);
-        }
-    },
-);
-
-const cropImage = () => {
-    const canvas = cropper.value.getCroppedCanvas();
-    if (canvas) {
-        cropImg.value = canvas.toDataURL();
-        emit("update:cropped", cropImg.value); // 把裁剪后的 base64 图像抛出
-    }
-};
-
-const reset = () => {
-    cropper.value?.reset();
-};
-
-const rotate = (deg) => {
-    cropper.value?.rotate(deg);
-};
-</script>
-
+<!-- ./components/ImageEditor.vue -->
 <template>
-    <div class="image-editor">
-        <vue-cropper
-            ref="cropper"
-            :src="imageSrc"
-            :background="false"
-            :viewMode="1"
-            preview=".preview"
-            :guides="true"
+    <ClientOnly>
+        <Cropper
+            ref="cropperRef"
+            class="w-[70svw] object-contain"
+            :src="getCropperSrc"
+            :default-size="defaultSize"
+            :stencil-props="{
+                handlers: {},
+            }"
         />
-
-        <div class="actions">
-            <button @click="rotate(90)">Rotate +90°</button>
-            <button @click="rotate(-90)">Rotate -90°</button>
-            <button @click="reset">Reset</button>
-            <button @click="cropImage">Crop</button>
-            <button @click="$emit('close')">Close</button>
-        </div>
-
-        <div v-if="cropImg" class="mt-4">
-            <p>Cropped Image:</p>
-            <img :src="cropImg" class="w-full" />
-        </div>
+    </ClientOnly>
+    <div class="flex flex-1 justify-end gap-3 mt-4">
+        <UButton size="md" variant="outline" @click="closePreview"
+            >取消</UButton
+        >
+        <UTooltip text="裁切图片">
+            <UButton
+                size="md"
+                :ui="{
+                    base: 'text-white',
+                    leadingIcon: 'text-white',
+                }"
+                @click="handleCrop"
+            >
+                确定
+            </UButton>
+        </UTooltip>
     </div>
 </template>
 
-<style scoped>
-.image-editor {
-    max-width: 800px;
-    margin: auto;
-}
-.actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 1rem;
-}
-.actions button {
-    padding: 0.4rem 0.75rem;
-    background-color: #0062cc;
-    color: white;
-    border: none;
-    border-radius: 4px;
-}
-</style>
+<script setup lang="ts">
+import { useImage } from "~/composables/useImage";
+const { imageItems, selectedIndex, closePreview, cropSelectedImage } =
+    useImage();
+
+import { Cropper } from "vue-advanced-cropper";
+import "vue-advanced-cropper/dist/style.css";
+
+const cropperRef = ref<InstanceType<typeof Cropper> | null>(null);
+
+const getCropperSrc = computed(() => {
+    const index = selectedIndex.value;
+    if (index === null || index < 0 || index >= imageItems.value.length)
+        return "";
+    const item = imageItems.value[index];
+    return item.croppedBase64 || item.base64;
+});
+
+const defaultSize = () => {
+    return {
+        width: 300,
+        height: 300,
+    };
+};
+
+const handleCrop = () => {
+    cropSelectedImage(cropperRef);
+    closePreview();
+};
+</script>
