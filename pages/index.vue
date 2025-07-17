@@ -139,6 +139,8 @@ import {
     isConsideredInvalid,
 } from "@/utils/listUtils";
 import { exportResultsToFile } from "@/utils/exportUtils";
+import { useImage } from "~/composables/useImage";
+const { imageItems } = useImage();
 
 const toast = useToast();
 const clipboard = useClipboard();

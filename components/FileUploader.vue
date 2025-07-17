@@ -46,8 +46,7 @@ import type { ImageItem } from "~/types/file";
 import { useFileHandler } from "~/composables/useFileHandler";
 import { useImage } from "~/composables/useImage";
 
-const { imageItems, addImages, updateImageAt, deleteImageAt, clearImages } =
-    useImage();
+const { imageItems, deleteImageAt, clearImages } = useImage();
 
 const toast = useToast();
 const { parseFile, getFileType } = useFileHandler();

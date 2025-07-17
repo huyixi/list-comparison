@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { useSeparators } from "~/composables/useSerapators";
+import { useSeparators } from "~/composables/useSeparators";
 import type { SeparatorItem } from "~/types/separators";
 
 const props = defineProps({

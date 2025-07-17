@@ -28,7 +28,7 @@
                         }"
                         @click="handleOcrAllImages"
                     >
-                        文字识别
+                        {{ allOcrDone ? "导入文字" : "文字识别" }}
                     </UButton>
                 </UTooltip>
             </div>
@@ -38,17 +38,24 @@
 
 <script setup lang="ts">
 import { useImage } from "~/composables/useImage";
-const { imageItems, performAllOCR } = useImage();
+const { imageItems, performAllOCR, allOcrDone } = useImage();
 const imageCount = computed(() => imageItems.value.length);
 
-const emit = defineEmits(["add-image"]);
+const emit = defineEmits(["ocr-finished", "add-image"]);
 
 const handleAddImage = () => {
     emit("add-image");
 };
 
-const handleOcrAllImages = () => {
-    console.log("111");
-    performAllOCR();
+const handleOcrAllImages = async () => {
+    await performAllOCR();
+    const results = imageItems.value
+        .filter((item) => item.ocrStatus === "success" && item.ocrText?.trim())
+        .map((item) => ({
+            text: item.ocrText!,
+            fromList: item.fromList!,
+        }));
+
+    emit("ocr-finished", results);
 };
 </script>

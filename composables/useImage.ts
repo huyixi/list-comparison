@@ -93,13 +93,11 @@ const performAllOCR = async () => {
 
     const updated = await performOCR(item);
 
-    // 可加上 flash 标记
     updateImageAt(i, {
       ...updated,
-      __flashOCR: true, // 可用于触发 CSS 动画
+      __flashOCR: true,
     });
 
-    // 延迟移除 flash 标记
     setTimeout(() => {
       const current = imageItems.value[i];
       if (current) {
@@ -109,6 +107,10 @@ const performAllOCR = async () => {
     }, 1000);
   }
 };
+
+const allOcrDone = computed(() => {
+  return imageItems.value.every((item) => item.ocrStatus === "success");
+});
 
 export function useImage() {
   return {
@@ -123,5 +125,6 @@ export function useImage() {
     clearImages,
     cropSelectedImage,
     performAllOCR,
+    allOcrDone,
   };
 }
