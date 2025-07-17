@@ -1,11 +1,11 @@
-<!-- ./components/ImageImportModal.vue -->
+<!-- ./components/image-import/Modal.vue -->
 <template>
     <UModal
-        title="图片预览"
+        title="图文识别"
         :ui="{ body: 'p-0 sm:p-0 h-[60dvh] aspect-square' }"
     >
         <template #body>
-            <ImagePreviewGrid />
+            <ImageImportPreviewGrid />
         </template>
         <template #footer>
             <div class="flex flex-1 justify-end gap-3">
@@ -53,7 +53,6 @@ const handleOcrAllImages = async () => {
         .filter((item) => item.ocrStatus === "success" && item.ocrText?.trim())
         .map((item) => ({
             text: item.ocrText!,
-            fromList: item.fromList!,
         }));
 
     emit("ocr-finished", results);

@@ -1,7 +1,7 @@
 <template>
     <UModal
         :ui="{ body: 'p-4 sm:p-4', footer: 'justify-between p-4 sm:p-4' }"
-        title="导入数据"
+        title="导入表格"
     >
         <template #body>
             <UCard

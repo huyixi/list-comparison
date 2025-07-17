@@ -1,4 +1,4 @@
-<!-- components/ImagePreviewGrid.vue -->
+<!-- components/image-import/PreviewGrid.vue -->
 <template>
     <div
         class="grid gap-0.5 w-full h-full"
@@ -8,9 +8,6 @@
             v-for="(img, i) in imageItems"
             :key="img.file.name || i"
             class="relative group overflow-hidden hover:cursor-pointer"
-            :class="{
-                'flash-ocr': img.__flashOCR,
-            }"
             :style="{
                 gridColumn: `span ${imageLayout[i].colSpan} / span ${imageLayout[i].colSpan}`,
                 gridRow: `span ${imageLayout[i].rowSpan} / span ${imageLayout[i].rowSpan}`,
@@ -77,7 +74,7 @@
             </div>
         </div>
 
-        <ImagePreview v-model:open="previewOpen" @close="closePreview" />
+        <ImageImportPreview v-model:open="previewOpen" @close="closePreview" />
     </div>
 </template>
 
@@ -164,13 +161,4 @@ const layoutMap: Record<number, GridLayoutItem[]> = {
 const imageLayout = computed(() => {
     return layoutMap[imageItems.value.length] || layoutMap[9];
 });
-
-const flashIndex = ref<number | null>(null);
-
-function triggerFlash(index: number) {
-    flashIndex.value = index;
-    setTimeout(() => {
-        flashIndex.value = null;
-    }, 1000); // 动画持续时间后清除
-}
 </script>

@@ -1,4 +1,4 @@
-<!-- ./components/ImagePreview.vue -->
+<!-- ./components/image-import/Preview.vue -->
 <template>
     <UModal
         :ui="{
@@ -8,7 +8,7 @@
         v-model:open="isOpen"
     >
         <template #content>
-            <ImageEditor @close="isOpen = false" />
+            <ImageImportEditor @close="isOpen = false" />
         </template>
     </UModal>
 </template>

@@ -1,4 +1,4 @@
-<!-- ./components/ImageEditor.vue -->
+<!-- ./components/image-import/Editor.vue -->
 <template>
     <ClientOnly>
         <Cropper
