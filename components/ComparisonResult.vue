@@ -29,7 +29,7 @@
                 <li
                     v-for="(item, index) in items"
                     :key="index"
-                    class="px-3 py-1.5 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 hover:cursor-pointer"
+                    class="px-3 py-1.5 border-b border-gray-100 hover:bg-gray-50 hover:cursor-pointer"
                     @click="handleCopy(item)"
                 >
                     {{ item }}

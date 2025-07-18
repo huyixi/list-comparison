@@ -1,33 +1,193 @@
+<script setup lang="ts">
+import { exportResultsToFile } from "@/utils/export";
+import { useImage } from "~/composables/useImage";
+
+const listARef = ref(null);
+const listBRef = ref(null);
+const showResults = ref(true);
+
+const { input: inputA, appendInput: appendTextA } = useInput();
+const { input: inputB, appendInput: appendTextB } = useInput();
+
+const { selectedSeparators } = useSeparators();
+
+const listAInfo = computed(() =>
+    parseText(inputA.value, selectedSeparators.value),
+);
+const listBInfo = computed(() =>
+    parseText(inputB.value, selectedSeparators.value),
+);
+
+const comparedResult = computed(() =>
+    compareLists(listAInfo.value.rawItems, listBInfo.value.rawItems),
+);
+
+const appendText = (target: "A" | "B", text: string) => {
+    console.log("appendText", target, text);
+    if (target === "A") appendTextA(text);
+    else appendTextB(text);
+};
+provide("appendText", appendText);
+
+const toast = useToast();
+const clipboard = useClipboard();
+
+const validListACopied = ref(false);
+const validListBCopied = ref(false);
+
+const handleCopy = (content) => {
+    clipboard.writeText(content);
+};
+
+// const exportResults = () => {
+//     const sections = [];
+
+//     if (onlyInA.value.length > 0) {
+//         sections.push({
+//             title: "--- 仅在列表 A 中存在的条目 ---",
+//             content: onlyInA.value.join("\n"),
+//         });
+//     }
+
+//     if (onlyInB.value.length > 0) {
+//         sections.push({
+//             title: "--- 仅在列表 B 中存在的条目 ---",
+//             content: onlyInB.value.join("\n"),
+//         });
+//     }
+
+//     if (inBoth.value.length > 0) {
+//         sections.push({
+//             title: "--- 同时存在于列表 A 和 B 中的条目 ---",
+//             content: inBoth.value.join("\n"),
+//         });
+//     }
+
+//     if (listAInfo.value.duplicates.length > 0) {
+//         const duplicateContent = listAInfo.value.duplicates
+//             .map((item) => `${item.name} (出现 ${item.count} 次)`)
+//             .join("\n");
+
+//         sections.push({
+//             title: "--- 列表 A 中的重复条目 ---",
+//             content: duplicateContent,
+//         });
+//     }
+
+//     if (listBInfo.value.duplicates.length > 0) {
+//         const duplicateContent = listBInfo.value.duplicates
+//             .map((item) => `${item.name} (出现 ${item.count} 次)`)
+//             .join("\n");
+
+//         sections.push({
+//             title: "--- 列表 B 中的重复条目 ---",
+//             content: duplicateContent,
+//         });
+//     }
+
+//     if (listAInfo.value.invalidNames.length > 0) {
+//         sections.push({
+//             title: "--- 列表 A 中检测到的特殊格式或空条目 (仅提示) ---",
+//             content: listAInfo.value.invalidNames.join("\n"),
+//         });
+//     }
+
+//     if (listBInfo.value.invalidNames.length > 0) {
+//         sections.push({
+//             title: "--- 列表 B 中检测到的特殊格式或空条目 (仅提示) ---",
+//             content: listBInfo.value.invalidNames.join("\n"),
+//         });
+//     }
+
+//     if (sections.length === 0) {
+//         toast.add({
+//             title: "没有可导出的内容",
+//             description: "没有发现任何可导出的结果",
+//             color: "warning",
+//             icon: "i-lucide-circle-alert",
+//         });
+//         return;
+//     }
+
+//     exportResultsToFile(sections);
+// };
+
+// const removeDuplicateItems = (listType) => {
+//     const info = listType === "A" ? listAInfo.value : listBInfo.value;
+//     const currentRef = listType === "A" ? listA : listB;
+
+//     if (!info.duplicates.length) {
+//         toast.add({
+//             title: `列表 ${listType} 中没有重复项`,
+//             icon: "i-lucide-circle-alert",
+//         });
+//         return;
+//     }
+
+//     currentRef.value = info.orderedUniqueNames.join("\n");
+
+//     toast.add({
+//         title: `列表 ${listType} 的重复项已移除`,
+//         icon: "i-lucide-list-check",
+//         color: "neutral",
+//     });
+// };
+
+// const removeInvalidItems = (listType) => {
+//     const info = listType === "A" ? listAInfo.value : listBInfo.value;
+//     const currentRef = listType === "A" ? listA : listB;
+
+//     if (!info.invalidNames.length) {
+//         toast.add({
+//             title: `列表 ${listType} 中没有无效项`,
+//             icon: "i-lucide-circle-alert",
+//             color: "neutral",
+//         });
+//         return;
+//     }
+
+//     const validItems = info.allNames.filter(
+//         (item) => !info.invalidNames.includes(item),
+//     );
+
+//     currentRef.value = validItems.join("\n");
+
+//     toast.add({
+//         title: `列表 ${listType} 的无效项已移除`,
+//         icon: "i-lucide-list-check",
+//         color: "neutral",
+//     });
+// };
+</script>
+
 <template>
     <UContainer class="py-8">
         <AppHeader />
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <ListInput
-                v-model="listA"
-                ref="listARef"
                 title="列表 A"
-                :total-count="listAInfo.totalEnteredCount"
-                @clipboard-paste="(content) => handlePaste('A', content)"
-                @file-upload="
-                    (fileContent) => handleFileUpload('A', fileContent)
-                "
+                target="A"
+                ref="listARef"
+                v-model="inputA"
+                :total-count="listAInfo.rawItemsCount"
+                @file-upload="(text) => appendInputA(text)"
             >
                 <template #stats>
                     <StatPopover
                         title="个有效项"
-                        :count="listAInfo.allUniqueNames.length"
-                        :items="listAInfo.allUniqueNames"
+                        :count="listAInfo.validItemsCount"
+                        :items="listAInfo.validItems"
                         status="green"
                         :show-copy="true"
-                        @copy="handleCopy(listAInfo.allUniqueNames.join('\n'))"
-                        :copied="listACopied"
+                        @copy="handleCopy(listAInfo.validItems.join('\n'))"
+                        :copied="validListACopied"
                     />
 
                     <StatPopover
                         title="个重复项"
-                        :count="listAInfo.duplicateInfoCount"
-                        :items="listAInfo.duplicates"
+                        :count="listAInfo.duplicateItemsCount"
+                        :items="listAInfo.duplicateItems"
                         status="yellow"
                         :show-clean="true"
                         :display-formatter="
@@ -38,8 +198,8 @@
 
                     <StatPopover
                         title="个可能无效项"
-                        :count="listAInfo.invalidCount"
-                        :items="listAInfo.invalidNames"
+                        :count="listAInfo.invalidItemsCount"
+                        :items="listAInfo.invalidItems"
                         status="red"
                         :show-clean="true"
                         @clean="removeInvalidItems('A')"
@@ -48,30 +208,28 @@
             </ListInput>
 
             <ListInput
-                v-model="listB"
+                v-model="inputB"
+                target="B"
                 title="列表 B"
                 ref="listBRef"
                 :total-count="listBInfo.totalEnteredCount"
-                @clipboard-paste="(event) => handlePaste('B', event)"
-                @file-upload="
-                    (fileContent) => handleFileUpload('B', fileContent)
-                "
+                @file-upload="(text) => appendInputB(text)"
             >
                 <template #stats>
                     <StatPopover
                         title="个有效项"
-                        :count="listBInfo.allUniqueNames.length"
-                        :items="listBInfo.allUniqueNames"
+                        :count="listBInfo.validItemsCount"
+                        :items="listBInfo.validItems"
                         status="green"
                         :show-copy="true"
-                        @copy="handleCopy(listBInfo.allUniqueNames.join('\n'))"
-                        :copied="listBCopied"
+                        @copy="handleCopy(listBInfo.validItems.join('\n'))"
+                        :copied="validListACopied"
                     />
 
                     <StatPopover
                         title="个重复项"
-                        :count="listBInfo.duplicateInfoCount"
-                        :items="listBInfo.duplicates"
+                        :count="listBInfo.duplicateItemsCount"
+                        :items="listBInfo.duplicateItems"
                         status="yellow"
                         :show-clean="true"
                         :display-formatter="
@@ -82,8 +240,8 @@
 
                     <StatPopover
                         title="个可能无效项"
-                        :count="listBInfo.invalidCount"
-                        :items="listBInfo.invalidNames"
+                        :count="listBInfo.invalidItemsCount"
+                        :items="listBInfo.invalidItems"
                         status="red"
                         :show-clean="true"
                         @clean="removeInvalidItems('B')"
@@ -100,25 +258,25 @@
         >
             <ComparisonResult
                 title="仅在列表 A"
-                :items="onlyInA"
+                :items="comparedResult.onlyInA"
                 empty-text="列表 A 中没有独有条目。"
                 suffix="独有"
             />
             <ComparisonResult
                 title="同时存在于 A 和 B"
-                :items="inBoth"
+                :items="comparedResult.inBoth"
                 empty-text="A 和 B 中没有共同条目。"
                 suffix="共有"
             />
             <ComparisonResult
                 title="仅在列表 B"
-                :items="onlyInB"
+                :items="comparedResult.onlyInB"
                 empty-text="列表 B 中没有独有条目。"
                 suffix="独有"
             />
         </div>
 
-        <div v-if="showResults" class="text-center my-6">
+        <!-- <div v-if="showResults" class="text-center my-6">
             <UButton
                 @click="exportResults"
                 icon="i-lucide-download"
@@ -128,217 +286,6 @@
             >
                 导出结果
             </UButton>
-        </div>
+        </div> -->
     </UContainer>
 </template>
-
-<script setup>
-import {
-    parseList,
-    getItemsFromString,
-    isConsideredInvalid,
-} from "@/utils/listUtils";
-import { exportResultsToFile } from "@/utils/exportUtils";
-import { useImage } from "~/composables/useImage";
-const { imageItems } = useImage();
-
-const toast = useToast();
-const clipboard = useClipboard();
-
-const listA = ref("");
-const listB = ref("");
-const listARef = ref(null);
-const listBRef = ref(null);
-const onlyInA = ref([]);
-const onlyInB = ref([]);
-const inBoth = ref([]);
-const showResults = ref(false);
-const listACopied = ref(false);
-const listBCopied = ref(false);
-
-const handlePaste = (targetList, content) => {
-    const listInputRef = targetList === "A" ? listARef : listBRef;
-    listInputRef.value?.focusTextarea();
-
-    const currentValue = targetList === "A" ? listA.value : listB.value;
-
-    const separator = currentValue && !currentValue.endsWith("\n") ? "\n" : "";
-
-    if (targetList === "A") {
-        listA.value = `${currentValue}${separator}${content}`;
-    } else {
-        listB.value = `${currentValue}${separator}${content}`;
-    }
-};
-
-const handleCopy = (content) => {
-    clipboard.writeText(content);
-};
-
-const handleFileUpload = (listType, fileContent) => {
-    if (listType === "A") {
-        listA.value = listA.value
-            ? listA.value + "\n" + fileContent
-            : fileContent;
-    } else {
-        listB.value = listB.value
-            ? listB.value + "\n" + fileContent
-            : fileContent;
-    }
-};
-
-const separators = useSeparators().selectedSeparators;
-const listAInfo = computed(() => parseList(listA.value, separators.value));
-const listBInfo = computed(() => parseList(listB.value, separators.value));
-
-const compareNames = () => {
-    const namesA = listAInfo.value.allNames;
-    const namesB = listBInfo.value.allNames;
-
-    onlyInA.value = [];
-    onlyInB.value = [];
-    inBoth.value = [];
-
-    if (namesA.length === 0 && namesB.length === 0) {
-        showResults.value = false;
-        return;
-    }
-
-    const setA = new Set(namesA);
-    const setB = new Set(namesB);
-
-    onlyInA.value = [...setA].filter((name) => !setB.has(name)).sort();
-    onlyInB.value = [...setB].filter((name) => !setA.has(name)).sort();
-    inBoth.value = [...setA].filter((name) => setB.has(name)).sort();
-
-    showResults.value = true;
-};
-
-const exportResults = () => {
-    const sections = [];
-
-    if (onlyInA.value.length > 0) {
-        sections.push({
-            title: "--- 仅在列表 A 中存在的条目 ---",
-            content: onlyInA.value.join("\n"),
-        });
-    }
-
-    if (onlyInB.value.length > 0) {
-        sections.push({
-            title: "--- 仅在列表 B 中存在的条目 ---",
-            content: onlyInB.value.join("\n"),
-        });
-    }
-
-    if (inBoth.value.length > 0) {
-        sections.push({
-            title: "--- 同时存在于列表 A 和 B 中的条目 ---",
-            content: inBoth.value.join("\n"),
-        });
-    }
-
-    if (listAInfo.value.duplicates.length > 0) {
-        const duplicateContent = listAInfo.value.duplicates
-            .map((item) => `${item.name} (出现 ${item.count} 次)`)
-            .join("\n");
-
-        sections.push({
-            title: "--- 列表 A 中的重复条目 ---",
-            content: duplicateContent,
-        });
-    }
-
-    if (listBInfo.value.duplicates.length > 0) {
-        const duplicateContent = listBInfo.value.duplicates
-            .map((item) => `${item.name} (出现 ${item.count} 次)`)
-            .join("\n");
-
-        sections.push({
-            title: "--- 列表 B 中的重复条目 ---",
-            content: duplicateContent,
-        });
-    }
-
-    if (listAInfo.value.invalidNames.length > 0) {
-        sections.push({
-            title: "--- 列表 A 中检测到的特殊格式或空条目 (仅提示) ---",
-            content: listAInfo.value.invalidNames.join("\n"),
-        });
-    }
-
-    if (listBInfo.value.invalidNames.length > 0) {
-        sections.push({
-            title: "--- 列表 B 中检测到的特殊格式或空条目 (仅提示) ---",
-            content: listBInfo.value.invalidNames.join("\n"),
-        });
-    }
-
-    if (sections.length === 0) {
-        toast.add({
-            title: "没有可导出的内容",
-            description: "没有发现任何可导出的结果",
-            color: "warning",
-            icon: "i-lucide-circle-alert",
-        });
-        return;
-    }
-
-    exportResultsToFile(sections);
-};
-
-const removeDuplicateItems = (listType) => {
-    const info = listType === "A" ? listAInfo.value : listBInfo.value;
-    const currentRef = listType === "A" ? listA : listB;
-
-    if (!info.duplicates.length) {
-        toast.add({
-            title: `列表 ${listType} 中没有重复项`,
-            icon: "i-lucide-circle-alert",
-        });
-        return;
-    }
-
-    currentRef.value = info.orderedUniqueNames.join("\n");
-
-    toast.add({
-        title: `列表 ${listType} 的重复项已移除`,
-        icon: "i-lucide-list-check",
-        color: "neutral",
-    });
-};
-
-const removeInvalidItems = (listType) => {
-    const info = listType === "A" ? listAInfo.value : listBInfo.value;
-    const currentRef = listType === "A" ? listA : listB;
-
-    if (!info.invalidNames.length) {
-        toast.add({
-            title: `列表 ${listType} 中没有无效项`,
-            icon: "i-lucide-circle-alert",
-            color: "neutral",
-        });
-        return;
-    }
-
-    const validItems = info.allNames.filter(
-        (item) => !info.invalidNames.includes(item),
-    );
-
-    currentRef.value = validItems.join("\n");
-
-    toast.add({
-        title: `列表 ${listType} 的无效项已移除`,
-        icon: "i-lucide-list-check",
-        color: "neutral",
-    });
-};
-
-watch(
-    [listA, listB],
-    () => {
-        compareNames();
-    },
-    { immediate: false },
-);
-</script>

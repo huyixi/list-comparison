@@ -1,51 +1,14 @@
 <!-- components/ListInput.vue -->
-<template>
-    <div
-        class="bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden"
-    >
-        <div
-            class="flex items-center justify-between border-b border-gray-200 bg-gray-50 ps-3 pe-1"
-        >
-            <h2 class="text-xl font-medium text-gray-700">{{ title }}</h2>
-            <div class="flex items-center gap-0">
-                <ClipboardPaste
-                    @request-focus="focusTextarea"
-                    @clipboard-paste="
-                        (content) => $emit('clipboard-paste', content)
-                    "
-                />
-                <FileUploader @file-upload="handleFileUpload" />
-            </div>
-        </div>
-
-        <textarea
-            :value="modelValue"
-            ref="textareaRef"
-            @input="$emit('update:modelValue', $event.target.value)"
-            class="w-full min-h-80 p-3 border-0 focus:ring-0 resize-none flex-1"
-            placeholder="输入列表，每项可用逗号、分号、制表符或换行分隔。"
-        ></textarea>
-
-        <div
-            class="flex justify-between items-center border-t border-gray-200 bg-gray-50 text-sm"
-        >
-            <SeperatorModal :totalCount="totalCount"></SeperatorModal>
-            <div class="flex items-center justify-end gap-3 p-2">
-                <slot name="stats"></slot>
-            </div>
-        </div>
-    </div>
-</template>
-
-<script setup>
+<script setup lang="ts">
 const textareaRef = ref(null);
+const rawInput = defineModel();
 
 defineProps({
-    modelValue: {
-        type: String,
-        default: "",
-    },
     title: String,
+    target: {
+        type: String as () => "A" | "B",
+        required: true,
+    },
     totalCount: Number,
     separators: {
         type: Array,
@@ -53,11 +16,7 @@ defineProps({
     },
 });
 
-const emit = defineEmits([
-    "update:modelValue",
-    "clipboard-paste",
-    "file-upload",
-]);
+const emit = defineEmits(["file-upload"]);
 
 const handleFileUpload = (files) => {
     emit("file-upload", files);
@@ -71,3 +30,41 @@ defineExpose({
     focusTextarea,
 });
 </script>
+
+<template>
+    <div
+        class="bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden"
+    >
+        <div
+            class="flex items-center justify-between border-b border-gray-200 bg-gray-50 ps-3 pe-1"
+        >
+            <h2 class="text-xl font-medium text-gray-700">{{ title }}</h2>
+            <div class="flex items-center gap-0">
+                <PasteButton
+                    :target="target"
+                    @request-focus="focusTextarea"
+                    @clipboard-paste="
+                        (content) => $emit('clipboard-paste', content)
+                    "
+                />
+                <FileUploader @file-upload="handleFileUpload" />
+            </div>
+        </div>
+
+        <textarea
+            ref="textareaRef"
+            class="w-full min-h-80 p-3 border-0 focus:ring-0 resize-none flex-1"
+            placeholder="输入列表，每项可用逗号、分号、制表符或换行分隔。"
+            v-model="rawInput"
+        ></textarea>
+
+        <div
+            class="flex justify-between items-center border-t border-gray-200 bg-gray-50 text-sm"
+        >
+            <SeperatorModal :totalCount="totalCount"></SeperatorModal>
+            <div class="flex items-center justify-end gap-3 p-2">
+                <slot name="stats"></slot>
+            </div>
+        </div>
+    </div>
+</template>
