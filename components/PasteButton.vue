@@ -4,7 +4,7 @@ const isPasted = ref(false);
 
 const props = defineProps({
     target: {
-        type: String as () => "A" | "B",
+        type: String as PropType<"A" | "B">,
         required: true,
     },
 });

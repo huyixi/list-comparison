@@ -1,3 +1,47 @@
+<script setup lang="ts">
+import { useSeparators } from "~/composables/useSeparators";
+import type { SeparatorItem } from "~/types/separators";
+
+const props = defineProps({
+    totalCount: Number,
+});
+
+const isModalOpen = ref(false);
+
+const {
+    separators,
+    selectedSeparatorIds,
+    separatorQuery,
+    isCustom,
+    addCustomSeparator,
+    removeCustomSeparator,
+    handleSeparatorClick,
+    resetSeparators,
+} = useSeparators();
+
+const openSeparatorPopover = () => {
+    isModalOpen.value = true;
+};
+
+const filteredSeparators = computed(() => {
+    const query = separatorQuery.value.trim().toLowerCase();
+
+    if (!query) return separators.value;
+
+    return separators.value.filter((sep: SeparatorItem) => {
+        const labelMatch = sep.label.toLowerCase().includes(query);
+
+        if (isCustom(sep)) {
+            return labelMatch;
+        }
+
+        const descriptionMatch = sep.description?.toLowerCase().includes(query);
+
+        return labelMatch || descriptionMatch;
+    });
+});
+</script>
+
 <template>
     <UTooltip text="添加分隔符">
         <p
@@ -86,47 +130,3 @@
         </template>
     </UModal>
 </template>
-
-<script setup lang="ts">
-import { useSeparators } from "~/composables/useSeparators";
-import type { SeparatorItem } from "~/types/separators";
-
-const props = defineProps({
-    totalCount: Number,
-});
-
-const isModalOpen = ref(false);
-
-const {
-    separators,
-    selectedSeparatorIds,
-    separatorQuery,
-    isCustom,
-    addCustomSeparator,
-    removeCustomSeparator,
-    handleSeparatorClick,
-    resetSeparators,
-} = useSeparators();
-
-const openSeparatorPopover = () => {
-    isModalOpen.value = true;
-};
-
-const filteredSeparators = computed(() => {
-    const query = separatorQuery.value.trim().toLowerCase();
-
-    if (!query) return separators.value;
-
-    return separators.value.filter((sep: SeparatorItem) => {
-        const labelMatch = sep.label.toLowerCase().includes(query);
-
-        if (isCustom(sep)) {
-            return labelMatch;
-        }
-
-        const descriptionMatch = sep.description?.toLowerCase().includes(query);
-
-        return labelMatch || descriptionMatch;
-    });
-});
-</script>

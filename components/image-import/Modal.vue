@@ -21,13 +21,17 @@
                 </UTooltip>
                 <UTooltip text="识别图片中的文字并导入">
                     <UButton
-                        icon="i-lucide-scan-text"
+                        :icon="
+                            allOcrDone ? 'i-lucide-plus' : 'i-lucide-scan-text'
+                        "
                         size="md"
                         :ui="{
                             base: 'text-white',
                             leadingIcon: 'text-white',
                         }"
-                        @click="handleOcrAllImages"
+                        :loading="isRecognizing"
+                        :disabled="isRecognizing"
+                        @click="handleClick"
                     >
                         {{ allOcrDone ? "导入文字" : "文字识别" }}
                     </UButton>
@@ -39,7 +43,7 @@
 
 <script setup lang="ts">
 import { useImage } from "~/composables/useImage";
-const { imageItems, performAllOCR, allOcrDone } = useImage();
+const { imageItems, performAllOCR, allOcrDone, clearImages } = useImage();
 const imageCount = computed(() => imageItems.value.length);
 
 const emit = defineEmits(["ocr-finished", "add-image"]);
@@ -48,14 +52,36 @@ const handleAddImage = () => {
     emit("add-image");
 };
 
-const handleOcrAllImages = async () => {
-    await performAllOCR();
-    const results = imageItems.value
-        .filter((item) => item.ocrStatus === "success" && item.ocrText?.trim())
-        .map((item) => ({
-            text: item.ocrText!,
-        }));
+const props = defineProps({
+    target: {
+        type: String as PropType<"A" | "B">,
+        required: true,
+    },
+});
 
-    emit("ocr-finished", results);
+const appendText =
+    inject<(target: "A" | "B", text: string) => void>("appendText");
+
+const isRecognizing = ref(false);
+
+const handleClick = async () => {
+    if (!allOcrDone.value) {
+        if (isRecognizing.value) return;
+
+        isRecognizing.value = true;
+        await performAllOCR();
+        isRecognizing.value = false;
+    } else {
+        const text = imageItems.value
+            .filter(
+                (item) => item.ocrStatus === "success" && item.ocrText?.trim(),
+            )
+            .map((item) => item.ocrText!.trim())
+            .join("\n");
+
+        appendText(props.target, text);
+        emit("update:open", false);
+        clearImages();
+    }
 };
 </script>

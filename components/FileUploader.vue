@@ -55,6 +55,9 @@ const MAX_FILE_COUNT = 9;
 const inputAccept = ref("");
 const inputMultiple = ref(true);
 
+const appendText =
+    inject<(target: "A" | "b", text: string) => void>("appendText");
+
 const openFilePicker = () => {
     inputAccept.value = ACCEPT_FILE_TYPES;
     inputMultiple.value = true;
@@ -127,7 +130,7 @@ const processSelectedFiles = async (e: Event) => {
         } else if (uniqueTypes[0] === "text") {
             for (const file of fileArray) {
                 const content = await parseFile(file);
-                emit("file-upload", content as string);
+                appendText(props.target, content as string);
             }
         } else {
             toast.add({
@@ -221,14 +224,13 @@ const handleImageDelete = (index: number) => {
     <XlsxImportModal
         :target="props.target"
         v-model:open="isXlsxModalOpen"
-        @update:open="handleCloseModal"
         :workbook-data="workbookData"
     />
 
     <ImageImportModal
         :target="props.target"
-        v-model:open="isImageModalOpen"
         :imageItems="imageItems"
+        v-model:open="isImageModalOpen"
         @add-image="openImageFilePicker"
         @delete-image="handleImageDelete"
     />

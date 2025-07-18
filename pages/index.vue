@@ -211,7 +211,7 @@ const handleCopy = (content) => {
                 target="B"
                 title="列表 B"
                 ref="listBRef"
-                :total-count="listBInfo.totalEnteredCount"
+                :total-count="listBInfo.rawItemsCount"
             >
                 <template #stats>
                     <StatPopover
