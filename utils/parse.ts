@@ -26,7 +26,6 @@ function isInvalidItem(item: string): boolean {
 }
 
 export function parseText(text: string, separators: string[]) {
-  console.log("Parsing text:", text);
   const rawItems = splitTextBySeparators(text, separators);
 
   const validItems: string[] = [];

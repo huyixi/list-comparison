@@ -6,6 +6,7 @@
                 'bg-elevated/75 rounded-none border-none shadow-none ring-0',
         }"
         v-model:open="isOpen"
+        :dismissible="false"
     >
         <template #content>
             <ImageImportEditor @close="isOpen = false" />

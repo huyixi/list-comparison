@@ -1,45 +1,3 @@
-<template>
-    <UTooltip :text="TOOLTIP_TEXT">
-        <UButton
-            type="button"
-            icon="i-lucide-file-up"
-            size="md"
-            color="neutral"
-            variant="ghost"
-            :aria-label="TOOLTIP_TEXT"
-            class="hover:cursor-pointer"
-            @click="openFilePicker"
-            :ui="{
-                base: 'gap-0.5 ps-1 py-3',
-            }"
-        >
-            导入文件
-        </UButton>
-    </UTooltip>
-
-    <input
-        ref="fileInput"
-        type="file"
-        class="hidden"
-        :accept="inputAccept"
-        :multiple="inputMultiple"
-        @change="processSelectedFiles"
-    />
-
-    <XlsxImportModal
-        v-model:open="isXlsxModalOpen"
-        :workbook-data="workbookData"
-        @import-data="handleImportedData"
-    />
-
-    <ImageImportModal
-        v-model:open="isImageModalOpen"
-        :imageItems="imageItems"
-        @add-image="openImageFilePicker"
-        @delete-image="handleImageDelete"
-    />
-</template>
-
 <script setup lang="ts">
 import type { Sheet } from "~/types/sheet";
 import type { ImageItem } from "~/types/file";
@@ -55,6 +13,13 @@ const emit = defineEmits<{
     (e: "import-data", data: Sheet[]): void;
     (e: "file-upload", data: Sheet[] | string): void;
 }>();
+
+const props = defineProps({
+    target: {
+        type: String as PropType<"A" | "B">,
+        required: true,
+    },
+});
 
 const fileInput = ref<HTMLInputElement | null>(null);
 const isXlsxModalOpen = ref(false);
@@ -203,8 +168,7 @@ const processImageFiles = async (files: File[]) => {
     }
 };
 
-const handleImportedData = (data: string) => {
-    emit("file-upload", data);
+const handleCloseModal = () => {
     isXlsxModalOpen.value = false;
     isImageModalOpen.value = false;
     if (fileInput.value) {
@@ -225,3 +189,47 @@ const handleImageDelete = (index: number) => {
     }
 };
 </script>
+
+<template>
+    <UTooltip :text="TOOLTIP_TEXT">
+        <UButton
+            type="button"
+            icon="i-lucide-file-up"
+            size="md"
+            color="neutral"
+            variant="ghost"
+            :aria-label="TOOLTIP_TEXT"
+            class="hover:cursor-pointer"
+            @click="openFilePicker"
+            :ui="{
+                base: 'gap-0.5 ps-1 py-3',
+            }"
+        >
+            导入文件
+        </UButton>
+    </UTooltip>
+
+    <input
+        ref="fileInput"
+        type="file"
+        class="hidden"
+        :accept="inputAccept"
+        :multiple="inputMultiple"
+        @change="processSelectedFiles"
+    />
+
+    <XlsxImportModal
+        :target="props.target"
+        v-model:open="isXlsxModalOpen"
+        @update:open="handleCloseModal"
+        :workbook-data="workbookData"
+    />
+
+    <ImageImportModal
+        :target="props.target"
+        v-model:open="isImageModalOpen"
+        :imageItems="imageItems"
+        @add-image="openImageFilePicker"
+        @delete-image="handleImageDelete"
+    />
+</template>

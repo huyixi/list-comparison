@@ -3,10 +3,10 @@
 const textareaRef = ref(null);
 const rawInput = defineModel();
 
-defineProps({
+const props = defineProps({
     title: String,
     target: {
-        type: String as () => "A" | "B",
+        type: String as PropType<"A" | "B">,
         required: true,
     },
     totalCount: Number,
@@ -15,12 +15,6 @@ defineProps({
         default: () => [],
     },
 });
-
-const emit = defineEmits(["file-upload"]);
-
-const handleFileUpload = (files) => {
-    emit("file-upload", files);
-};
 
 const focusTextarea = () => {
     textareaRef.value?.focus();
@@ -38,16 +32,10 @@ defineExpose({
         <div
             class="flex items-center justify-between border-b border-gray-200 bg-gray-50 ps-3 pe-1"
         >
-            <h2 class="text-xl font-medium text-gray-700">{{ title }}</h2>
+            <h2 class="text-xl font-medium text-gray-700">{{ props.title }}</h2>
             <div class="flex items-center gap-0">
-                <PasteButton
-                    :target="target"
-                    @request-focus="focusTextarea"
-                    @clipboard-paste="
-                        (content) => $emit('clipboard-paste', content)
-                    "
-                />
-                <FileUploader @file-upload="handleFileUpload" />
+                <PasteButton :target="target" @request-focus="focusTextarea" />
+                <FileUploader :target="target" />
             </div>
         </div>
 
@@ -61,7 +49,7 @@ defineExpose({
         <div
             class="flex justify-between items-center border-t border-gray-200 bg-gray-50 text-sm"
         >
-            <SeperatorModal :totalCount="totalCount"></SeperatorModal>
+            <SeperatorModal :totalCount="props.totalCount"></SeperatorModal>
             <div class="flex items-center justify-end gap-3 p-2">
                 <slot name="stats"></slot>
             </div>

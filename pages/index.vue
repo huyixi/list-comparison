@@ -23,7 +23,7 @@ const comparedResult = computed(() =>
 );
 
 const appendText = (target: "A" | "B", text: string) => {
-    console.log("appendText", target, text);
+    console.log("appendText", target);
     if (target === "A") appendTextA(text);
     else appendTextB(text);
 };
@@ -171,7 +171,6 @@ const handleCopy = (content) => {
                 ref="listARef"
                 v-model="inputA"
                 :total-count="listAInfo.rawItemsCount"
-                @file-upload="(text) => appendInputA(text)"
             >
                 <template #stats>
                     <StatPopover
@@ -213,7 +212,6 @@ const handleCopy = (content) => {
                 title="列表 B"
                 ref="listBRef"
                 :total-count="listBInfo.totalEnteredCount"
-                @file-upload="(text) => appendInputB(text)"
             >
                 <template #stats>
                     <StatPopover

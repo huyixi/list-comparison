@@ -3,6 +3,7 @@
     <UModal
         title="图文识别"
         :ui="{ body: 'p-0 sm:p-0 h-[60dvh] aspect-square' }"
+        :dismissible="false"
     >
         <template #body>
             <ImageImportPreviewGrid />

@@ -1,79 +1,25 @@
-<template>
-    <UModal
-        :ui="{ body: 'p-4 sm:p-4', footer: 'justify-between p-4 sm:p-4' }"
-        title="导入表格"
-    >
-        <template #body>
-            <UCard
-                :ui="{
-                    root: 'overflow-hidden',
-                    body: 'p-0 sm:p-0 ',
-                }"
-            >
-                <UTable
-                    :key="selectedSheetIndex"
-                    :data="previewSheetData"
-                    :columns="selectedSheetColumns"
-                    :ui="{
-                        root: 'max-h-[50vh] overflow-auto',
-                        tbody: 'bg-(--ui-bg-muted) hover:cursor-not-allowed',
-                        th: 'p-2 max-w-[6rem] truncate whitespace-nowrap',
-                        td: 'p-2 max-w-[6rem] truncate whitespace-nowrap',
-                    }"
-                >
-                </UTable>
-            </UCard>
-        </template>
-        <template #footer>
-            <USelect
-                v-model="selectedSheetIndex"
-                :items="sheetOptions"
-                placeholder="请选择Sheet"
-                class="w-24"
-                size="md"
-            />
-            <div class="flex gap-2 items-center">
-                <UCheckbox
-                    label="全选"
-                    :model-value="selectedAllColumns"
-                    size="md"
-                    @click="toggleSheetColumnsSelectAll"
-                    :ui="{
-                        root: 'p-2 hover:cursor-pointer',
-                        base: 'size-4 hover:cursor-pointer',
-                        wrapper: 'ms-1 hover:cursor-pointer',
-                        label: 'hover:cursor-pointer',
-                    }"
-                />
-
-                <UButton
-                    color="primary"
-                    variant="solid"
-                    size="md"
-                    class="px-4"
-                    @click="importSelectedData"
-                >
-                    导入
-                </UButton>
-            </div>
-        </template>
-    </UModal>
-</template>
-
 <script setup lang="ts">
 import { h, resolveComponent } from "vue";
 import type { Sheet } from "~/types/sheet";
 
 const UCheckbox = resolveComponent("UCheckbox");
 
-const props = defineProps<{
-    workbookData: Sheet[];
-}>();
+const props = defineProps({
+    workbookData: {
+        type: Array as PropType<Sheet[]>,
+        required: true,
+    },
+    target: {
+        type: String as PropType<"A" | "B">,
+        required: true,
+    },
+});
 
 const emit = defineEmits(["import-data"]);
 
 const toast = useToast();
 
+const isOpen = ref(false);
 const selectedSheetIndex = ref(0);
 const selectedSheetColumns = ref<any[]>([]);
 const selectedSheetData = ref<any[]>([]);
@@ -218,6 +164,9 @@ watch(
     { immediate: true },
 );
 
+const appendText =
+    inject<(target: "A" | "B", text: string) => void>("appendText");
+
 const importSelectedData = () => {
     const sheet = props.workbookData[selectedSheetIndex.value];
     const selectedColumns = selectedSheetColumnSelections.value;
@@ -230,12 +179,78 @@ const importSelectedData = () => {
         });
         return;
     }
+
     const importedData = sheet.data.map((row) =>
         selectedColumns.map((colIndex) => row[colIndex]),
     );
 
-    const result = importedData.map((item) => item.join(",")).join("\n");
+    const text = importedData.map((item) => item.join(",")).join("\n");
 
-    emit("import-data", result);
+    appendText(props.target, text);
+    emit("update:open", false);
 };
 </script>
+
+<template>
+    <UModal
+        :ui="{ body: 'p-4 sm:p-4', footer: 'justify-between p-4 sm:p-4' }"
+        title="导入表格"
+        v-model:open="isOpen"
+        :dismissible="false"
+    >
+        <template #body>
+            <UCard
+                :ui="{
+                    root: 'overflow-hidden',
+                    body: 'p-0 sm:p-0 ',
+                }"
+            >
+                <UTable
+                    :key="selectedSheetIndex"
+                    :data="previewSheetData"
+                    :columns="selectedSheetColumns"
+                    :ui="{
+                        root: 'max-h-[50vh] overflow-auto',
+                        tbody: 'bg-(--ui-bg-muted) hover:cursor-not-allowed',
+                        th: 'p-2 max-w-[6rem] truncate whitespace-nowrap',
+                        td: 'p-2 max-w-[6rem] truncate whitespace-nowrap',
+                    }"
+                >
+                </UTable>
+            </UCard>
+        </template>
+        <template #footer>
+            <USelect
+                v-model="selectedSheetIndex"
+                :items="sheetOptions"
+                placeholder="请选择Sheet"
+                class="w-24"
+                size="md"
+            />
+            <div class="flex gap-2 items-center">
+                <UCheckbox
+                    label="全选"
+                    :model-value="selectedAllColumns"
+                    size="md"
+                    @click="toggleSheetColumnsSelectAll"
+                    :ui="{
+                        root: 'p-2 hover:cursor-pointer',
+                        base: 'size-4 hover:cursor-pointer',
+                        wrapper: 'ms-1 hover:cursor-pointer',
+                        label: 'hover:cursor-pointer',
+                    }"
+                />
+
+                <UButton
+                    color="primary"
+                    variant="solid"
+                    size="md"
+                    class="px-4"
+                    @click="importSelectedData"
+                >
+                    导入
+                </UButton>
+            </div>
+        </template>
+    </UModal>
+</template>
