@@ -114,23 +114,16 @@ const performAllOCR = async () => {
 
     const updated = await performOCR(item);
 
-    updateImageAt(i, {
-      ...updated,
-      __flashOCR: true,
-    });
-
-    setTimeout(() => {
-      const current = imageItems.value[i];
-      if (current) {
-        const { __flashOCR, ...rest } = current;
-        updateImageAt(i, rest);
-      }
-    }, 1000);
+    updateImageAt(i, updated);
   }
 };
 
 const allOcrDone = computed(() => {
   return imageItems.value.every((item) => item.ocrStatus === "success");
+});
+
+const ocredCount = computed(() => {
+  return imageItems.value.filter((item) => item.ocrStatus === "success").length;
 });
 
 export function useImage() {
@@ -147,6 +140,7 @@ export function useImage() {
     cropSelectedImage,
     performAllOCR,
     allOcrDone,
+    ocredCount,
     importModalOpen,
     closeImportModal,
     openImportModal,

@@ -39,11 +39,6 @@ export function getImageLayout(index: number, total: number): GridLayoutItem {
   };
 
   const layout = layouts[total] || [];
-  console.log(
-    "getImageLayout result111111111111111",
-    index,
-    total,
-    layout[index] || { colSpan: 1, rowSpan: 1 },
-  );
+  console.log(index, total, layout[index] || { colSpan: 1, rowSpan: 1 });
   return layout[index] || { colSpan: 1, rowSpan: 1 };
 }

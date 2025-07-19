@@ -4,14 +4,8 @@ import type { ImageItem } from "~/types/file";
 import { useFileHandler } from "~/composables/useFileHandler";
 import { useImage } from "~/composables/useImage";
 
-const {
-    imageItems,
-    deleteImageAt,
-    clearImages,
-    importModalOpen,
-    openImportModal,
-    closeImportModal,
-} = useImage();
+const { imageItems, deleteImageAt, importModalOpen, openImportModal } =
+    useImage();
 
 const toast = useToast();
 const { parseFile, getFileType } = useFileHandler();
@@ -62,7 +56,7 @@ const inputAccept = ref("");
 const inputMultiple = ref(true);
 
 const appendText =
-    inject<(target: "A" | "b", text: string) => void>("appendText");
+    inject<(target: "A" | "B", text: string) => void>("appendText")!;
 
 const openFilePicker = () => {
     inputAccept.value = ACCEPT_FILE_TYPES;
