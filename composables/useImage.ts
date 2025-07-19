@@ -42,6 +42,10 @@ const updateImageAt = (index: number, item: ImageItem) => {
 const deleteImageAt = (index: number) => {
   if (index >= 0 && index < imageItems.value.length) {
     imageItems.value.splice(index, 1);
+    if (imageItems.value.length === 0) {
+      clearImages();
+      previewOpen.value = false;
+    }
   }
 };
 

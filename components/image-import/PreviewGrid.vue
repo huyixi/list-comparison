@@ -1,13 +1,13 @@
 <!-- components/image-import/PreviewGrid.vue -->
 <template>
     <div
-        class="grid gap-0.5 w-full h-full"
+        class="grid gap-1 w-full h-full"
         :class="getGridTemplate(imageItems.length)"
     >
         <div
             v-for="(img, i) in imageItems"
             :key="img.file.name || i"
-            class="relative group overflow-hidden hover:cursor-pointer"
+            class="relative overflow-hidden group hover:cursor-pointer"
             :style="{
                 gridColumn: `span ${imageLayout[i].colSpan} / span ${imageLayout[i].colSpan}`,
                 gridRow: `span ${imageLayout[i].rowSpan} / span ${imageLayout[i].rowSpan}`,
@@ -21,27 +21,19 @@
             />
 
             <div
-                class="absolute flex items-center justify-center inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity"
+                class="absolute top-0 right-0 p-2"
+                @click.stop="deleteImageAt(i)"
             >
-                <div class="flex items-center justify-center h-full">
-                    <div
-                        class="px-6 py-3 hover:bg-white/60 rounded-3xl hover:backdrop-blur h-11"
-                    >
-                        <UIcon name="i-lucide-eye" class="size-5 text-white" />
-                    </div>
-                </div>
-
-                <div
-                    class="absolute top-0 right-0 p-2"
-                    @click.stop="deleteImageAt(i)"
+                <button
+                    class="hover:cursor-pointer rounded-full overflow-hidden bg-slate-100/80 w-10 h-10 flex items-center justify-center md:hidden"
                 >
-                    <button
-                        class="hover:bg-red-600 hover:cursor-pointer rounded-md text-white p-2 transition w-8 h-8 flex items-center justify-center"
-                    >
-                        <UIcon name="i-lucide-trash" class="size-5" />
-                    </button>
-                </div>
+                    <UIcon
+                        name="i-lucide-trash"
+                        class="size-6 text-black-500"
+                    />
+                </button>
             </div>
+
             <div
                 class="absolute bottom-0 left-0 flex items-center gap-1 bg-black/60 text-white text-xs px-2 py-1 rounded-tr"
             >
