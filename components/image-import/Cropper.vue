@@ -3,7 +3,7 @@
     <ClientOnly>
         <Cropper
             ref="cropperRef"
-            class="w-[70svw] object-contain"
+            class="object-contain"
             :src="getCropperSrc"
             :default-size="defaultSize"
             :stencil-props="{
@@ -11,7 +11,7 @@
             }"
         />
     </ClientOnly>
-    <div class="flex flex-1 justify-end gap-3 mt-4">
+    <div class="flex justify-between mt-4">
         <UButton size="md" variant="outline" @click="closeEditor">取消</UButton>
         <UTooltip text="裁切图片">
             <UButton

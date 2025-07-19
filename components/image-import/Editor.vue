@@ -4,7 +4,7 @@
     <UModal
         :ui="{
             content:
-                'bg-elevated/75 rounded-none border-none shadow-none ring-0',
+                'bg-elevated/75 rounded-none border-none shadow-none ring-0 h-[70dvh]',
         }"
     >
         <template #content>
