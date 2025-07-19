@@ -4,7 +4,14 @@ import type { ImageItem } from "~/types/file";
 import { useFileHandler } from "~/composables/useFileHandler";
 import { useImage } from "~/composables/useImage";
 
-const { imageItems, deleteImageAt, clearImages } = useImage();
+const {
+    imageItems,
+    deleteImageAt,
+    clearImages,
+    importModalOpen,
+    openImportModal,
+    closeImportModal,
+} = useImage();
 
 const toast = useToast();
 const { parseFile, getFileType } = useFileHandler();
@@ -23,7 +30,6 @@ const props = defineProps({
 
 const fileInput = ref<HTMLInputElement | null>(null);
 const isXlsxModalOpen = ref(false);
-const isImageModalOpen = ref(false);
 const workbookData = ref<Sheet[]>([]);
 const TOOLTIP_TEXT = "上传 txt / xlsx / 图片";
 const ACCEPT_FILE_TYPES = [
@@ -126,7 +132,7 @@ const processSelectedFiles = async (e: Event) => {
             isXlsxModalOpen.value = true;
         } else if (uniqueTypes[0] === "image") {
             await processImageFiles(fileArray);
-            isImageModalOpen.value = true;
+            openImportModal();
         } else if (uniqueTypes[0] === "text") {
             for (const file of fileArray) {
                 const content = await parseFile(file);
@@ -173,24 +179,12 @@ const processImageFiles = async (files: File[]) => {
 
 const handleCloseModal = () => {
     isXlsxModalOpen.value = false;
-    isImageModalOpen.value = false;
     if (fileInput.value) {
         fileInput.value.value = "";
     }
 };
 
-watch(isImageModalOpen, () => {
-    if (!isImageModalOpen.value) {
-        imageItems.value = [];
-    }
-});
-
-const handleImageDelete = (index: number) => {
-    deleteImageAt(index);
-    if (imageItems.value.length === 0) {
-        isImageModalOpen.value = false;
-    }
-};
+provide("deleteImage", deleteImageAt);
 </script>
 
 <template>
@@ -230,8 +224,7 @@ const handleImageDelete = (index: number) => {
     <ImageImportModal
         :target="props.target"
         :imageItems="imageItems"
-        v-model:open="isImageModalOpen"
+        v-model:open="importModalOpen"
         @add-image="openImageFilePicker"
-        @delete-image="handleImageDelete"
     />
 </template>

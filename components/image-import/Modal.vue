@@ -1,15 +1,17 @@
 <!-- ./components/image-import/Modal.vue -->
-
 <script setup lang="ts">
 import { useImage } from "~/composables/useImage";
-const { imageItems, performAllOCR, allOcrDone, clearImages } = useImage();
+const {
+    imageItems,
+    performAllOCR,
+    allOcrDone,
+    clearImages,
+    editorOpen,
+    closeImportModal,
+} = useImage();
 const imageCount = computed(() => imageItems.value.length);
 
-const emit = defineEmits(["ocr-finished", "add-image"]);
-
-const handleAddImage = () => {
-    emit("add-image");
-};
+const emit = defineEmits(["add-image"]);
 
 const props = defineProps({
     target: {
@@ -39,17 +41,14 @@ const handleClick = async () => {
             .join("\n");
 
         appendText(props.target, text);
-        emit("update:open", false);
+        closeImportModal();
         clearImages();
     }
 };
 </script>
 
 <template>
-    <UModal
-        title="图文识别"
-        :ui="{ body: 'p-0 sm:p-0 h-[60dvh] aspect-square' }"
-    >
+    <UModal title="图文识别" :ui="{ body: 'p-0 sm:p-0 aspect-square' }">
         <template #body>
             <ImageImportPreviewGrid />
         </template>
@@ -61,7 +60,7 @@ const handleClick = async () => {
                         icon="i-lucide-plus"
                         size="md"
                         variant="outline"
-                        @click="handleAddImage"
+                        @click="emit('add-image')"
                     ></UButton>
                 </UTooltip>
                 <UTooltip

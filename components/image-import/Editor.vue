@@ -1,62 +1,14 @@
-<!-- ./components/image-import/Editor.vue -->
+<!-- ./components/image-import/Preview.vue -->
+<script setup lang="ts"></script>
 <template>
-    <ClientOnly>
-        <Cropper
-            ref="cropperRef"
-            class="w-[70svw] object-contain"
-            :src="getCropperSrc"
-            :default-size="defaultSize"
-            :stencil-props="{
-                handlers: {},
-            }"
-        />
-    </ClientOnly>
-    <div class="flex flex-1 justify-end gap-3 mt-4">
-        <UButton size="md" variant="outline" @click="closePreview"
-            >取消</UButton
-        >
-        <UTooltip text="裁切图片">
-            <UButton
-                size="md"
-                :ui="{
-                    base: 'text-white',
-                    leadingIcon: 'text-white',
-                }"
-                @click="handleCrop"
-            >
-                确定
-            </UButton>
-        </UTooltip>
-    </div>
+    <UModal
+        :ui="{
+            content:
+                'bg-elevated/75 rounded-none border-none shadow-none ring-0',
+        }"
+    >
+        <template #content>
+            <ImageImportCropper />
+        </template>
+    </UModal>
 </template>
-
-<script setup lang="ts">
-import { useImage } from "~/composables/useImage";
-const { imageItems, selectedIndex, closePreview, cropSelectedImage } =
-    useImage();
-
-import { Cropper } from "vue-advanced-cropper";
-import "vue-advanced-cropper/dist/style.css";
-
-const cropperRef = ref<InstanceType<typeof Cropper> | null>(null);
-
-const getCropperSrc = computed(() => {
-    const index = selectedIndex.value;
-    if (index === null || index < 0 || index >= imageItems.value.length)
-        return "";
-    const item = imageItems.value[index];
-    return item.croppedBase64 || item.base64;
-});
-
-const defaultSize = () => {
-    return {
-        width: 300,
-        height: 300,
-    };
-};
-
-const handleCrop = () => {
-    cropSelectedImage(cropperRef);
-    closePreview();
-};
-</script>

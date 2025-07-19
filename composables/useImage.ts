@@ -7,22 +7,33 @@ import { performOCR } from "~/utils/ocr";
 
 const imageItems = ref<ImageItem[]>([]);
 const selectedIndex = ref<number | null>(null);
-const previewOpen = ref(false);
 
-const openPreview = (index: number) => {
+const importModalOpen = ref(false);
+
+const openImportModal = () => {
+  importModalOpen.value = true;
+};
+
+const closeImportModal = () => {
+  importModalOpen.value = false;
+};
+
+const editorOpen = ref(false);
+
+const openEditor = (index: number) => {
   if (index < 0 || index >= imageItems.value.length) {
-    console.warn("[useImage] openPreview: index 越界", index);
+    console.warn("[useImage] openEditor: index 越界", index);
     selectedIndex.value = null;
-    previewOpen.value = false;
+    editorOpen.value = false;
     return;
   }
   selectedIndex.value = index;
-  previewOpen.value = true;
-  console.log("previewOpen", selectedIndex.value);
+  editorOpen.value = true;
+  console.log("editorOpen", selectedIndex.value);
 };
 
-const closePreview = () => {
-  previewOpen.value = false;
+const closeEditor = () => {
+  editorOpen.value = false;
   selectedIndex.value = null;
   console.log("previewClose", selectedIndex.value);
 };
@@ -42,16 +53,22 @@ const updateImageAt = (index: number, item: ImageItem) => {
 const deleteImageAt = (index: number) => {
   if (index >= 0 && index < imageItems.value.length) {
     imageItems.value.splice(index, 1);
-    if (imageItems.value.length === 0) {
-      clearImages();
-      previewOpen.value = false;
-    }
+    console.log("deleteImageAt", index, imageItems.value, imageItems);
   }
 };
 
 const clearImages = () => {
   imageItems.value = [];
 };
+
+watch(
+  () => imageItems.value.length,
+  (newLength) => {
+    if (newLength === 0) {
+      closeImportModal();
+    }
+  },
+);
 
 const cropSelectedImage = (
   cropperRef: Ref<InstanceType<typeof Cropper> | null>,
@@ -86,7 +103,7 @@ const cropSelectedImage = (
 
   updateImageAt(index, newItem);
 
-  closePreview();
+  closeEditor();
 };
 
 const performAllOCR = async () => {
@@ -119,10 +136,10 @@ const allOcrDone = computed(() => {
 export function useImage() {
   return {
     imageItems,
-    previewOpen,
+    editorOpen,
     selectedIndex,
-    openPreview,
-    closePreview,
+    openEditor,
+    closeEditor,
     addImages,
     updateImageAt,
     deleteImageAt,
@@ -130,5 +147,8 @@ export function useImage() {
     cropSelectedImage,
     performAllOCR,
     allOcrDone,
+    importModalOpen,
+    closeImportModal,
+    openImportModal,
   };
 }
