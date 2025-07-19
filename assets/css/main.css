@@ -1,2 +1,4 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+@source inline('col-span-{1,2,3}');
+@source inline('row-span-{1,2,3}');

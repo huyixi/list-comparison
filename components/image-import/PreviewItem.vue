@@ -5,13 +5,14 @@ const { imageItems, deleteImageAt, openEditor, closeEditor } = useImage();
 const props = defineProps<{
     img: any;
     index: number;
+    layout: GridLayoutItem;
 }>();
 
-const getOcrIcon = (status: string) => {
+const getOcrStatus = (status: string) => {
     if (status === "pending")
         return {
-            icon: "i-lucide-loader",
-            class: "animate-spin size-3",
+            icon: "i-lucide-loader-circle",
+            class: "motion-safe:animate-[spin_2s_linear_infinite] size-3",
             label: "识别中",
         };
     if (status === "success")
@@ -29,12 +30,18 @@ const getOcrIcon = (status: string) => {
     return { icon: "", class: "size-3", label: "未识别" };
 };
 
-const ocr = computed(() => getOcrIcon(props.img.ocrStatus));
+const ocr = computed(() => getOcrStatus(props.img.ocrStatus));
+
+const layoutString = computed(() => {
+    const { colSpan, rowSpan } = props.layout;
+    return `col-span-${colSpan} row-span-${rowSpan}`;
+});
 </script>
 
 <template>
     <div
-        class="relative overflow-hidden group hover:cursor-pointer"
+        class="aspect-square w-full h-full relative overflow-hidden group hover:cursor-pointer"
+        :class="layoutString"
         @click="openEditor(index)"
     >
         <img

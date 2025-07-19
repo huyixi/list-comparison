@@ -1,14 +1,8 @@
 <!-- ./components/image-import/Modal.vue -->
 <script setup lang="ts">
 import { useImage } from "~/composables/useImage";
-const {
-    imageItems,
-    performAllOCR,
-    allOcrDone,
-    clearImages,
-    editorOpen,
-    closeImportModal,
-} = useImage();
+const { imageItems, performAllOCR, allOcrDone, clearImages, closeImportModal } =
+    useImage();
 const imageCount = computed(() => imageItems.value.length);
 
 const emit = defineEmits(["add-image"]);
@@ -48,7 +42,10 @@ const handleClick = async () => {
 </script>
 
 <template>
-    <UModal title="图文识别" :ui="{ body: 'p-0 sm:p-0 aspect-square' }">
+    <UModal
+        title="图文识别"
+        :ui="{ body: 'p-0 sm:p-0 aspect-square overflow-hidden' }"
+    >
         <template #body>
             <ImageImportPreviewGrid />
         </template>
