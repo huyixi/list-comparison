@@ -8,15 +8,7 @@ import { performOCR } from "~/utils/ocr";
 const imageItems = ref<ImageItem[]>([]);
 const selectedIndex = ref<number | null>(null);
 
-const importModalOpen = ref(false);
-
-const openImportModal = () => {
-  importModalOpen.value = true;
-};
-
-const closeImportModal = () => {
-  importModalOpen.value = false;
-};
+const imageItemCount = computed(() => imageItems.value.length);
 
 const editorOpen = ref(false);
 
@@ -60,15 +52,6 @@ const deleteImageAt = (index: number) => {
 const clearImages = () => {
   imageItems.value = [];
 };
-
-watch(
-  () => imageItems.value.length,
-  (newLength) => {
-    if (newLength === 0) {
-      closeImportModal();
-    }
-  },
-);
 
 const cropSelectedImage = (
   cropperRef: Ref<InstanceType<typeof Cropper> | null>,
@@ -129,6 +112,7 @@ const ocredCount = computed(() => {
 export function useImage() {
   return {
     imageItems,
+    imageItemCount,
     editorOpen,
     selectedIndex,
     openEditor,
@@ -141,8 +125,5 @@ export function useImage() {
     performAllOCR,
     allOcrDone,
     ocredCount,
-    importModalOpen,
-    closeImportModal,
-    openImportModal,
   };
 }

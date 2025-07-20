@@ -4,16 +4,10 @@ import type { ImageItem } from "~/types/file";
 import { useFileHandler } from "~/composables/useFileHandler";
 import { useImage } from "~/composables/useImage";
 
-const { imageItems, deleteImageAt, importModalOpen, openImportModal } =
-    useImage();
+const { imageItems, imageItemCount, deleteImageAt, clearImages } = useImage();
 
 const toast = useToast();
 const { parseFile, getFileType } = useFileHandler();
-
-const emit = defineEmits<{
-    (e: "import-data", data: Sheet[]): void;
-    (e: "file-upload", data: Sheet[] | string): void;
-}>();
 
 const props = defineProps({
     target: {
@@ -24,6 +18,7 @@ const props = defineProps({
 
 const fileInput = ref<HTMLInputElement | null>(null);
 const isXlsxModalOpen = ref(false);
+const isImageModalOpen = ref(false);
 const workbookData = ref<Sheet[]>([]);
 const TOOLTIP_TEXT = "上传 txt / xlsx / 图片";
 const ACCEPT_FILE_TYPES = [
@@ -58,7 +53,7 @@ const inputMultiple = ref(true);
 const appendText =
     inject<(target: "A" | "B", text: string) => void>("appendText")!;
 
-const openFilePicker = () => {
+const openCommonFilePicker = () => {
     inputAccept.value = ACCEPT_FILE_TYPES;
     inputMultiple.value = true;
 
@@ -104,9 +99,13 @@ const checkFileUploadConstraints = (
 };
 
 const processSelectedFiles = async (e: Event) => {
+    console.log("processSelectedFiles");
     const input = e.target as HTMLInputElement;
     const files = input.files;
-    if (!files || files.length === 0) return;
+    if (!files || files.length === 0) {
+        toast.add({ title: "请选择文件", color: "warning" });
+        return;
+    }
 
     const fileArray = Array.from(files);
     const fileTypes = fileArray.map(getFileType).filter(Boolean) as string[];
@@ -121,12 +120,14 @@ const processSelectedFiles = async (e: Event) => {
 
     try {
         if (uniqueTypes[0] === "spreadsheet") {
+            console.log("parseFile");
             const parsedSheets = await parseFile(fileArray[0]);
             workbookData.value = parsedSheets as Sheet[];
             isXlsxModalOpen.value = true;
         } else if (uniqueTypes[0] === "image") {
             await processImageFiles(fileArray);
-            openImportModal();
+            console.log("processImageFiles");
+            isImageModalOpen.value = true;
         } else if (uniqueTypes[0] === "text") {
             for (const file of fileArray) {
                 const content = await parseFile(file);
@@ -162,7 +163,6 @@ const processImageFiles = async (files: File[]) => {
             });
         }
         imageItems.value.push(...newItems);
-        console.log("Image items:", imageItems.value);
     } catch (error) {
         console.error("图片处理失败", error);
         toast.add({ title: "图片解析失败", color: "error" });
@@ -171,12 +171,21 @@ const processImageFiles = async (files: File[]) => {
     }
 };
 
-const handleCloseModal = () => {
-    isXlsxModalOpen.value = false;
-    if (fileInput.value) {
-        fileInput.value.value = "";
+watch([isImageModalOpen, isXlsxModalOpen], ([valImageOpen, valXlsxOpen]) => {
+    if (!valImageOpen && !valXlsxOpen) {
+        if (fileInput.value) {
+            fileInput.value.value = "";
+        }
+        clearImages();
     }
-};
+});
+
+watch(imageItemCount, () => {
+    if (imageItems.value.length === 0) {
+        isImageModalOpen.value = false;
+        if (fileInput.value) fileInput.value.value = "";
+    }
+});
 
 provide("deleteImage", deleteImageAt);
 </script>
@@ -191,7 +200,7 @@ provide("deleteImage", deleteImageAt);
             variant="ghost"
             :aria-label="TOOLTIP_TEXT"
             class="hover:cursor-pointer"
-            @click="openFilePicker"
+            @click="openCommonFilePicker"
             :ui="{
                 base: 'gap-0.5 ps-1 py-3',
             }"
@@ -218,7 +227,7 @@ provide("deleteImage", deleteImageAt);
     <ImageImportModal
         :target="props.target"
         :imageItems="imageItems"
-        v-model:open="importModalOpen"
+        v-model:open="isImageModalOpen"
         @add-image="openImageFilePicker"
     />
 </template>

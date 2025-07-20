@@ -56,9 +56,9 @@ const layoutString = computed(() => {
             @click.stop="deleteImageAt(index)"
         >
             <button
-                class="hover:cursor-pointer rounded-full overflow-hidden bg-slate-100/80 w-10 h-10 flex items-center justify-center md:hidden md:group-hover:flex"
+                class="hover:cursor-pointer rounded-full overflow-hidden bg-slate-100/80 w-10 h-10 flex items-center justify-center sm:hidden sm:group-hover:flex"
             >
-                <UIcon :name="'i-lucide-trash'" class="size-6 text-black-500" />
+                <UIcon name="i-lucide-trash" class="size-6 text-black-500" />
             </button>
         </div>
 

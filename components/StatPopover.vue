@@ -1,3 +1,40 @@
+<script setup lang="ts">
+const clipboard = useClipboard();
+
+const handleCopy = (text: string) => {
+    clipboard.writeText(text);
+};
+
+const props = defineProps({
+    title: String,
+    count: Number,
+    items: Array,
+    status: {
+        type: String,
+        default: "green",
+        validator: (value) => ["red", "yellow", "green"].includes(value),
+    },
+    showClean: Boolean,
+    showCopy: Boolean,
+    displayFormatter: {
+        type: Function,
+        default: (item) => item,
+    },
+    copied: Boolean,
+});
+
+const statusColor = computed(() => {
+    const colors = {
+        red: "#FF5F56",
+        yellow: "#FFBD2E",
+        green: "#27C93F",
+    };
+    return colors[props.status] || colors.green;
+});
+
+defineEmits(["clean", "copy"]);
+</script>
+
 <template>
     <UPopover v-if="count > 0" :ui="{ content: 'overflow-hidden' }">
         <p class="flex items-center hover:cursor-pointer">
@@ -58,40 +95,3 @@
         </template>
     </UPopover>
 </template>
-
-<script setup lang="ts">
-const clipboard = useClipboard();
-
-const handleCopy = (text) => {
-    clipboard.writeText(text);
-};
-
-const props = defineProps({
-    title: String,
-    count: Number,
-    items: Array,
-    status: {
-        type: String,
-        default: "green",
-        validator: (value) => ["red", "yellow", "green"].includes(value),
-    },
-    showClean: Boolean,
-    showCopy: Boolean,
-    displayFormatter: {
-        type: Function,
-        default: (item) => item,
-    },
-    copied: Boolean,
-});
-
-const statusColor = computed(() => {
-    const colors = {
-        red: "#FF5F56",
-        yellow: "#FFBD2E",
-        green: "#27C93F",
-    };
-    return colors[props.status] || colors.green;
-});
-
-defineEmits(["clean", "copy"]);
-</script>

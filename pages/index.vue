@@ -35,7 +35,7 @@ const clipboard = useClipboard();
 const validListACopied = ref(false);
 const validListBCopied = ref(false);
 
-const handleCopy = (content) => {
+const handleCopy = (content: string) => {
     clipboard.writeText(content);
 };
 
@@ -221,7 +221,7 @@ const handleCopy = (content) => {
                         status="green"
                         :show-copy="true"
                         @copy="handleCopy(listBInfo.validItems.join('\n'))"
-                        :copied="validListACopied"
+                        :copied="validListBCopied"
                     />
 
                     <StatPopover
@@ -231,7 +231,8 @@ const handleCopy = (content) => {
                         status="yellow"
                         :show-clean="true"
                         :display-formatter="
-                            (item) => `[${item.count} 次]${item.name}`
+                            (item: DuplicateItem) =>
+                                `[${item.count} 次]${item.name}`
                         "
                         @clean="removeDuplicateItems('B')"
                     />

@@ -1,7 +1,7 @@
 <!-- components/ListInput.vue -->
 <script setup lang="ts">
-const textareaRef = ref(null);
-const rawInput = defineModel();
+const textareaRef = ref<HTMLTextAreaElement | null>(null);
+const rawInput = defineModel<string>();
 
 const props = defineProps({
     title: String,

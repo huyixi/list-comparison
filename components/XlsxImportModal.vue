@@ -15,11 +15,9 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(["import-data"]);
-
 const toast = useToast();
 
-const isOpen = ref(false);
+const isOpen = defineModel<boolean>("open");
 const selectedSheetIndex = ref(0);
 const selectedSheetColumns = ref<any[]>([]);
 const selectedSheetData = ref<any[]>([]);
@@ -164,8 +162,10 @@ watch(
     { immediate: true },
 );
 
+const emit = defineEmits(["update:open"]);
+
 const appendText =
-    inject<(target: "A" | "B", text: string) => void>("appendText");
+    inject<(target: "A" | "B", text: string) => void>("appendText")!;
 
 const importSelectedData = () => {
     const sheet = props.workbookData[selectedSheetIndex.value];
@@ -176,6 +176,7 @@ const importSelectedData = () => {
             title: "未选择任何数据",
             description: "请从表格中选择你想导入的列。",
             color: "warning",
+            icon: "i-lucide-circle-alert",
         });
         return;
     }
@@ -196,7 +197,6 @@ const importSelectedData = () => {
         :ui="{ body: 'p-4 sm:p-4', footer: 'justify-between p-4 sm:p-4' }"
         title="导入表格"
         v-model:open="isOpen"
-        :dismissible="false"
     >
         <template #body>
             <UCard

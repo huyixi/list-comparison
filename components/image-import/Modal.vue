@@ -1,17 +1,12 @@
 <!-- ./components/image-import/Modal.vue -->
 <script setup lang="ts">
 import { useImage } from "~/composables/useImage";
-const {
-    imageItems,
-    performAllOCR,
-    allOcrDone,
-    clearImages,
-    closeImportModal,
-    ocredCount,
-} = useImage();
+const { imageItems, performAllOCR, allOcrDone, clearImages, ocredCount } =
+    useImage();
+const toast = useToast();
 const imageCount = computed(() => imageItems.value.length);
 
-const emit = defineEmits(["add-image"]);
+const emit = defineEmits(["add-image", "update:open"]);
 
 const props = defineProps({
     target: {
@@ -40,17 +35,25 @@ const handleClick = async () => {
             .map((item) => item.ocrText!.trim())
             .join("\n");
 
+        console.log(props.target, text);
         appendText(props.target, text);
-        closeImportModal();
         clearImages();
+        emit("update:open", false);
+        toast.add({
+            title: "识别结果已添加到输入框",
+            icon: "i-lucide-check-circle",
+        });
     }
 };
+
+const isOpen = defineModel<boolean>("open");
 </script>
 
 <template>
     <UModal
         title="图文识别"
         :ui="{ body: 'p-0 sm:p-0 aspect-square overflow-hidden' }"
+        v-model:open="isOpen"
     >
         <template #body>
             <ImageImportPreviewGrid />
