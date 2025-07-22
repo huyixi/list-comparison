@@ -25,6 +25,10 @@ const handleCrop = () => {
     cropSelectedImage(cropperRef);
 };
 
+const handleRotate = () => {
+    cropperRef?.value?.rotate(90);
+};
+
 const coordinates = ref<{
     left: number;
     top: number;
@@ -43,54 +47,127 @@ watch(selectedImageSize, (size) => {
     }
     console.log("coordinates updated", size);
 });
+
+const isCropperChange = ref(false);
+const lastCoordinates = ref<null | CropperCoordinates>(null);
+
+type CropperCoordinates = {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+};
+
+function isEqualCoordinates(
+    a: CropperCoordinates | null,
+    b: CropperCoordinates | null,
+) {
+    if (!a || !b) return false;
+    return (
+        a.left === b.left &&
+        a.top === b.top &&
+        a.width === b.width &&
+        a.height === b.height
+    );
+}
+const handleCropperChange = (event: any) => {
+    const current = event?.coordinates;
+
+    if (!current) return;
+
+    if (!lastCoordinates.value) {
+        lastCoordinates.value = { ...current };
+        return;
+    }
+
+    if (!isEqualCoordinates(current, lastCoordinates.value)) {
+        isCropperChange.value = true;
+    }
+};
+
+const handleCropperReset = () => {
+    cropperRef.value?.reset();
+};
 </script>
 <template>
     <UModal
         fullscreen
-        title="裁切图片"
         :ui="{
-            body: 'p-0 sm:p-0 overflow-hidden',
+            body: 'p-0 sm:p-0',
             footer: 'justify-between',
+            content:
+                'flex flex-col justify-between items-center w-svw h-svh p-8',
         }"
     >
-        <template #body>
-            <ClientOnly>
-                <Cropper
-                    ref="cropperRef"
-                    :src="getCropperSrc"
-                    :coordinates="coordinates"
-                    :default-size="coordinates"
-                    :auto-zoom="true"
-                    :stencil-props="{
-                        handlersClasses: {
-                            north: 'line--handler handler--north',
-                            south: 'line--handler handler--south',
-                            west: 'line--handler handler--west',
-                            east: 'line--handler handler--east',
-                            westNorth: 'corner--handler handler--west-north',
-                            westSouth: 'corner--handler handler--west-south',
-                            eastNorth: 'corner--handler handler--east-north',
-                            eastSouth: 'corner--handler handler--east-south',
-                        },
-                    }"
-                />
-            </ClientOnly>
-        </template>
-        <template #footer>
-            <UTooltip text="取消图片">
-                <UButton size="md" variant="ghost" @click="closeEditor"
-                    >取消</UButton
+        <template #content>
+            <div class="w-full border-none flex justify-center">
+                <button
+                    class="px-2.5 py-1.5 text-sm gap-1.5 hover:cursor-pointer"
+                    @click="handleRotate"
                 >
-            </UTooltip>
-            <UTooltip text="确定图片">
+                    <UIcon name="i-lucide-rotate-cw-square" class="size-6" />
+                </button>
+            </div>
+            <div class="h-[80svh] border-none">
+                <ClientOnly>
+                    <Cropper
+                        ref="cropperRef"
+                        :src="getCropperSrc"
+                        :coordinates="coordinates"
+                        :default-size="coordinates"
+                        :auto-zoom="true"
+                        :stencil-props="{
+                            handlersClasses: {
+                                north: 'line--handler handler--north',
+                                south: 'line--handler handler--south',
+                                west: 'line--handler handler--west',
+                                east: 'line--handler handler--east',
+                                westNorth:
+                                    'corner--handler handler--west-north',
+                                westSouth:
+                                    'corner--handler handler--west-south',
+                                eastNorth:
+                                    'corner--handler handler--east-north',
+                                eastSouth:
+                                    'corner--handler handler--east-south',
+                            },
+                        }"
+                        @change="handleCropperChange"
+                    />
+                </ClientOnly>
+            </div>
+            <div class="w-full flex justify-between">
+                <UTooltip text="取消图片">
+                    <UButton
+                        size="md"
+                        variant="ghost"
+                        @click="closeEditor"
+                        class="text-black rounded-full"
+                        >取消</UButton
+                    >
+                </UTooltip>
                 <UButton
                     size="md"
-                    :ui="{ base: 'text-white', leadingIcon: 'text-white' }"
-                    @click="handleCrop"
+                    variant="ghost"
+                    v-if="isCropperChange"
+                    @click="handleCropperReset"
+                    class="bg-yellow-300 text-black rounded-full"
                 >
-                    确定
+                    重置
                 </UButton>
-            </UTooltip>
+                <UTooltip text="确定修改">
+                    <UButton
+                        size="md"
+                        :ui="{
+                            base: 'text-white',
+                            leadingIcon: 'text-white',
+                        }"
+                        @click="handleCrop"
+                    >
+                        确定
+                    </UButton>
+                </UTooltip>
+            </div>
         </template>
     </UModal>
 </template>
