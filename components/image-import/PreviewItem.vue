@@ -1,11 +1,7 @@
 <!-- components/image-import/PreviewItem.vue -->
 <script setup lang="ts">
-const { imageItems, deleteImageAt, openEditor, closeEditor } = useImage();
-
 const props = defineProps<{
     img: any;
-    index: number;
-    layout: GridLayoutItem;
 }>();
 
 const getOcrStatus = (status: string) => {
@@ -31,36 +27,15 @@ const getOcrStatus = (status: string) => {
 };
 
 const ocr = computed(() => getOcrStatus(props.img.ocrStatus));
-
-const layoutString = computed(() => {
-    const { colSpan, rowSpan } = props.layout;
-    return `col-span-${colSpan} row-span-${rowSpan}`;
-});
 </script>
 
 <template>
-    <div
-        class="aspect-square w-full h-full relative overflow-hidden group hover:cursor-pointer"
-        :class="layoutString"
-        @click="openEditor(index)"
-    >
+    <div>
         <img
             :src="img.croppedBase64 || img.base64"
             alt="preview"
             class="w-full h-full object-cover"
         />
-
-        <!-- 删除按钮 -->
-        <div
-            class="absolute top-0 right-0 p-2"
-            @click.stop="deleteImageAt(index)"
-        >
-            <button
-                class="hover:cursor-pointer rounded-full overflow-hidden bg-slate-100/80 w-10 h-10 flex items-center justify-center sm:hidden sm:group-hover:flex"
-            >
-                <UIcon name="i-lucide-trash" class="size-6 text-black-500" />
-            </button>
-        </div>
 
         <!-- OCR 状态 -->
         <div

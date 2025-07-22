@@ -4,7 +4,8 @@ import type { ImageItem } from "~/types/file";
 import { useFileHandler } from "~/composables/useFileHandler";
 import { useImage } from "~/composables/useImage";
 
-const { imageItems, imageItemCount, deleteImageAt, clearImages } = useImage();
+const { imageItems, imageItemCount, addImages, deleteImageAt, clearImages } =
+    useImage();
 
 const toast = useToast();
 const { parseFile, getFileType } = useFileHandler();
@@ -99,7 +100,6 @@ const checkFileUploadConstraints = (
 };
 
 const processSelectedFiles = async (e: Event) => {
-    console.log("processSelectedFiles");
     const input = e.target as HTMLInputElement;
     const files = input.files;
     if (!files || files.length === 0) {
@@ -126,7 +126,6 @@ const processSelectedFiles = async (e: Event) => {
             isXlsxModalOpen.value = true;
         } else if (uniqueTypes[0] === "image") {
             await processImageFiles(fileArray);
-            console.log("processImageFiles");
             isImageModalOpen.value = true;
         } else if (uniqueTypes[0] === "text") {
             for (const file of fileArray) {
@@ -162,7 +161,7 @@ const processImageFiles = async (files: File[]) => {
                 ocrStatus: "idle",
             });
         }
-        imageItems.value.push(...newItems);
+        addImages(newItems);
     } catch (error) {
         console.error("图片处理失败", error);
         toast.add({ title: "图片解析失败", color: "error" });
@@ -183,11 +182,22 @@ watch([isImageModalOpen, isXlsxModalOpen], ([valImageOpen, valXlsxOpen]) => {
 watch(imageItemCount, () => {
     if (imageItems.value.length === 0) {
         isImageModalOpen.value = false;
+        clearImages();
         if (fileInput.value) fileInput.value.value = "";
     }
 });
 
 provide("deleteImage", deleteImageAt);
+
+const {
+    performAllOCR,
+    allOcrDone,
+    ocredCount,
+    selectedIndex,
+    openEditor,
+    editorOpen,
+    closeEditor,
+} = useImage();
 </script>
 
 <template>
@@ -230,4 +240,6 @@ provide("deleteImage", deleteImageAt);
         v-model:open="isImageModalOpen"
         @add-image="openImageFilePicker"
     />
+
+    <ImageImportEditor v-model:open="editorOpen" />
 </template>

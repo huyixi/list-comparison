@@ -9,12 +9,19 @@ export default defineNuxtConfig({
   },
   compatibilityDate: "2024-11-01",
   devtools: { enabled: false },
-  css: ["~/assets/css/main.css"],
+  css: ["~/assets/css/main.css", "~/assets/css/cropper.css"],
   icon: {
     customCollections: [{ prefix: "custom", dir: "./assets/icons" }],
   },
   vite: {
     plugins: [tailwindcss()],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `@use "@/assets/css/cropper.scss" as *;`,
+        },
+      },
+    },
   },
   ui: {
     colorMode: false,

@@ -1,8 +1,17 @@
 <!-- ./components/image-import/Modal.vue -->
 <script setup lang="ts">
 import { useImage } from "~/composables/useImage";
-const { imageItems, performAllOCR, allOcrDone, clearImages, ocredCount } =
-    useImage();
+const {
+    imageItems,
+    performAllOCR,
+    allOcrDone,
+    clearImages,
+    ocredCount,
+    selectedIndex,
+    openEditor,
+    editorOpen,
+    closeEditor,
+} = useImage();
 const toast = useToast();
 const imageCount = computed(() => imageItems.value.length);
 
@@ -35,7 +44,6 @@ const handleClick = async () => {
             .map((item) => item.ocrText!.trim())
             .join("\n");
 
-        console.log(props.target, text);
         appendText(props.target, text);
         clearImages();
         emit("update:open", false);

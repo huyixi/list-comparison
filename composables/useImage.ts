@@ -12,26 +12,62 @@ const imageItemCount = computed(() => imageItems.value.length);
 
 const editorOpen = ref(false);
 
-const openEditor = (index: number) => {
+const selectedImageSize = ref<{ width: number; height: number } | null>(null);
+const cropCoordinates = ref<{
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+} | null>(null);
+
+const openEditor = async (index: number) => {
   if (index < 0 || index >= imageItems.value.length) {
-    console.warn("[useImage] openEditor: index 越界", index);
     selectedIndex.value = null;
     editorOpen.value = false;
     return;
   }
+
   selectedIndex.value = index;
   editorOpen.value = true;
-  console.log("editorOpen", selectedIndex.value);
+
+  const image = new Image();
+  image.src =
+    imageItems.value[index].croppedBase64 || imageItems.value[index].base64;
+
+  await new Promise((resolve) => {
+    image.onload = resolve;
+    image.onerror = () => {
+      selectedImageSize.value = null;
+      cropCoordinates.value = null;
+      resolve(null);
+    };
+  });
+
+  selectedImageSize.value = {
+    width: image.naturalWidth,
+    height: image.naturalHeight,
+  };
+
+  console.log("coordinates updated", selectedImageSize.value);
+
+  cropCoordinates.value = {
+    left: 0,
+    top: 0,
+    width: image.naturalWidth,
+    height: image.naturalHeight,
+  };
 };
 
 const closeEditor = () => {
+  console.log("closeEditor called");
   editorOpen.value = false;
   selectedIndex.value = null;
-  console.log("previewClose", selectedIndex.value);
 };
 
 const addImages = (items: ImageItem[]) => {
   imageItems.value.push(...items);
+
+  console.log("updateImageAt", imageItems.value);
 };
 
 const updateImageAt = (index: number, item: ImageItem) => {
@@ -113,8 +149,10 @@ export function useImage() {
   return {
     imageItems,
     imageItemCount,
-    editorOpen,
     selectedIndex,
+    editorOpen,
+    selectedImageSize,
+    cropCoordinates,
     openEditor,
     closeEditor,
     addImages,
