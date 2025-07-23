@@ -66,7 +66,7 @@ const containerClass = computed(() => {
         :ui="{
             body: 'p-0 sm:p-0',
             footer: 'justify-between',
-            content: 'flex flex-col items-center w-svw h-svh pb-12',
+            content: 'flex flex-col items-center w-svw h-svh pb-10',
         }"
     >
         <template #content>
