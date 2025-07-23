@@ -66,7 +66,7 @@ const containerClass = computed(() => {
         :ui="{
             body: 'p-0 sm:p-0',
             footer: 'justify-between',
-            content: 'flex flex-col items-center w-svw h-svh pb-16 ',
+            content: 'flex flex-col items-center w-svw h-svh pb-12',
         }"
     >
         <template #content>
@@ -74,7 +74,7 @@ const containerClass = computed(() => {
                 class="flex-1 flex justify-center items-center w-full border-none"
             >
                 <div
-                    class="h-[80svh] w-[80vw] p-4 border-none flex justify-center items-center"
+                    class="h-[70svh] w-[80vw] p-4 border-none flex justify-center items-center"
                 >
                     <ClientOnly>
                         <Cropper

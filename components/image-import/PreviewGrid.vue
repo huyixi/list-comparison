@@ -17,7 +17,7 @@ const layoutList = computed(() =>
 </script>
 
 <template>
-    <div class="grid gap-1 w-full h-full" :class="gridTemplate">
+    <div class="grid gap-0.5 w-full h-full" :class="gridTemplate">
         <div
             v-for="(img, i) in imageItems"
             :key="`${i}-${img.file.name}`"
