@@ -48,46 +48,17 @@ watch(selectedImageSize, (size) => {
     console.log("coordinates updated", size);
 });
 
-const isCropperChange = ref(false);
-const lastCoordinates = ref<null | CropperCoordinates>(null);
-
-type CropperCoordinates = {
-    left: number;
-    top: number;
-    width: number;
-    height: number;
-};
-
-function isEqualCoordinates(
-    a: CropperCoordinates | null,
-    b: CropperCoordinates | null,
-) {
-    if (!a || !b) return false;
-    return (
-        a.left === b.left &&
-        a.top === b.top &&
-        a.width === b.width &&
-        a.height === b.height
-    );
-}
-const handleCropperChange = (event: any) => {
-    const current = event?.coordinates;
-
-    if (!current) return;
-
-    if (!lastCoordinates.value) {
-        lastCoordinates.value = { ...current };
-        return;
-    }
-
-    if (!isEqualCoordinates(current, lastCoordinates.value)) {
-        isCropperChange.value = true;
-    }
-};
-
 const handleCropperReset = () => {
     cropperRef.value?.reset();
 };
+
+const containerClass = computed(() => {
+    const width = coordinates.value?.width;
+    if (width && width > 0) {
+        return `sm:w-[${width}px]`;
+    }
+    return "";
+});
 </script>
 <template>
     <UModal
@@ -95,11 +66,10 @@ const handleCropperReset = () => {
         :ui="{
             body: 'p-0 sm:p-0',
             footer: 'justify-between',
-            content: 'flex flex-col items-center w-svw h-svh',
+            content: 'flex flex-col items-center w-svw h-svh pb-16 ',
         }"
     >
         <template #content>
-            <!-- ✅ 中间裁剪区域：占据剩余空间并居中内容 -->
             <div
                 class="flex-1 flex justify-center items-center w-full border-none"
             >
@@ -135,9 +105,12 @@ const handleCropperReset = () => {
                 </div>
             </div>
 
-            <div class="flex flex-col w-full">
+            <div
+                class="flex items-center flex-col w-full divide-y divide-neutral-200"
+                :class="containerClass"
+            >
                 <div
-                    class="w-full flex justify-between px-4 py-4 border-b border-b-neutral-200"
+                    class="w-full flex justify-between px-4 py-4 sm:max-w-[600px]"
                 >
                     <UButton
                         size="lg"
@@ -156,13 +129,14 @@ const handleCropperReset = () => {
                         size="lg"
                         variant="ghost"
                         @click="handleCropperReset"
-                        class="text-black rounded-full text-lg font-normal"
+                        class="text-black text-lg font-normal"
                     >
                         重置
                     </UButton>
                 </div>
-
-                <div class="w-full flex justify-between px-4 py-8">
+                <div
+                    class="w-full flex justify-between px-4 py-8 sm:max-w-[600px]"
+                >
                     <UTooltip text="取消图片">
                         <UButton
                             size="lg"
