@@ -99,7 +99,6 @@ const containerClass = computed(() => {
                                         'corner--handler handler--east-south',
                                 },
                             }"
-                            @change="handleCropperChange"
                         />
                     </ClientOnly>
                 </div>

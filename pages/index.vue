@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import { exportResultsToFile } from "@/utils/export";
-import { useImage } from "~/composables/useImage";
 
 const listARef = ref(null);
 const listBRef = ref(null);
 const showResults = ref(true);
 
-const { input: inputA, appendInput: appendTextA } = useInput();
-const { input: inputB, appendInput: appendTextB } = useInput();
+const {
+    input: inputA,
+    appendInput: appendTextA,
+    setInput: setInputA,
+} = useInput();
+const {
+    input: inputB,
+    appendInput: appendTextB,
+    setInput: setInputB,
+} = useInput();
 
 const { selectedSeparators } = useSeparators();
 
@@ -39,26 +46,35 @@ const handleCopy = (content: string) => {
     clipboard.writeText(content);
 };
 
+import { deduplicateText } from "@/utils/parse";
+
+const removeDuplicateItems = (target: "A" | "B") => {
+    const text = target === "A" ? inputA.value : inputB.value;
+    const result = deduplicateText(text, selectedSeparators.value);
+
+    if (target === "A") setInputA(result);
+    else setInputB(result);
+};
 // const exportResults = () => {
 //     const sections = [];
 
 //     if (onlyInA.value.length > 0) {
 //         sections.push({
-//             title: "--- 仅在列表 A 中存在的条目 ---",
+//             title: "--- 仅在名单 A 中存在的条目 ---",
 //             content: onlyInA.value.join("\n"),
 //         });
 //     }
 
 //     if (onlyInB.value.length > 0) {
 //         sections.push({
-//             title: "--- 仅在列表 B 中存在的条目 ---",
+//             title: "--- 仅在名单 B 中存在的条目 ---",
 //             content: onlyInB.value.join("\n"),
 //         });
 //     }
 
 //     if (inBoth.value.length > 0) {
 //         sections.push({
-//             title: "--- 同时存在于列表 A 和 B 中的条目 ---",
+//             title: "--- 同时存在于名单 A 和 B 中的条目 ---",
 //             content: inBoth.value.join("\n"),
 //         });
 //     }
@@ -69,7 +85,7 @@ const handleCopy = (content: string) => {
 //             .join("\n");
 
 //         sections.push({
-//             title: "--- 列表 A 中的重复条目 ---",
+//             title: "--- 名单 A 中的重复条目 ---",
 //             content: duplicateContent,
 //         });
 //     }
@@ -80,21 +96,21 @@ const handleCopy = (content: string) => {
 //             .join("\n");
 
 //         sections.push({
-//             title: "--- 列表 B 中的重复条目 ---",
+//             title: "--- 名单 B 中的重复条目 ---",
 //             content: duplicateContent,
 //         });
 //     }
 
 //     if (listAInfo.value.invalidNames.length > 0) {
 //         sections.push({
-//             title: "--- 列表 A 中检测到的特殊格式或空条目 (仅提示) ---",
+//             title: "--- 名单 A 中检测到的特殊格式或空条目 (仅提示) ---",
 //             content: listAInfo.value.invalidNames.join("\n"),
 //         });
 //     }
 
 //     if (listBInfo.value.invalidNames.length > 0) {
 //         sections.push({
-//             title: "--- 列表 B 中检测到的特殊格式或空条目 (仅提示) ---",
+//             title: "--- 名单 B 中检测到的特殊格式或空条目 (仅提示) ---",
 //             content: listBInfo.value.invalidNames.join("\n"),
 //         });
 //     }
@@ -118,7 +134,7 @@ const handleCopy = (content: string) => {
 
 //     if (!info.duplicates.length) {
 //         toast.add({
-//             title: `列表 ${listType} 中没有重复项`,
+//             title: `名单 ${listType} 中没有重复项`,
 //             icon: "i-lucide-circle-alert",
 //         });
 //         return;
@@ -127,7 +143,7 @@ const handleCopy = (content: string) => {
 //     currentRef.value = info.orderedUniqueNames.join("\n");
 
 //     toast.add({
-//         title: `列表 ${listType} 的重复项已移除`,
+//         title: `名单 ${listType} 的重复项已移除`,
 //         icon: "i-lucide-list-check",
 //         color: "neutral",
 //     });
@@ -139,7 +155,7 @@ const handleCopy = (content: string) => {
 
 //     if (!info.invalidNames.length) {
 //         toast.add({
-//             title: `列表 ${listType} 中没有无效项`,
+//             title: `名单 ${listType} 中没有无效项`,
 //             icon: "i-lucide-circle-alert",
 //             color: "neutral",
 //         });
@@ -153,7 +169,7 @@ const handleCopy = (content: string) => {
 //     currentRef.value = validItems.join("\n");
 
 //     toast.add({
-//         title: `列表 ${listType} 的无效项已移除`,
+//         title: `名单 ${listType} 的无效项已移除`,
 //         icon: "i-lucide-list-check",
 //         color: "neutral",
 //     });
@@ -166,7 +182,7 @@ const handleCopy = (content: string) => {
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <ListInput
-                title="列表 A"
+                title="名单 A"
                 target="A"
                 ref="listARef"
                 v-model="inputA"
@@ -209,7 +225,7 @@ const handleCopy = (content: string) => {
             <ListInput
                 v-model="inputB"
                 target="B"
-                title="列表 B"
+                title="名单 B"
                 ref="listBRef"
                 :total-count="listBInfo.rawItemsCount"
             >
@@ -256,9 +272,9 @@ const handleCopy = (content: string) => {
             class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6"
         >
             <ComparisonResult
-                title="仅在列表 A"
+                title="仅在名单 A"
                 :items="comparedResult.onlyInA"
-                empty-text="列表 A 中没有独有条目。"
+                empty-text="名单 A 中没有独有条目。"
                 suffix="独有"
             />
             <ComparisonResult
@@ -268,9 +284,9 @@ const handleCopy = (content: string) => {
                 suffix="共有"
             />
             <ComparisonResult
-                title="仅在列表 B"
+                title="仅在名单 B"
                 :items="comparedResult.onlyInB"
-                empty-text="列表 B 中没有独有条目。"
+                empty-text="名单 B 中没有独有条目。"
                 suffix="独有"
             />
         </div>

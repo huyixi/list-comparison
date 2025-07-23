@@ -23,6 +23,7 @@ const focusTextarea = () => {
 defineExpose({
     focusTextarea,
 });
+// import {parseText,deduplicateText} from ''
 </script>
 
 <template>
@@ -42,7 +43,7 @@ defineExpose({
         <textarea
             ref="textareaRef"
             class="w-full min-h-80 p-3 border-0 focus:ring-0 resize-none flex-1"
-            placeholder="输入列表，每项可用逗号、分号、制表符或换行分隔。"
+            placeholder="输入名单，每项可用逗号、分号、制表符或换行分隔。"
             v-model="rawInput"
         ></textarea>
 

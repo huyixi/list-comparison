@@ -61,7 +61,7 @@ defineEmits(["clean", "copy"]);
                     <UButton
                         v-if="showCopy"
                         :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
-                        size="2xs"
+                        size="xs"
                         color="neutral"
                         variant="ghost"
                         class="hover:cursor-pointer p-1"
@@ -72,7 +72,7 @@ defineEmits(["clean", "copy"]);
                     <UButton
                         v-if="showClean"
                         icon="i-heroicons-trash"
-                        size="2xs"
+                        size="xs"
                         color="neutral"
                         variant="ghost"
                         class="hover:cursor-pointer p-1"
