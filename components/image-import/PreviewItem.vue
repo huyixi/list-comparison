@@ -30,7 +30,7 @@ const ocr = computed(() => getOcrStatus(props.img.ocrStatus));
 </script>
 
 <template>
-    <div>
+    <div class="w-full h-full">
         <img
             :src="img.croppedBase64 || img.base64"
             alt="preview"

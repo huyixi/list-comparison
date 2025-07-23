@@ -95,78 +95,91 @@ const handleCropperReset = () => {
         :ui="{
             body: 'p-0 sm:p-0',
             footer: 'justify-between',
-            content:
-                'flex flex-col justify-between items-center w-svw h-svh p-8',
+            content: 'flex flex-col items-center w-svw h-svh',
         }"
     >
         <template #content>
-            <div class="w-full border-none flex justify-center">
-                <button
-                    class="px-2.5 py-1.5 text-sm gap-1.5 hover:cursor-pointer"
-                    @click="handleRotate"
+            <!-- ✅ 中间裁剪区域：占据剩余空间并居中内容 -->
+            <div
+                class="flex-1 flex justify-center items-center w-full border-none"
+            >
+                <div
+                    class="h-[80svh] w-[80vw] p-4 border-none flex justify-center items-center"
                 >
-                    <UIcon name="i-lucide-rotate-cw-square" class="size-6" />
-                </button>
+                    <ClientOnly>
+                        <Cropper
+                            ref="cropperRef"
+                            :src="getCropperSrc"
+                            :coordinates="coordinates"
+                            :default-size="coordinates"
+                            :auto-zoom="true"
+                            :stencil-props="{
+                                handlersClasses: {
+                                    north: 'line--handler handler--north',
+                                    south: 'line--handler handler--south',
+                                    west: 'line--handler handler--west',
+                                    east: 'line--handler handler--east',
+                                    westNorth:
+                                        'corner--handler handler--west-north',
+                                    westSouth:
+                                        'corner--handler handler--west-south',
+                                    eastNorth:
+                                        'corner--handler handler--east-north',
+                                    eastSouth:
+                                        'corner--handler handler--east-south',
+                                },
+                            }"
+                            @change="handleCropperChange"
+                        />
+                    </ClientOnly>
+                </div>
             </div>
-            <div class="h-[80svh] border-none">
-                <ClientOnly>
-                    <Cropper
-                        ref="cropperRef"
-                        :src="getCropperSrc"
-                        :coordinates="coordinates"
-                        :default-size="coordinates"
-                        :auto-zoom="true"
-                        :stencil-props="{
-                            handlersClasses: {
-                                north: 'line--handler handler--north',
-                                south: 'line--handler handler--south',
-                                west: 'line--handler handler--west',
-                                east: 'line--handler handler--east',
-                                westNorth:
-                                    'corner--handler handler--west-north',
-                                westSouth:
-                                    'corner--handler handler--west-south',
-                                eastNorth:
-                                    'corner--handler handler--east-north',
-                                eastSouth:
-                                    'corner--handler handler--east-south',
-                            },
-                        }"
-                        @change="handleCropperChange"
-                    />
-                </ClientOnly>
-            </div>
-            <div class="w-full flex justify-between">
-                <UTooltip text="取消图片">
+
+            <div class="flex flex-col w-full">
+                <div
+                    class="w-full flex justify-between px-4 py-4 border-b border-b-neutral-200"
+                >
                     <UButton
-                        size="md"
+                        size="lg"
+                        icon="i-lucide-rotate-cw-square"
                         variant="ghost"
-                        @click="closeEditor"
-                        class="text-black rounded-full"
-                        >取消</UButton
-                    >
-                </UTooltip>
-                <UButton
-                    size="md"
-                    variant="ghost"
-                    v-if="isCropperChange"
-                    @click="handleCropperReset"
-                    class="bg-yellow-300 text-black rounded-full"
-                >
-                    重置
-                </UButton>
-                <UTooltip text="确定修改">
-                    <UButton
-                        size="md"
+                        class="text-black"
+                        @click="handleRotate"
                         :ui="{
-                            base: 'text-white',
-                            leadingIcon: 'text-white',
+                            base: 'flex items-center justify-center px-4',
+                            leadingIcon: 'size-6',
                         }"
-                        @click="handleCrop"
                     >
-                        确定
                     </UButton>
-                </UTooltip>
+
+                    <UButton
+                        size="lg"
+                        variant="ghost"
+                        @click="handleCropperReset"
+                        class="text-black rounded-full text-lg font-normal"
+                    >
+                        重置
+                    </UButton>
+                </div>
+
+                <div class="w-full flex justify-between px-4 py-8">
+                    <UTooltip text="取消图片">
+                        <UButton
+                            size="lg"
+                            variant="ghost"
+                            @click="closeEditor"
+                            class="text-black text-lg font-normal"
+                        >
+                            取消
+                        </UButton>
+                    </UTooltip>
+
+                    <UTooltip text="确定修改">
+                        <UButton size="lg" @click="handleCrop" class="text-lg">
+                            确定
+                        </UButton>
+                    </UTooltip>
+                </div>
             </div>
         </template>
     </UModal>
