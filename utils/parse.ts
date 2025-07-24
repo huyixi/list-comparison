@@ -45,8 +45,10 @@ export function parseText(text: string, separators: string[]) {
 
   const duplicateItems = Object.entries(itemCountMap)
     .filter(([_, count]) => count > 1)
-    .map(([item, count]) => ({ item, count }))
-    .sort((a, b) => b.count - a.count || a.item.localeCompare(b.item));
+    .map(([item, count]) => ({ label: item, count }))
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+
+  console.log("duplicateItem00000000000s", duplicateItems);
 
   const result = {
     rawItems,

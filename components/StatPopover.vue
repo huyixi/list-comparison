@@ -23,6 +23,8 @@ const props = defineProps({
     copied: Boolean,
 });
 
+console.log("props", props);
+
 const statusColor = computed(() => {
     const colors = {
         red: "#FF5F56",
@@ -86,7 +88,7 @@ defineEmits(["clean", "copy"]);
                         v-for="(item, index) in items"
                         :key="index"
                         class="px-1.5 py-1 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 hover:cursor-pointer"
-                        @click="handleCopy(item.name || item)"
+                        @click="handleCopy(item.label || item)"
                     >
                         {{ displayFormatter(item) }}
                     </li>

@@ -206,7 +206,7 @@ const removeDuplicateItems = (target: "A" | "B") => {
                         status="yellow"
                         :show-clean="true"
                         :display-formatter="
-                            (item) => `[${item.count} 次]${item.name}`
+                            (item) => `[${item.count} 次]${item.label}`
                         "
                         @clean="removeDuplicateItems('A')"
                     />
@@ -247,8 +247,7 @@ const removeDuplicateItems = (target: "A" | "B") => {
                         status="yellow"
                         :show-clean="true"
                         :display-formatter="
-                            (item: DuplicateItem) =>
-                                `[${item.count} 次]${item.name}`
+                            (item) => `[${item.count} 次]${item.label}`
                         "
                         @clean="removeDuplicateItems('B')"
                     />
