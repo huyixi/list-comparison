@@ -5,36 +5,50 @@ const handleCopy = (text: string) => {
     clipboard.writeText(text);
 };
 
+import type { DuplicateItem } from "@/types";
+
 const props = defineProps({
     title: String,
-    count: Number,
-    items: Array,
+    count: {
+        type: Number,
+        required: true,
+    },
+    items: {
+        type: Array as PropType<string[] | DuplicateItem[]>,
+        required: true,
+    },
     status: {
-        type: String,
+        type: String as PropType<"red" | "yellow" | "green">,
         default: "green",
-        validator: (value) => ["red", "yellow", "green"].includes(value),
+        validator: (value: string) =>
+            ["red", "yellow", "green"].includes(value),
     },
     showClean: Boolean,
     showCopy: Boolean,
     displayFormatter: {
         type: Function,
-        default: (item) => item,
+        default: (item: string | DuplicateItem) => item,
     },
     copied: Boolean,
 });
 
-console.log("props", props);
+const colors: Record<"red" | "yellow" | "green", string> = {
+    red: "#FF5F56",
+    yellow: "#FFBD2E",
+    green: "#27C93F",
+};
 
-const statusColor = computed(() => {
-    const colors = {
-        red: "#FF5F56",
-        yellow: "#FFBD2E",
-        green: "#27C93F",
-    };
-    return colors[props.status] || colors.green;
-});
+const getStatusColor = (status: "red" | "yellow" | "green"): string => {
+    return colors[status];
+};
+
+const statusColor = computed(() => getStatusColor(props.status));
 
 defineEmits(["clean", "copy"]);
+
+const getItemLabel = (item: string | DuplicateItem): string => {
+    return typeof item === "string" ? item : item.label;
+};
 </script>
 
 <template>
@@ -53,11 +67,9 @@ defineEmits(["clean", "copy"]);
                     class="sticky top-0 z-10 p-1.5 flex justify-between items-center bg-gray-50 border-b border-gray-200"
                 >
                     <p class="font-medium">
-                        <span
-                            :style="{ color: statusColor }"
-                            class="font-semibold"
-                            >{{ count }}</span
-                        >
+                        <span class="font-semibold" :class="statusColor">{{
+                            count
+                        }}</span>
                         {{ title }}
                     </p>
                     <UButton
@@ -88,7 +100,7 @@ defineEmits(["clean", "copy"]);
                         v-for="(item, index) in items"
                         :key="index"
                         class="px-1.5 py-1 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 hover:cursor-pointer"
-                        @click="handleCopy(item.label || item)"
+                        @click="handleCopy(getItemLabel(item))"
                     >
                         {{ displayFormatter(item) }}
                     </li>

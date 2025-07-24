@@ -51,6 +51,21 @@ import { removeDuplicateItems, removeInvalidItems } from "@/utils/parse";
 const handleRemoveDuplicateItems = (target: "A" | "B") => {
     const text = target === "A" ? inputA.value : inputB.value;
     const result = removeDuplicateItems(text, selectedSeparators.value);
+
+    if (text === result) {
+        toast.add({
+            title: `名单 ${target} 中没有重复项`,
+            icon: "i-lucide-circle-alert",
+            color: "neutral",
+        });
+    } else {
+        toast.add({
+            title: `名单 ${target} 的重复项已移除`,
+            icon: "i-lucide-list-check",
+            color: "neutral",
+        });
+    }
+
     if (target === "A") setInputA(result);
     else setInputB(result);
 };
@@ -58,129 +73,35 @@ const handleRemoveDuplicateItems = (target: "A" | "B") => {
 const handleRemoveInvalidItems = (target: "A" | "B") => {
     const text = target === "A" ? inputA.value : inputB.value;
     const result = removeInvalidItems(text, selectedSeparators.value);
+
+    if (text === result) {
+        toast.add({
+            title: `名单 ${target} 中没有无效项`,
+            icon: "i-lucide-circle-alert",
+            color: "neutral",
+        });
+    } else {
+        toast.add({
+            title: `名单 ${target} 的无效项已移除`,
+            icon: "i-lucide-list-check",
+            color: "neutral",
+        });
+    }
+
     if (target === "A") setInputA(result);
     else setInputB(result);
 };
 
-// const exportResults = () => {
-//     const sections = [];
+import type { DuplicateItem } from "@/types";
 
-//     if (onlyInA.value.length > 0) {
-//         sections.push({
-//             title: "--- 仅在名单 A 中存在的条目 ---",
-//             content: onlyInA.value.join("\n"),
-//         });
-//     }
-
-//     if (onlyInB.value.length > 0) {
-//         sections.push({
-//             title: "--- 仅在名单 B 中存在的条目 ---",
-//             content: onlyInB.value.join("\n"),
-//         });
-//     }
-
-//     if (inBoth.value.length > 0) {
-//         sections.push({
-//             title: "--- 同时存在于名单 A 和 B 中的条目 ---",
-//             content: inBoth.value.join("\n"),
-//         });
-//     }
-
-//     if (listAInfo.value.duplicates.length > 0) {
-//         const duplicateContent = listAInfo.value.duplicates
-//             .map((item) => `${item.name} (出现 ${item.count} 次)`)
-//             .join("\n");
-
-//         sections.push({
-//             title: "--- 名单 A 中的重复条目 ---",
-//             content: duplicateContent,
-//         });
-//     }
-
-//     if (listBInfo.value.duplicates.length > 0) {
-//         const duplicateContent = listBInfo.value.duplicates
-//             .map((item) => `${item.name} (出现 ${item.count} 次)`)
-//             .join("\n");
-
-//         sections.push({
-//             title: "--- 名单 B 中的重复条目 ---",
-//             content: duplicateContent,
-//         });
-//     }
-
-//     if (listAInfo.value.invalidNames.length > 0) {
-//         sections.push({
-//             title: "--- 名单 A 中检测到的特殊格式或空条目 (仅提示) ---",
-//             content: listAInfo.value.invalidNames.join("\n"),
-//         });
-//     }
-
-//     if (listBInfo.value.invalidNames.length > 0) {
-//         sections.push({
-//             title: "--- 名单 B 中检测到的特殊格式或空条目 (仅提示) ---",
-//             content: listBInfo.value.invalidNames.join("\n"),
-//         });
-//     }
-
-//     if (sections.length === 0) {
-//         toast.add({
-//             title: "没有可导出的内容",
-//             description: "没有发现任何可导出的结果",
-//             color: "warning",
-//             icon: "i-lucide-circle-alert",
-//         });
-//         return;
-//     }
-
-//     exportResultsToFile(sections);
-// };
-
-// const removeDuplicateItems = (listType) => {
-//     const info = listType === "A" ? listAInfo.value : listBInfo.value;
-//     const currentRef = listType === "A" ? listA : listB;
-
-//     if (!info.duplicates.length) {
-//         toast.add({
-//             title: `名单 ${listType} 中没有重复项`,
-//             icon: "i-lucide-circle-alert",
-//         });
-//         return;
-//     }
-
-//     currentRef.value = info.orderedUniqueNames.join("\n");
-
-//     toast.add({
-//         title: `名单 ${listType} 的重复项已移除`,
-//         icon: "i-lucide-list-check",
-//         color: "neutral",
-//     });
-// };
-
-// const removeInvalidItems = (listType) => {
-//     const info = listType === "A" ? listAInfo.value : listBInfo.value;
-//     const currentRef = listType === "A" ? listA : listB;
-
-//     if (!info.invalidNames.length) {
-//         toast.add({
-//             title: `名单 ${listType} 中没有无效项`,
-//             icon: "i-lucide-circle-alert",
-//             color: "neutral",
-//         });
-//         return;
-//     }
-
-//     const validItems = info.allNames.filter(
-//         (item) => !info.invalidNames.includes(item),
-//     );
-
-//     currentRef.value = validItems.join("\n");
-
-//     toast.add({
-//         title: `名单 ${listType} 的无效项已移除`,
-//         icon: "i-lucide-list-check",
-//         color: "neutral",
-//     });
-// };
+// exportResultsToFile({
+//     onlyInA: comparedResult.value.onlyInA,
+//     onlyInB: comparedResult.value.onlyInB,
+//     inBoth: comparedResult.value.inBoth,
+//     listAInfo: listAInfo.value,
+//     listBInfo: listBInfo.value,
+//     filename: "名单比对",
+// });
 </script>
 
 <template>
@@ -298,8 +219,8 @@ const handleRemoveInvalidItems = (target: "A" | "B") => {
                 suffix="独有"
             />
         </div>
-
-        <!-- <div v-if="showResults" class="text-center my-6">
+        <!--
+        <div v-if="showResults" class="text-center my-6">
             <UButton
                 @click="exportResults"
                 icon="i-lucide-download"
