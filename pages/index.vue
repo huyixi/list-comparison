@@ -46,15 +46,22 @@ const handleCopy = (content: string) => {
     clipboard.writeText(content);
 };
 
-import { deduplicateText } from "@/utils/parse";
+import { removeDuplicateItems, removeInvalidItems } from "@/utils/parse";
 
-const removeDuplicateItems = (target: "A" | "B") => {
+const handleRemoveDuplicateItems = (target: "A" | "B") => {
     const text = target === "A" ? inputA.value : inputB.value;
-    const result = deduplicateText(text, selectedSeparators.value);
-
+    const result = removeDuplicateItems(text, selectedSeparators.value);
     if (target === "A") setInputA(result);
     else setInputB(result);
 };
+
+const handleRemoveInvalidItems = (target: "A" | "B") => {
+    const text = target === "A" ? inputA.value : inputB.value;
+    const result = removeInvalidItems(text, selectedSeparators.value);
+    if (target === "A") setInputA(result);
+    else setInputB(result);
+};
+
 // const exportResults = () => {
 //     const sections = [];
 
@@ -206,9 +213,10 @@ const removeDuplicateItems = (target: "A" | "B") => {
                         status="yellow"
                         :show-clean="true"
                         :display-formatter="
-                            (item) => `[${item.count} 次]${item.label}`
+                            (item: DuplicateItem) =>
+                                `[${item.count} 次]${item.label}`
                         "
-                        @clean="removeDuplicateItems('A')"
+                        @clean="handleRemoveDuplicateItems('A')"
                     />
 
                     <StatPopover
@@ -217,7 +225,7 @@ const removeDuplicateItems = (target: "A" | "B") => {
                         :items="listAInfo.invalidItems"
                         status="red"
                         :show-clean="true"
-                        @clean="removeInvalidItems('A')"
+                        @clean="handleRemoveInvalidItems('A')"
                     />
                 </template>
             </ListInput>
@@ -247,9 +255,10 @@ const removeDuplicateItems = (target: "A" | "B") => {
                         status="yellow"
                         :show-clean="true"
                         :display-formatter="
-                            (item) => `[${item.count} 次]${item.label}`
+                            (item: DuplicateItem) =>
+                                `[${item.count} 次]${item.label}`
                         "
-                        @clean="removeDuplicateItems('B')"
+                        @clean="handleRemoveDuplicateItems('B')"
                     />
 
                     <StatPopover
@@ -258,7 +267,7 @@ const removeDuplicateItems = (target: "A" | "B") => {
                         :items="listBInfo.invalidItems"
                         status="red"
                         :show-clean="true"
-                        @clean="removeInvalidItems('B')"
+                        @clean="handleRemoveInvalidItems('B')"
                     />
                 </template>
             </ListInput>

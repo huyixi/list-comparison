@@ -1,23 +1,52 @@
-// utils/parse.ts
+type ParsedItem = {
+  value: string;
+  separator: string;
+  start: number;
+  end: number;
+};
 
-function buildRegexCharClass(separators: string[]): string {
-  return separators
-    .map((sep) => sep.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-    .join("");
+function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function splitTextBySeparators(text: string, separators: string[]): string[] {
+export function parseTextWithSeparators(
+  text: string,
+  separators: string[],
+): ParsedItem[] {
   if (!text || typeof text !== "string" || !text.trim()) {
     return [];
   }
-  const regexCharClass = buildRegexCharClass(separators);
 
-  const regex = new RegExp(`[${regexCharClass}]`, "g");
+  const sepPattern = separators.map(escapeRegex).join("|");
+  const regex = new RegExp(sepPattern, "g");
 
-  return text
-    .split(regex)
-    .map((item) => item.trim())
-    .filter((item) => item !== "");
+  const result: ParsedItem[] = [];
+
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(text)) !== null) {
+    const sep = match[0];
+    const part = text.slice(lastIndex, match.index);
+    result.push({
+      value: part,
+      separator: sep,
+      start: lastIndex,
+      end: match.index + sep.length,
+    });
+    lastIndex = match.index + sep.length;
+  }
+
+  if (lastIndex < text.length) {
+    result.push({
+      value: text.slice(lastIndex),
+      separator: "",
+      start: lastIndex,
+      end: text.length,
+    });
+  }
+
+  return result;
 }
 
 function isInvalidItem(item: string): boolean {
@@ -25,12 +54,26 @@ function isInvalidItem(item: string): boolean {
   return !item?.trim() || !validCharPattern.test(item);
 }
 
-export function parseText(text: string, separators: string[]) {
-  const rawItems = splitTextBySeparators(text, separators);
+export function parseText(
+  text: string,
+  separators: string[],
+): {
+  rawItems: string[];
+  rawItemsCount: number;
+  validItems: string[];
+  validItemsCount: number;
+  duplicateItems: { label: string; count: number }[];
+  duplicateItemsCount: number;
+  invalidItems: string[];
+  invalidItemsCount: number;
+} {
+  const parsed = parseTextWithSeparators(text, separators);
+  const rawItems = parsed
+    .map((entry) => entry.value.trim())
+    .filter((v) => v !== "");
 
   const validItems: string[] = [];
   const invalidItems: string[] = [];
-
   const itemCountMap: Record<string, number> = {};
 
   rawItems.forEach((item) => {
@@ -39,7 +82,6 @@ export function parseText(text: string, separators: string[]) {
     } else {
       validItems.push(item);
     }
-
     itemCountMap[item] = (itemCountMap[item] || 0) + 1;
   });
 
@@ -48,9 +90,7 @@ export function parseText(text: string, separators: string[]) {
     .map(([item, count]) => ({ label: item, count }))
     .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
 
-  console.log("duplicateItem00000000000s", duplicateItems);
-
-  const result = {
+  return {
     rawItems,
     rawItemsCount: rawItems.length,
     validItems,
@@ -60,59 +100,50 @@ export function parseText(text: string, separators: string[]) {
     invalidItems,
     invalidItemsCount: invalidItems.length,
   };
-
-  return result;
 }
 
-export function deduplicateText(text: string, separators: string[]): string {
-  if (!text) return "";
+export function removeDuplicateItems(
+  text: string,
+  separators: string[],
+): string {
+  if (!text || typeof text !== "string") return "";
 
-  const parsed = parseText(text, separators);
-  if (parsed.duplicateItems.length === 0) return text;
+  const parsed = parseTextWithSeparators(text, separators);
+  const seen = new Set<string>();
+  const resultParts: string[] = [];
 
-  let modifiedText = text;
-
-  // 构建匹配所有分隔符或空白的正则表达式
-  const sepPattern = separators
-    .map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-    .join("|");
-  const separatorRegex = new RegExp(`(?:${sepPattern})|\\s+`, "g");
-
-  // 为避免重复删除同一部分，我们记录每次删改后的位置
-  parsed.duplicateItems.forEach(({ item, count }) => {
-    for (let i = 0; i < count - 1; i++) {
-      const lastIndex = modifiedText.lastIndexOf(item);
-      if (lastIndex === -1) continue;
-
-      let startIndex = lastIndex;
-      let endIndex = lastIndex + item.length;
-
-      // 1. 尝试删除 item 后方的分隔符（优先处理）
-      separatorRegex.lastIndex = endIndex;
-      const nextMatch = separatorRegex.exec(modifiedText);
-      if (nextMatch && nextMatch.index === endIndex) {
-        endIndex = nextMatch.index + nextMatch[0].length;
-      } else {
-        // 2. 否则尝试删除前方的分隔符
-        const before = modifiedText.slice(0, startIndex);
-        let match: RegExpExecArray | null = null;
-        let result: RegExpExecArray | null;
-
-        // 向前找最后一个分隔符（避免直接用 regex.exec）
-        while ((result = separatorRegex.exec(before)) !== null) {
-          match = result;
-        }
-
-        if (match && match.index + match[0].length === startIndex) {
-          startIndex = match.index;
-        }
-      }
-
-      // 删除该重复项及可能的前/后分隔符
-      modifiedText =
-        modifiedText.slice(0, startIndex) + modifiedText.slice(endIndex);
+  for (const entry of parsed) {
+    const trimmed = entry.value.trim();
+    if (trimmed === "") {
+      resultParts.push(text.slice(entry.start, entry.end));
+      continue;
     }
-  });
 
-  return modifiedText.trim();
+    if (!seen.has(trimmed)) {
+      seen.add(trimmed);
+      resultParts.push(text.slice(entry.start, entry.end));
+    }
+  }
+
+  return resultParts.join("");
+}
+
+export function removeInvalidItems(text: string, separators: string[]): string {
+  if (!text || typeof text !== "string") return "";
+
+  const parsed = parseTextWithSeparators(text, separators);
+  const resultParts: string[] = [];
+
+  for (const entry of parsed) {
+    const trimmed = entry.value.trim();
+    if (!isInvalidItem(trimmed)) {
+      resultParts.push(text.slice(entry.start, entry.end));
+    } else {
+      const slice = text.slice(entry.start, entry.end);
+      const preservedSeparators = slice.slice(entry.value.length);
+      resultParts.push(preservedSeparators);
+    }
+  }
+
+  return resultParts.join("");
 }
