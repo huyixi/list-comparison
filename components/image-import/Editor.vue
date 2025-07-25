@@ -63,6 +63,98 @@ const containerClass = computed(() => {
 const handleFlip = () => {
     cropperRef.value?.flip(true);
 };
+
+type CropperResult = {
+    coordinates: {
+        left: number;
+        top: number;
+        width: number;
+        height: number;
+    };
+    imageTransforms: {
+        flip: {
+            horizontal: boolean;
+            vertical: boolean;
+        };
+        rotate: number;
+    };
+    visibleArea: {
+        left: number;
+        top: number;
+        width: number;
+        height: number;
+    };
+};
+
+const isImageChange = ref(false);
+
+const initImage = reactive<CropperResult>({
+    coordinates: {
+        left: 0,
+        top: 0,
+        width: 0,
+        height: 0,
+    },
+    imageTransforms: {
+        flip: {
+            horizontal: false,
+            vertical: false,
+        },
+        rotate: 0,
+    },
+    visibleArea: {
+        left: 0,
+        top: 0,
+        width: 0,
+        height: 0,
+    },
+});
+
+const getResult = () => {
+    const result = cropperRef.value?.getResult?.();
+    console.log("getResult", result);
+};
+
+const handleCropperReady = () => {
+    const result = cropperRef.value?.getResult?.();
+    if (result) {
+        Object.assign(initImage, result);
+    }
+    isImageChange.value = false;
+};
+
+const handleCropperChange = (result: CropperResult) => {
+    isImageChange.value = !compareInitImage(result);
+};
+
+function isApproxEqual(a: number, b: number, tolerance = 1): boolean {
+    return Math.abs(a - b) <= tolerance;
+}
+
+const compareInitImage = (current: CropperResult): boolean => {
+    const init = toRaw(initImage);
+
+    const coordsEqual =
+        isApproxEqual(current.coordinates.left, init.coordinates.left) &&
+        isApproxEqual(current.coordinates.top, init.coordinates.top) &&
+        isApproxEqual(current.coordinates.width, init.coordinates.width) &&
+        isApproxEqual(current.coordinates.height, init.coordinates.height);
+
+    const visibleEqual =
+        isApproxEqual(current.visibleArea.left, init.visibleArea.left) &&
+        isApproxEqual(current.visibleArea.top, init.visibleArea.top) &&
+        isApproxEqual(current.visibleArea.width, init.visibleArea.width) &&
+        isApproxEqual(current.visibleArea.height, init.visibleArea.height);
+
+    const transformEqual =
+        current.imageTransforms.rotate === init.imageTransforms.rotate &&
+        current.imageTransforms.flip.horizontal ===
+            init.imageTransforms.flip.horizontal &&
+        current.imageTransforms.flip.vertical ===
+            init.imageTransforms.flip.vertical;
+
+    return coordsEqual && visibleEqual && transformEqual;
+};
 </script>
 <template>
     <UModal
@@ -80,16 +172,14 @@ const handleFlip = () => {
                     :class="containerClass"
                 >
                     <div class="flex-1">
-                        <UTooltip text="取消图片">
-                            <UButton
-                                size="md"
-                                variant="ghost"
-                                @click="closeEditor"
-                                class="text-black text-md font-normal"
-                            >
-                                取消
-                            </UButton>
-                        </UTooltip>
+                        <UButton
+                            size="md"
+                            variant="ghost"
+                            @click="closeEditor"
+                            class="text-black text-md font-normal"
+                        >
+                            取消
+                        </UButton>
                     </div>
 
                     <div>
@@ -98,9 +188,18 @@ const handleFlip = () => {
                             variant="ghost"
                             @click="handleCropperReset"
                             class="text-black text-md font-normal"
+                            :class="{ 'opacity-0': !isImageChange }"
                         >
                             重置
                         </UButton>
+                        <!-- <UButton
+                            size="md"
+                            variant="ghost"
+                            @click="getResult"
+                            class="text-black text-md font-normal"
+                        >
+                            Get Result
+                        </UButton> -->
                     </div>
 
                     <div class="flex-1 flex justify-end">
@@ -130,11 +229,9 @@ const handleFlip = () => {
                             >
                             </UButton>
                         </UTooltip>
-                        <UTooltip text="确定修改">
-                            <UButton size="md" @click="handleCrop" class="ms-2">
-                                确定
-                            </UButton>
-                        </UTooltip>
+                        <UButton size="md" @click="handleCrop" class="ms-2">
+                            确定
+                        </UButton>
                     </div>
                 </div>
                 <div
@@ -163,6 +260,8 @@ const handleFlip = () => {
                                         'corner--handler handler--east-south',
                                 },
                             }"
+                            @ready="handleCropperReady"
+                            @change="handleCropperChange"
                         />
                     </ClientOnly>
                 </div>

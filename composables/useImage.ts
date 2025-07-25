@@ -48,8 +48,6 @@ const openEditor = async (index: number) => {
     height: image.naturalHeight,
   };
 
-  console.log("coordinates updated", selectedImageSize.value);
-
   cropCoordinates.value = {
     left: 0,
     top: 0,
