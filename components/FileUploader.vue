@@ -4,11 +4,10 @@ import type { ImageItem } from "~/types/file";
 import { useFileHandler } from "~/composables/useFileHandler";
 import { useImage } from "~/composables/useImage";
 
-const { imageItems, imageItemCount, addImages, deleteImageAt, clearImages } =
+const { imageItems, addImages, deleteImageAt, editorOpen, clearImages } =
     useImage();
-
-const toast = useToast();
 const { parseFile, getFileType } = useFileHandler();
+const toast = useToast();
 
 const props = defineProps({
     target: {
@@ -17,26 +16,19 @@ const props = defineProps({
     },
 });
 
+const appendText =
+    inject<(target: "A" | "B", text: string) => void>("appendText")!;
+
 const fileInput = ref<HTMLInputElement | null>(null);
+const inputAccept = ref("");
+const inputMultiple = ref(true);
 const isXlsxModalOpen = ref(false);
 const isImageModalOpen = ref(false);
+const isProcessingImage = ref(false);
 const workbookData = ref<Sheet[]>([]);
+const spreadsheetQueue = ref<File[]>([]);
+
 const TOOLTIP_TEXT = "上传 txt / xlsx / 图片";
-const ACCEPT_FILE_TYPES = [
-    ".txt",
-    ".csv",
-    ".xlsx",
-    ".png",
-    ".jpg",
-    ".jpeg",
-    ".webp",
-    "text/plain",
-    "text/csv",
-    "image/png",
-    "image/jpeg",
-    "image/webp",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-].join(",");
 const ACCEPT_IMAGE_TYPES = [
     ".png",
     ".jpg",
@@ -46,158 +38,158 @@ const ACCEPT_IMAGE_TYPES = [
     "image/jpeg",
     "image/webp",
 ].join(",");
-const MAX_FILE_COUNT = 9;
 
-const inputAccept = ref("");
-const inputMultiple = ref(true);
+const ACCEPT_FILE_TYPES = [
+    ".txt",
+    ".csv",
+    ".xlsx",
+    ...ACCEPT_IMAGE_TYPES.split(","),
+    "text/plain",
+    "text/csv",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+].join(",");
 
-const appendText =
-    inject<(target: "A" | "B", text: string) => void>("appendText")!;
+const MAX_IMAGE_COUNT = 9;
 
-const openCommonFilePicker = () => {
-    inputAccept.value = ACCEPT_FILE_TYPES;
+const openCommonFilePicker = (isImage = false) => {
+    inputAccept.value = isImage ? ACCEPT_IMAGE_TYPES : ACCEPT_FILE_TYPES;
     inputMultiple.value = true;
-
-    nextTick(() => {
-        fileInput.value?.click();
-    });
+    nextTick(() => fileInput.value?.click());
 };
 
-const openImageFilePicker = () => {
-    inputAccept.value = ACCEPT_IMAGE_TYPES;
-    inputMultiple.value = true;
-
-    nextTick(() => {
-        fileInput.value?.click();
-    });
+const closeOtherModals = async () => {
+    isImageModalOpen.value = false;
+    isXlsxModalOpen.value = false;
+    await nextTick();
 };
 
-const checkFileUploadConstraints = (
-    files: File[],
-    existingImages: ImageItem[] = [],
-): string | null => {
-    const fileTypes = getFileType(files[0]);
-    const uniqueTypes = [...new Set(fileTypes)];
-
-    let totalCount = files.length;
-    if (uniqueTypes.some((type) => type === "image")) {
-        totalCount += existingImages.length;
-    }
-
-    if (totalCount > MAX_FILE_COUNT) {
-        return `文件上传数量超出限制，最多上传 ${MAX_FILE_COUNT} 个文件`;
-    }
-
-    if (files.length > 1) {
-        if (uniqueTypes.includes("spreadsheet")) {
-            return "一次仅支持上传一个 .xlsx 文件";
-        }
-        if (uniqueTypes.includes("image") && uniqueTypes.includes("text")) {
-            return "不能同时上传图片和文本";
-        }
-    }
-    return null;
+const checkImageLimit = (files: File[]) => {
+    const newImages = files.filter((file) => getFileType(file) === "image");
+    const total = imageItems.value.length + newImages.length;
+    return total > MAX_IMAGE_COUNT
+        ? `最多上传 ${MAX_IMAGE_COUNT} 张图片`
+        : null;
 };
 
-const processSelectedFiles = async (e: Event) => {
+const classifyFiles = (files: File[]) => {
+    const images: File[] = [];
+    const spreadsheets: File[] = [];
+    const texts: File[] = [];
+
+    for (const file of files) {
+        const type = getFileType(file);
+        if (type === "image") images.push(file);
+        else if (type === "spreadsheet") spreadsheets.push(file);
+        else if (type === "text") texts.push(file);
+    }
+    return { images, spreadsheets, texts };
+};
+
+const handleFileInput = async (e: Event) => {
     const input = e.target as HTMLInputElement;
-    const files = input.files;
-    if (!files || files.length === 0) {
+    const files = input.files ? Array.from(input.files) : [];
+    input.value = "";
+
+    if (files.length === 0) {
         toast.add({ title: "请选择文件", color: "warning" });
         return;
     }
 
-    const fileArray = Array.from(files);
-    const fileTypes = fileArray.map(getFileType).filter(Boolean) as string[];
-    const uniqueTypes = Array.from(new Set(fileTypes));
-    const resetInput = () => (input.value = "");
-
-    const error = checkFileUploadConstraints(fileArray, imageItems.value);
-    if (error) {
-        toast.add({ title: error, color: "warning" });
-        return resetInput();
+    const limitError = checkImageLimit(files);
+    if (limitError) {
+        toast.add({ title: limitError, color: "warning" });
+        return;
     }
 
+    const { images, spreadsheets, texts } = classifyFiles(files);
+
     try {
-        if (uniqueTypes[0] === "spreadsheet") {
-            console.log("parseFile");
-            const parsedSheets = await parseFile(fileArray[0]);
-            workbookData.value = parsedSheets as Sheet[];
-            isXlsxModalOpen.value = true;
-        } else if (uniqueTypes[0] === "image") {
-            await processImageFiles(fileArray);
-            isImageModalOpen.value = true;
-        } else if (uniqueTypes[0] === "text") {
-            for (const file of fileArray) {
-                const content = await parseFile(file);
-                appendText(props.target, content as string);
+        if (images.length > 0) {
+            if (!isImageModalOpen.value) {
+                await closeOtherModals();
             }
-        } else {
+            isProcessingImage.value = true;
+            await handleImages(images);
+            isImageModalOpen.value = true;
+        }
+
+        if (spreadsheets.length > 0) {
+            spreadsheetQueue.value = [...spreadsheets];
+            processNextXlsxFile();
+        }
+
+        for (const file of texts) {
+            const content = await parseFile(file);
+            appendText(props.target, content as string);
+        }
+
+        if (
+            images.length === 0 &&
+            spreadsheets.length === 0 &&
+            texts.length === 0
+        ) {
             toast.add({
                 title: "不支持的文件类型",
                 description: "请上传 .xlsx、.jpg、.png、.txt 等文件",
                 color: "warning",
             });
         }
-    } catch (error) {
-        console.error("文件处理失败", error);
+    } catch (err) {
+        console.error("文件处理失败", err);
         toast.add({ title: "文件解析失败", color: "error" });
-    } finally {
-        input.value = "";
     }
 };
 
-const processImageFiles = async (files: File[]) => {
+const handleImages = async (files: File[]) => {
     try {
-        const newItems: ImageItem[] = [];
-
-        for (const file of files) {
-            const base64 = await imageFileToBase64(file);
-            newItems.push({
+        const newItems: ImageItem[] = await Promise.all(
+            files.map(async (file) => ({
                 file,
-                base64,
+                base64: await imageFileToBase64(file),
                 croppedBase64: "",
                 ocrText: "",
                 ocrStatus: "idle",
-            });
-        }
+            })),
+        );
         addImages(newItems);
-    } catch (error) {
-        console.error("图片处理失败", error);
+    } catch (err) {
+        console.error("图片处理失败", err);
         toast.add({ title: "图片解析失败", color: "error" });
-    } finally {
-        if (fileInput.value) fileInput.value.value = "";
     }
 };
 
-watch([isImageModalOpen, isXlsxModalOpen], ([valImageOpen, valXlsxOpen]) => {
-    if (!valImageOpen && !valXlsxOpen) {
-        if (fileInput.value) {
-            fileInput.value.value = "";
+const processNextXlsxFile = async () => {
+    if (spreadsheetQueue.value.length === 0) return;
+    const file = spreadsheetQueue.value.shift()!;
+    const parsedSheets = await parseFile(file);
+    workbookData.value = parsedSheets as Sheet[];
+    isXlsxModalOpen.value = true;
+};
+
+watch([isImageModalOpen, isXlsxModalOpen], async ([imgOpen, xlsxOpen]) => {
+    if (!imgOpen && isProcessingImage.value) {
+        isProcessingImage.value = false;
+        if (spreadsheetQueue.value.length > 0) {
+            await closeOtherModals();
+            await processNextXlsxFile();
         }
-        clearImages();
     }
 });
 
-watch(imageItemCount, () => {
-    if (imageItems.value.length === 0) {
-        isImageModalOpen.value = false;
+watch(isXlsxModalOpen, async (val) => {
+    if (!val && spreadsheetQueue.value.length > 0 && !isProcessingImage.value) {
+        await closeOtherModals();
+        await processNextXlsxFile();
+    }
+});
+
+watch(isImageModalOpen, async (val) => {
+    if (!val && !isProcessingImage.value) {
         clearImages();
-        if (fileInput.value) fileInput.value.value = "";
     }
 });
 
 provide("deleteImage", deleteImageAt);
-
-const {
-    performAllOCR,
-    allOcrDone,
-    ocredCount,
-    selectedIndex,
-    openEditor,
-    editorOpen,
-    closeEditor,
-} = useImage();
 </script>
 
 <template>
@@ -210,7 +202,7 @@ const {
             variant="ghost"
             :aria-label="TOOLTIP_TEXT"
             class="hover:cursor-pointer"
-            @click="openCommonFilePicker"
+            @click="openCommonFilePicker()"
             :ui="{
                 base: 'gap-0.5 ps-1 py-3',
             }"
@@ -225,7 +217,7 @@ const {
         class="hidden"
         :accept="inputAccept"
         :multiple="inputMultiple"
-        @change="processSelectedFiles"
+        @change="handleFileInput"
     />
 
     <XlsxImportModal
@@ -238,7 +230,7 @@ const {
         :target="props.target"
         :imageItems="imageItems"
         v-model:open="isImageModalOpen"
-        @add-image="openImageFilePicker"
+        @add-image="openCommonFilePicker(true)"
     />
 
     <ImageImportEditor v-model:open="editorOpen" />
