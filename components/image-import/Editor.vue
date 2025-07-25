@@ -59,6 +59,10 @@ const containerClass = computed(() => {
     }
     return "";
 });
+
+const handleFlip = () => {
+    cropperRef.value?.flip(true);
+};
 </script>
 <template>
     <UModal
@@ -66,15 +70,75 @@ const containerClass = computed(() => {
         :ui="{
             body: 'p-0 sm:p-0',
             footer: 'justify-between',
-            content: 'flex flex-col items-center w-svw h-svh pb-10',
+            content: 'flex flex-col items-center w-svw h-svh p-10',
         }"
     >
         <template #content>
-            <div
-                class="flex-1 flex justify-center items-center w-full border-none"
-            >
+            <div class="flex-1 flex flex-col items-center w-full border-none">
                 <div
-                    class="h-[70svh] w-[80vw] p-4 border-none flex justify-center items-center"
+                    class="flex items-center w-full max-w-[600px]"
+                    :class="containerClass"
+                >
+                    <div class="flex-1">
+                        <UTooltip text="取消图片">
+                            <UButton
+                                size="md"
+                                variant="ghost"
+                                @click="closeEditor"
+                                class="text-black text-md font-normal"
+                            >
+                                取消
+                            </UButton>
+                        </UTooltip>
+                    </div>
+
+                    <div>
+                        <UButton
+                            size="md"
+                            variant="ghost"
+                            @click="handleCropperReset"
+                            class="text-black text-md font-normal"
+                        >
+                            重置
+                        </UButton>
+                    </div>
+
+                    <div class="flex-1 flex justify-end">
+                        <UTooltip text="水平翻转">
+                            <UButton
+                                size="md"
+                                icon="i-lucide-flip-horizontal"
+                                variant="ghost"
+                                @click="handleFlip"
+                                :ui="{
+                                    base: 'flex items-center justify-center',
+                                    leadingIcon: 'size-5 text-black',
+                                }"
+                            >
+                            </UButton>
+                        </UTooltip>
+                        <UTooltip text="顺时针旋转">
+                            <UButton
+                                size="md"
+                                icon="i-lucide-rotate-cw-square"
+                                variant="ghost"
+                                @click="handleRotate"
+                                :ui="{
+                                    base: 'flex items-center justify-center',
+                                    leadingIcon: 'size-[22px] text-black',
+                                }"
+                            >
+                            </UButton>
+                        </UTooltip>
+                        <UTooltip text="确定修改">
+                            <UButton size="md" @click="handleCrop" class="ms-2">
+                                确定
+                            </UButton>
+                        </UTooltip>
+                    </div>
+                </div>
+                <div
+                    class="h-[86svh] w-[80vw] p-4 border-none flex justify-center items-center"
                 >
                     <ClientOnly>
                         <Cropper
@@ -101,57 +165,6 @@ const containerClass = computed(() => {
                             }"
                         />
                     </ClientOnly>
-                </div>
-            </div>
-
-            <div
-                class="flex items-center flex-col w-full divide-y divide-neutral-200"
-                :class="containerClass"
-            >
-                <div
-                    class="w-full flex justify-between px-4 py-4 sm:max-w-[600px]"
-                >
-                    <UButton
-                        size="lg"
-                        icon="i-lucide-rotate-cw-square"
-                        variant="ghost"
-                        class="text-black"
-                        @click="handleRotate"
-                        :ui="{
-                            base: 'flex items-center justify-center px-4',
-                            leadingIcon: 'size-6',
-                        }"
-                    >
-                    </UButton>
-
-                    <UButton
-                        size="lg"
-                        variant="ghost"
-                        @click="handleCropperReset"
-                        class="text-black text-lg font-normal"
-                    >
-                        重置
-                    </UButton>
-                </div>
-                <div
-                    class="w-full flex justify-between px-4 py-8 sm:max-w-[600px]"
-                >
-                    <UTooltip text="取消图片">
-                        <UButton
-                            size="lg"
-                            variant="ghost"
-                            @click="closeEditor"
-                            class="text-black text-lg font-normal"
-                        >
-                            取消
-                        </UButton>
-                    </UTooltip>
-
-                    <UTooltip text="确定修改">
-                        <UButton size="lg" @click="handleCrop" class="text-lg">
-                            确定
-                        </UButton>
-                    </UTooltip>
                 </div>
             </div>
         </template>
