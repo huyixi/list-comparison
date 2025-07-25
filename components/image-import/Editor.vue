@@ -45,7 +45,6 @@ watch(selectedImageSize, (size) => {
             height: size.height,
         };
     }
-    console.log("coordinates updated", size);
 });
 
 const handleCropperReset = () => {
@@ -88,7 +87,7 @@ type CropperResult = {
 
 const isImageChange = ref(false);
 
-const initImage = reactive<CropperResult>({
+const initImage = ref<CropperResult>({
     coordinates: {
         left: 0,
         top: 0,
