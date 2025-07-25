@@ -70,7 +70,7 @@ const handleFlip = () => {
         :ui="{
             body: 'p-0 sm:p-0',
             footer: 'justify-between',
-            content: 'flex flex-col items-center w-svw h-svh p-10',
+            content: 'flex flex-col items-center w-svw h-svh p-4',
         }"
     >
         <template #content>
