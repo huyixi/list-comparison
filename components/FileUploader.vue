@@ -205,6 +205,7 @@ provide("deleteImage", deleteImageAt);
             @click="openCommonFilePicker()"
             :ui="{
                 base: 'gap-0.5 ps-1 py-3',
+                leadingIcon: 'size-4',
             }"
         >
             导入文件

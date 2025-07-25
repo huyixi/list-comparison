@@ -95,11 +95,11 @@ const getItemLabel = (item: string | DuplicateItem): string => {
                         清除
                     </UButton>
                 </div>
-                <ul class="overflow-y-auto space-y-0.5">
+                <ul class="overflow-y-auto">
                     <li
                         v-for="(item, index) in items"
                         :key="index"
-                        class="px-1.5 py-1 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 hover:cursor-pointer"
+                        class="px-1.5 py-1 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 hover:cursor-pointer truncate"
                         @click="handleCopy(getItemLabel(item))"
                     >
                         {{ displayFormatter(item) }}

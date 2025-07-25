@@ -17,7 +17,7 @@ const handlePaste = async () => {
 
     const text = await clipboard.readText();
     if (text?.trim()) {
-        appendText(props.target, text.trim());
+        appendText?.(props.target, text.trim());
 
         isPasted.value = true;
 
@@ -38,6 +38,7 @@ const handlePaste = async () => {
             aria-label="从剪贴板粘贴"
             :ui="{
                 base: 'gap-0.5 pe-1 py-3',
+                leadingIcon: 'size-4',
             }"
         >
             {{ isPasted ? "已粘贴" : "粘贴" }}

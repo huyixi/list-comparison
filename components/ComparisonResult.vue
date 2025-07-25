@@ -1,3 +1,32 @@
+<script setup>
+const clipboard = useClipboard();
+const toast = useToast();
+
+const props = defineProps({
+    title: String,
+    items: Array,
+    emptyText: String,
+    suffix: String,
+});
+
+const copied = ref(false);
+
+const handleCopy = (text) => {
+    clipboard.writeText(text);
+};
+
+const handleListCopy = (items) => {
+    const textToCopy = items.join("\n");
+    const result = handleCopy(textToCopy);
+    if (result) {
+        copied.value = true;
+        setTimeout(() => {
+            copied.value = false;
+        }, 2000);
+    }
+};
+</script>
+
 <template>
     <div
         class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col"
@@ -5,19 +34,19 @@
         <div
             class="flex items-center justify-between border-b border-gray-200 bg-gray-50"
         >
-            <h2 class="text-lg font-medium text-gray-700 ps-3">{{ title }}</h2>
+            <h2 class="font-medium text-gray-700 ps-3">{{ title }}</h2>
             <UTooltip :text="items.length ? '复制该列内容' : '无可复制内容'">
                 <UButton
                     :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
                     color="neutral"
                     size="md"
                     variant="ghost"
-                    :disabled="!items.length"
                     @click="handleListCopy(items)"
                     :aria-label="`复制${title}`"
                     class="hover:cursor-pointer"
                     :ui="{
-                        base: 'gap-0.5 p-3',
+                        base: 'gap-0.5 p-2.5 ',
+                        leadingIcon: 'size-4',
                     }"
                 >
                     {{ copied ? "已复制" : "复制" }}
@@ -25,18 +54,18 @@
             </UTooltip>
         </div>
         <div class="min-h-64 max-h-64 overflow-y-auto">
-            <ul class="text-sm">
+            <ul class="text-sm divide-y divide-gray-100">
                 <li
                     v-for="(item, index) in items"
                     :key="index"
-                    class="px-3 py-1.5 border-b border-gray-100 hover:bg-gray-50 hover:cursor-pointer"
+                    class="px-3 py-1.5 hover:bg-gray-50 hover:cursor-pointer truncate"
                     @click="handleCopy(item)"
                 >
                     {{ item }}
                 </li>
                 <li
                     v-if="!items.length"
-                    class="px-3 py-4 text-center text-gray-400 text-xs"
+                    class="px-3 py-4 text-center text-gray-400 text-xs divide-y-0"
                 >
                     {{ emptyText }}
                 </li>
@@ -49,31 +78,3 @@
         </div>
     </div>
 </template>
-
-<script setup>
-const clipboard = useClipboard();
-
-const handleCopy = (text) => {
-    clipboard.writeText(text);
-};
-
-const props = defineProps({
-    title: String,
-    items: Array,
-    emptyText: String,
-    suffix: String,
-});
-
-const copied = ref(false);
-
-const handleListCopy = async (items) => {
-    const textToCopy = items.join("\n");
-    const result = await handleCopy(textToCopy);
-    if (result) {
-        copied.value = true;
-        setTimeout(() => {
-            copied.value = false;
-        }, 2000);
-    }
-};
-</script>

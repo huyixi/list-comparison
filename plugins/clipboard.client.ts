@@ -54,6 +54,14 @@ export default defineNuxtPlugin(() => {
 
   const writeText = async (text: string): Promise<void> => {
     if (!import.meta.client) throw new Error("仅支持客户端剪贴板写入");
+    if (!text) {
+      toast.add({
+        title: "没有可复制的内容",
+        color: "warning",
+        icon: "i-lucide-copy-x",
+      });
+      throw new Error("无法复制空文本");
+    }
 
     try {
       if (!navigator?.clipboard?.writeText) {

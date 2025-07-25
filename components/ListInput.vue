@@ -23,7 +23,6 @@ const focusTextarea = () => {
 defineExpose({
     focusTextarea,
 });
-// import {parseText,deduplicateText} from ''
 </script>
 
 <template>
@@ -31,9 +30,9 @@ defineExpose({
         class="bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden"
     >
         <div
-            class="flex items-center justify-between border-b border-gray-200 bg-gray-50 ps-3 pe-1"
+            class="flex items-center justify-between border-b border-gray-200 bg-gray-50 ps-3"
         >
-            <h2 class="text-xl font-medium text-gray-700">{{ props.title }}</h2>
+            <h2 class="text-lg font-medium text-gray-700">{{ props.title }}</h2>
             <div class="flex items-center gap-0">
                 <PasteButton :target="target" @request-focus="focusTextarea" />
                 <FileUploader :target="target" />
