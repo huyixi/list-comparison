@@ -177,16 +177,15 @@ const handleFlip = () => {
     border-radius: 0%;
     position: absolute;
 }
-
 .handler--north {
-    width: 60px;
+    width: 68px;
     height: 4px;
     top: 12px;
     left: 50%;
     transform: translateX(-50%);
 }
 .handler--south {
-    width: 60px;
+    width: 68px;
     height: 4px;
     bottom: 12px;
     left: 50%;
@@ -194,7 +193,7 @@ const handleFlip = () => {
 }
 .handler--west {
     width: 4px;
-    height: 60px;
+    height: 68px;
     border-radius: 0%;
     left: 12px;
     top: 50%;
@@ -202,7 +201,7 @@ const handleFlip = () => {
 }
 .handler--east {
     width: 4px;
-    height: 60px;
+    height: 68px;
     border-radius: 0%;
     right: 12px;
     top: 50%;
@@ -210,22 +209,45 @@ const handleFlip = () => {
 }
 
 .corner--handler {
-    width: 30px;
-    height: 30px;
+    width: 44px;
+    height: 44px;
+    box-sizing: border-box;
+    position: absolute;
+}
+
+/* 左上 */
+.handler--west-north {
+    top: 0;
+    left: 0;
     border-left: 4px solid black;
     border-top: 4px solid black;
-    box-sizing: border-box;
-}
-.handler--west-north {
     transform: translate(12px, 12px);
 }
+
+/* 右上 */
 .handler--east-north {
-    transform: rotate(90deg) translate(12px, 12px);
+    top: 0;
+    right: 0;
+    border-right: 4px solid black;
+    border-top: 4px solid black;
+    transform: translate(-12px, 12px);
 }
+
+/* 左下 */
 .handler--west-south {
-    transform: rotate(270deg) translate(12px, 12px);
+    bottom: 0;
+    left: 0;
+    border-left: 4px solid black;
+    border-bottom: 4px solid black;
+    transform: translate(12px, -12px);
 }
+
+/* 右下 */
 .handler--east-south {
-    transform: rotate(180deg) translate(12px, 12px);
+    bottom: 0;
+    right: 0;
+    border-right: 4px solid black;
+    border-bottom: 4px solid black;
+    transform: translate(-12px, -12px);
 }
 </style>
