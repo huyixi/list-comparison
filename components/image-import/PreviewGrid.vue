@@ -31,7 +31,7 @@ const layoutList = computed(() =>
 
             <!-- Delete Button -->
             <div
-                class="absolute top-0 right-0 p-2"
+                class="absolute top-0 right-0 p-3"
                 @click.stop="deleteImageAt(i)"
             >
                 <button
@@ -39,7 +39,7 @@ const layoutList = computed(() =>
                 >
                     <UIcon
                         name="i-lucide-trash"
-                        class="size-6 text-black-500"
+                        class="size-5 text-black-500"
                     />
                 </button>
             </div>

@@ -37,7 +37,6 @@ const ocr = computed(() => getOcrStatus(props.img.ocrStatus));
             class="w-full h-full object-cover"
         />
 
-        <!-- OCR 状态 -->
         <div
             class="absolute bottom-0 left-0 flex items-center gap-1 bg-black/60 text-white text-xs px-2 py-1 rounded-tr"
         >
