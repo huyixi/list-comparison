@@ -45,7 +45,7 @@ const handleListCopy = (items) => {
                     :aria-label="`复制${title}`"
                     class="hover:cursor-pointer"
                     :ui="{
-                        base: 'gap-0.5 p-2.5 ',
+                        base: 'gap-0.5 py-3 px-2.5 ',
                         leadingIcon: 'size-4',
                     }"
                 >
