@@ -234,7 +234,7 @@ const compareInitImage = (current: CropperResult): boolean => {
                     </div>
                 </div>
                 <div
-                    class="h-[86svh] w-[80vw] p-4 border-none flex justify-center items-center"
+                    class="h-[86svh] w-[80vw] p-4 mt-4 border-none flex justify-center items-center"
                 >
                     <ClientOnly>
                         <Cropper
