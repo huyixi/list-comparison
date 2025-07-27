@@ -161,7 +161,7 @@ const compareInitImage = (current: CropperResult): boolean => {
     >
         <template #content>
             <div
-                class="flex-1 flex flex-col items-center w-full h-svh border-none"
+                class="flex-1 flex flex-col items-center w-full h-dvh border-none"
             >
                 <div
                     class="flex items-center w-full max-w-[600px]"
