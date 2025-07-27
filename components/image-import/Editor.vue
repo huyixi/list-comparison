@@ -156,7 +156,7 @@ const compareInitImage = (current: CropperResult): boolean => {
         :ui="{
             body: 'p-0 sm:p-0 bg-white',
             footer: 'justify-between',
-            content: 'flex flex-col items-center w-svw h-svh p-4 bg-white',
+            content: 'flex flex-col items-center w-svw h-dvh p-4 bg-white',
         }"
     >
         <template #content>
