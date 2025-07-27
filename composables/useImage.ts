@@ -77,7 +77,6 @@ const updateImageAt = (index: number, item: ImageItem) => {
 const deleteImageAt = (index: number) => {
   if (index >= 0 && index < imageItems.value.length) {
     imageItems.value.splice(index, 1);
-    console.log("deleteImageAt", index, imageItems.value, imageItems);
   }
 };
 

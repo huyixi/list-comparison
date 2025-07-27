@@ -38,7 +38,6 @@ const ACCEPT_IMAGE_TYPES = [
     "image/jpeg",
     "image/webp",
 ].join(",");
-
 const ACCEPT_FILE_TYPES = [
     ".txt",
     ".csv",
@@ -188,6 +187,9 @@ watch(isImageModalOpen, async (val) => {
 });
 
 provide("deleteImage", deleteImageAt);
+provide("closeImageModal", () => {
+    isImageModalOpen.value = false;
+});
 </script>
 
 <template>

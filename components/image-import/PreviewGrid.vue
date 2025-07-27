@@ -1,8 +1,6 @@
 <!-- components/image-import/PreviewGrid.vue -->
 <script setup lang="ts">
-import { useImage } from "~/composables/useImage";
-
-const { imageItems, openEditor, deleteImageAt } = useImage();
+const { imageItems, openEditor, deleteImageAt, clearImages } = useImage();
 
 const gridTemplate = computed(() => {
     const count = imageItems.value.length;
@@ -15,7 +13,18 @@ const layoutList = computed(() =>
     imageItems.value.map((_, i) => getImageLayout(i, imageItems.value.length)),
 );
 
-const { isDesktop, isTablet, isMobile } = useDevice();
+const { isDesktop } = useDevice();
+
+const closeImageModal = inject("closeImageModal", () => {
+    console.warn("closeImageModal 未提供");
+});
+const handleImageDelete = (index: number) => {
+    deleteImageAt(index);
+    if (imageItems.value.length === 0) {
+        clearImages();
+        closeImageModal();
+    }
+};
 </script>
 
 <template>
@@ -34,7 +43,7 @@ const { isDesktop, isTablet, isMobile } = useDevice();
             <!-- Delete Button -->
             <div
                 class="absolute top-0 right-0 p-3"
-                @click.stop="deleteImageAt(i)"
+                @click.stop="handleImageDelete(i)"
             >
                 <button
                     class="hover:cursor-pointer rounded-full overflow-hidden bg-slate-100/80 w-10 h-10 flex items-center justify-center group-hover:flex"
