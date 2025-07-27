@@ -6,8 +6,9 @@ export default defineNuxtPlugin({
     const ipadTabletFix = useCookie("ipadTabletFix", {
       maxAge: 60 * 60 * 24 * 365,
     });
+
     if (import.meta.server) {
-      if (ipadTabletFix?.value === "true") {
+      if (ipadTabletFix?.value === true) {
         device.isTablet = true;
         device.isMobileOrTablet = true;
         device.isDesktop = false;
@@ -25,8 +26,9 @@ export default defineNuxtPlugin({
         device.isMobileOrTablet = true;
         device.isDesktop = false;
 
-        if (ipadTabletFix.value !== "true") {
-          ipadTabletFix.value = "true";
+        if (!ipadTabletFix.value) {
+          // Set cookie to fix iPad tablet detection and reload Nuxt app
+          ipadTabletFix.value = true;
           reloadNuxtApp({ force: true });
         }
       }
