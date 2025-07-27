@@ -14,6 +14,8 @@ const gridTemplate = computed(() => {
 const layoutList = computed(() =>
     imageItems.value.map((_, i) => getImageLayout(i, imageItems.value.length)),
 );
+
+const { isDesktop } = useDevice();
 </script>
 
 <template>
@@ -35,7 +37,8 @@ const layoutList = computed(() =>
                 @click.stop="deleteImageAt(i)"
             >
                 <button
-                    class="hover:cursor-pointer rounded-full overflow-hidden bg-slate-100/80 w-10 h-10 flex items-center justify-center sm:hidden sm:group-hover:flex"
+                    class="hover:cursor-pointer rounded-full overflow-hidden bg-slate-100/80 w-10 h-10 flex items-center justify-center group-hover:flex"
+                    :class="isDesktop ? 'hidden' : 'flex'"
                 >
                     <UIcon
                         name="i-lucide-trash"
