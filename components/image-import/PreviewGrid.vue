@@ -19,10 +19,6 @@ const { isDesktop, isTablet, isMobile } = useDevice();
 </script>
 
 <template>
-    <p>
-        "isDesktop:", {{ isDesktop }}, "isTablet:", {{ isTablet }}, "isMobile:",
-        {{ isMobile }}
-    </p>
     <div class="grid gap-0.5 w-full h-full" :class="gridTemplate">
         <div
             v-for="(img, i) in imageItems"
