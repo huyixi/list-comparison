@@ -20,6 +20,9 @@ importers:
       nuxt:
         specifier: ^3.16.0
         version: 3.17.5(@parcel/watcher@2.5.1)(@types/node@24.0.3)(db0@0.3.2)(idb-keyval@6.2.2)(ioredis@5.6.1)(lightningcss@1.30.1)(magicast@0.3.5)(rollup@4.44.0)(sass@1.89.2)(terser@5.43.1)(typescript@5.8.3)(vite@6.3.5(@types/node@24.0.3)(jiti@2.4.2)(lightningcss@1.30.1)(sass@1.89.2)(terser@5.43.1)(yaml@2.8.0))(yaml@2.8.0)
+      nuxt-gtag:
+        specifier: 3.0.3
+        version: 3.0.3(magicast@0.3.5)
       nuxt-site-config:
         specifier: ^3.1.9
         version: 3.2.1(magicast@0.3.5)(vue@3.5.17(typescript@5.8.3))
@@ -2812,6 +2815,9 @@ packages:
 
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
+
+  nuxt-gtag@3.0.3:
+    resolution: {integrity: sha512-1XZc9I3DiF2GC07P7uQOlGN4v1cbnLwWHaQUIlayp4pg0h7wOrna5Nl733/2rXq7ktPL3fT8NBJR7OsV9BtJRA==}
 
   nuxt-site-config-kit@3.2.1:
     resolution: {integrity: sha512-8RbWwDFWZ4OKjuQAnDphA+WXBtTr6sdUuzpZOKI1TNJ2aY9hQNCc/8vf4oJGC84EXRN2SvUsyM3+uEBPdvi4Uw==}
@@ -7208,6 +7214,15 @@ snapshots:
   nth-check@2.1.1:
     dependencies:
       boolbase: 1.0.0
+
+  nuxt-gtag@3.0.3(magicast@0.3.5):
+    dependencies:
+      '@nuxt/kit': 3.17.5(magicast@0.3.5)
+      defu: 6.1.4
+      pathe: 2.0.3
+      ufo: 1.6.1
+    transitivePeerDependencies:
+      - magicast
 
   nuxt-site-config-kit@3.2.1(magicast@0.3.5)(vue@3.5.17(typescript@5.8.3)):
     dependencies:

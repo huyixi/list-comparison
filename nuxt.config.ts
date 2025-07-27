@@ -26,5 +26,8 @@ export default defineNuxtConfig({
   ui: {
     colorMode: false,
   },
-  modules: ["@nuxt/ui", "nuxt-site-config", "@nuxtjs/device"],
+  modules: ["@nuxt/ui", "nuxt-site-config", "@nuxtjs/device", "nuxt-gtag"],
+  gtag: {
+    id: "G-CKTD5J8NE1",
+  },
 });
