@@ -109,11 +109,6 @@ const initImage = ref<CropperResult>({
     },
 });
 
-const getResult = () => {
-    const result = cropperRef.value?.getResult?.();
-    console.log("getResult", result);
-};
-
 const handleCropperReady = () => {
     const result = cropperRef.value?.getResult?.();
     if (result) {
