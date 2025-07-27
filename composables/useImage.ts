@@ -13,6 +13,7 @@ const imageItemCount = computed(() => imageItems.value.length);
 const editorOpen = ref(false);
 
 const selectedImageSize = ref<{ width: number; height: number } | null>(null);
+
 const cropCoordinates = ref<{
   left: number;
   top: number;
@@ -57,15 +58,12 @@ const openEditor = async (index: number) => {
 };
 
 const closeEditor = () => {
-  console.log("closeEditor called");
   editorOpen.value = false;
   selectedIndex.value = null;
 };
 
 const addImages = (items: ImageItem[]) => {
   imageItems.value.push(...items);
-
-  console.log("updateImageAt", imageItems.value);
 };
 
 const updateImageAt = (index: number, item: ImageItem) => {
@@ -116,6 +114,8 @@ const cropSelectedImage = (
   const newItem: ImageItem = {
     ...originalItem,
     croppedBase64: base64,
+    ocrText: "",
+    ocrStatus: "idle",
   };
 
   updateImageAt(index, newItem);
@@ -126,12 +126,17 @@ const cropSelectedImage = (
 const performAllOCR = async () => {
   for (let i = 0; i < imageItems.value.length; i++) {
     const item = imageItems.value[i];
+    if (item.ocrStatus === "success") continue;
 
     updateImageAt(i, { ...item, ocrStatus: "pending" });
 
-    const updated = await performOCR(item);
-
-    updateImageAt(i, updated);
+    try {
+      const updated = await performOCR(item);
+      updateImageAt(i, updated);
+    } catch (e) {
+      updateImageAt(i, { ...item, ocrStatus: "error", ocrText: "" });
+      console.error(`OCR failed for image ${i}:`, e);
+    }
   }
 };
 

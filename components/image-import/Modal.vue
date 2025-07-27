@@ -1,17 +1,8 @@
 <!-- ./components/image-import/Modal.vue -->
 <script setup lang="ts">
 import { useImage } from "~/composables/useImage";
-const {
-    imageItems,
-    performAllOCR,
-    allOcrDone,
-    clearImages,
-    ocredCount,
-    selectedIndex,
-    openEditor,
-    editorOpen,
-    closeEditor,
-} = useImage();
+const { imageItems, performAllOCR, allOcrDone, clearImages, ocredCount } =
+    useImage();
 const toast = useToast();
 const imageCount = computed(() => imageItems.value.length);
 

@@ -30,7 +30,6 @@ const comparedResult = computed(() =>
 );
 
 const appendText = (target: "A" | "B", text: string) => {
-    console.log("appendText", target);
     if (target === "A") appendTextA(text);
     else appendTextB(text);
 };

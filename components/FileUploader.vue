@@ -49,8 +49,6 @@ const ACCEPT_FILE_TYPES = [
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 ].join(",");
 
-const MAX_IMAGE_COUNT = 9;
-
 const openCommonFilePicker = (isImage = false) => {
     inputAccept.value = isImage ? ACCEPT_IMAGE_TYPES : ACCEPT_FILE_TYPES;
     inputMultiple.value = true;
@@ -66,8 +64,8 @@ const closeOtherModals = async () => {
 const checkImageLimit = (files: File[]) => {
     const newImages = files.filter((file) => getFileType(file) === "image");
     const total = imageItems.value.length + newImages.length;
-    return total > MAX_IMAGE_COUNT
-        ? `最多上传 ${MAX_IMAGE_COUNT} 张图片`
+    return total > AppConfig.MAX_IMAGE_COUNT
+        ? `最多上传 ${AppConfig.MAX_IMAGE_COUNT} 张图片`
         : null;
 };
 
@@ -184,7 +182,7 @@ watch(isXlsxModalOpen, async (val) => {
 });
 
 watch(isImageModalOpen, async (val) => {
-    if (!val && !isProcessingImage.value) {
+    if (!val) {
         clearImages();
     }
 });

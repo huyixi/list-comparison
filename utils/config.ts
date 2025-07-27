@@ -1,0 +1,28 @@
+export const AppConfig = {
+  MAX_IMAGE_COUNT: 9,
+  MAX_SPREADSHEET_COUNT: 3,
+  ACCEPT_IMAGE_TYPES: [
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp",
+    "image/png",
+    "image/jpeg",
+    "image/webp",
+  ].join(","),
+  ACCEPT_FILE_TYPES: [
+    ".txt",
+    ".csv",
+    ".xlsx",
+    "text/csv",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp",
+    "image/png",
+    "image/jpeg",
+    "image/webp",
+    "text/plain",
+  ].join(","),
+};
