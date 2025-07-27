@@ -15,10 +15,13 @@ const layoutList = computed(() =>
     imageItems.value.map((_, i) => getImageLayout(i, imageItems.value.length)),
 );
 
-const { isDesktop } = useDevice();
+const { isDesktop, isTablet, isMobile } = useDevice();
 </script>
 
 <template>
+    <p>
+        {{ (isDesktop, isTablet, isMobile) }}
+    </p>
     <div class="grid gap-0.5 w-full h-full" :class="gridTemplate">
         <div
             v-for="(img, i) in imageItems"
