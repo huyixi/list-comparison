@@ -154,13 +154,15 @@ const compareInitImage = (current: CropperResult): boolean => {
     <UModal
         fullscreen
         :ui="{
-            body: 'p-0 sm:p-0',
+            body: 'p-0 sm:p-0 bg-white',
             footer: 'justify-between',
-            content: 'flex flex-col items-center w-svw h-svh p-4',
+            content: 'flex flex-col items-center w-svw h-svh p-4 bg-white',
         }"
     >
         <template #content>
-            <div class="flex-1 flex flex-col items-center w-full border-none">
+            <div
+                class="flex-1 flex flex-col items-center w-full h-svh border-none"
+            >
                 <div
                     class="flex items-center w-full max-w-[600px]"
                     :class="containerClass"

@@ -18,6 +18,7 @@ const { isDesktop } = useDevice();
 const closeImageModal = inject("closeImageModal", () => {
     console.warn("closeImageModal 未提供");
 });
+
 const handleImageDelete = (index: number) => {
     deleteImageAt(index);
     if (imageItems.value.length === 0) {
