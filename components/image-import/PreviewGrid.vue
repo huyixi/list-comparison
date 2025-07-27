@@ -20,7 +20,8 @@ const { isDesktop, isTablet, isMobile } = useDevice();
 
 <template>
     <p>
-        {{ (isDesktop, isTablet, isMobile) }}
+        "isDesktop:", {{ isDesktop }}, "isTablet:", {{ isTablet }}, "isMobile:",
+        {{ isMobile }}
     </p>
     <div class="grid gap-0.5 w-full h-full" :class="gridTemplate">
         <div
