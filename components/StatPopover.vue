@@ -64,9 +64,9 @@ const getItemLabel = (item: string | DuplicateItem): string => {
         <template #content>
             <div class="flex flex-col max-h-72 text-xs w-40">
                 <div
-                    class="sticky top-0 z-10 p-1.5 flex justify-between items-center bg-gray-50 border-b border-gray-200"
+                    class="sticky top-0 z-10 flex justify-between items-center bg-gray-50 border-b border-gray-200"
                 >
-                    <p class="font-medium">
+                    <p class="font-medium p-2">
                         <span class="font-semibold" :class="statusColor">{{
                             count
                         }}</span>
@@ -78,7 +78,7 @@ const getItemLabel = (item: string | DuplicateItem): string => {
                         size="xs"
                         color="neutral"
                         variant="ghost"
-                        class="hover:cursor-pointer p-1"
+                        class="hover:cursor-pointer gap-0.5 flex-1 justify-end py-2 -my-2"
                         @click="$emit('copy')"
                     >
                         复制
@@ -89,7 +89,7 @@ const getItemLabel = (item: string | DuplicateItem): string => {
                         size="xs"
                         color="neutral"
                         variant="ghost"
-                        class="hover:cursor-pointer p-1"
+                        class="hover:cursor-pointer gap-0.5 flex-1 justify-end py-2 -my-2"
                         @click="$emit('clean')"
                     >
                         清除
