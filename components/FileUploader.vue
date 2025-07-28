@@ -127,7 +127,7 @@ const handleFileInput = async (e: Event) => {
         ) {
             toast.add({
                 title: "不支持的文件类型",
-                description: "请上传 .xlsx、.jpg、.png、.txt 等文件",
+                description: "请上传 TXT、CSV、XLSX、JPG、PNG 等文件",
                 color: "warning",
             });
         }

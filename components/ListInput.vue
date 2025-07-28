@@ -42,7 +42,7 @@ defineExpose({
         <textarea
             ref="textareaRef"
             class="w-full min-h-80 p-3 border-0 focus:ring-0 resize-none flex-1"
-            placeholder="输入名单，每项可用逗号、分号、制表符或换行分隔。"
+            placeholder="输入或上传名单，支持文本 / 表格 / 图片。"
             v-model="rawInput"
         ></textarea>
 
