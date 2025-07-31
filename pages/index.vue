@@ -82,7 +82,7 @@ const handleRemoveDuplicateItems = (target: "A" | "B") => {
     } else {
         toast.add({
             title: `名单 ${target} 的重复项已移除`,
-            icon: "i-lucide-list-check",
+            icon: "i-lucide-check",
             color: "neutral",
         });
     }
@@ -104,7 +104,7 @@ const handleRemoveInvalidItems = (target: "A" | "B") => {
     } else {
         toast.add({
             title: `名单 ${target} 的无效项已移除`,
-            icon: "i-lucide-list-check",
+            icon: "i-lucide-check",
             color: "neutral",
         });
     }
