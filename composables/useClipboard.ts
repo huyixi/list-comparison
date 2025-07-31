@@ -65,7 +65,6 @@ export const useClipboard = () => {
     try {
       const text = await navigator.clipboard.readText();
       if (!text.trim()) {
-        console.log("剪贴板内容为空");
         const error = new Error("剪贴板内容为空");
         handleFailToast(error);
         return { success: false, error };
@@ -84,7 +83,6 @@ export const useClipboard = () => {
     }
 
     function handleFailToast(error: Error) {
-      console.log("粘贴失败", typeof error, error);
       if (!showFailToast) return;
       toast?.add?.({
         title: "粘贴失败",
