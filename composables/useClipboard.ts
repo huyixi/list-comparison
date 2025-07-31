@@ -57,7 +57,7 @@ export const useClipboard = () => {
     const { showSuccessToast = false, showFailToast = true } = options;
 
     if (!import.meta.client || !navigator?.clipboard?.readText) {
-      const error = new Error("浏览器不支持读取剪贴板");
+      const error = new Error("剪贴板权限未授权");
       handleFailToast(error);
       return { success: false, error };
     }
@@ -65,6 +65,7 @@ export const useClipboard = () => {
     try {
       const text = await navigator.clipboard.readText();
       if (!text.trim()) {
+        console.log("剪贴板内容为空");
         const error = new Error("剪贴板内容为空");
         handleFailToast(error);
         return { success: false, error };
@@ -83,14 +84,14 @@ export const useClipboard = () => {
     }
 
     function handleFailToast(error: Error) {
-      if (showFailToast) {
-        toast?.add?.({
-          title: "粘贴失败",
-          description: "剪贴板内容读取失败，请手动粘贴（Ctrl+V）",
-          color: "error",
-          icon: "i-lucide-x",
-        });
-      }
+      console.log("粘贴失败", typeof error, error);
+      if (!showFailToast) return;
+      toast?.add?.({
+        title: "粘贴失败",
+        description: error.message ?? "请手动粘贴（Ctrl+V）",
+        color: "error",
+        icon: "i-lucide-x",
+      });
     }
   };
 
