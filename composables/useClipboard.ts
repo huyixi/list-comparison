@@ -52,9 +52,9 @@ export const useClipboard = () => {
 
   // 粘贴
   const readText = async (
-    options: { showFailToast?: boolean } = {},
+    options: { showSuccessToast?: boolean; showFailToast?: boolean } = {},
   ): Promise<{ success: boolean; text?: string; error?: Error }> => {
-    const { showFailToast = true } = options;
+    const { showSuccessToast = true, showFailToast = true } = options;
 
     if (!import.meta.client || !navigator?.clipboard?.readText) {
       const error = new Error("浏览器不支持读取剪贴板");
@@ -64,6 +64,18 @@ export const useClipboard = () => {
 
     try {
       const text = await navigator.clipboard.readText();
+      if (!text?.trim()) {
+        const error = new Error("剪贴板内容为空");
+        handleFailToast(error);
+        return { success: false, error };
+      }
+      if (options.showSuccessToast) {
+        toast?.add?.({
+          title: "粘贴成功",
+          color: "success",
+          icon: "i-lucide-check",
+        });
+      }
       return { success: true, text };
     } catch (e: any) {
       handleFailToast(e);
