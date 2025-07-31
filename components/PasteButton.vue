@@ -26,6 +26,9 @@ const handlePaste = async () => {
         }, 500);
     } else {
         pasteStatus.value = "fail";
+        setTimeout(() => {
+            pasteStatus.value = "idle";
+        }, 500);
     }
 };
 
