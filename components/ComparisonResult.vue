@@ -1,5 +1,4 @@
-<script setup>
-const clipboard = useClipboard();
+<script setup lang="ts">
 const toast = useToast();
 
 const props = defineProps({
@@ -9,19 +8,50 @@ const props = defineProps({
     suffix: String,
 });
 
-const copied = ref(false);
+const clipboard = useClipboard();
+const { writeText } = clipboard;
+
+type CopyStatus = "idle" | "success" | "fail";
+const copyStatus = ref<CopyStatus>("idle");
+
+const copyIcon = computed(() => {
+    switch (copyStatus.value) {
+        case "success":
+            return "i-lucide-check";
+        case "fail":
+            return "i-lucide-x";
+        default:
+            return "i-lucide-copy";
+    }
+});
+
+const copyText = computed(() => {
+    switch (copyStatus.value) {
+        case "success":
+            return "已复制";
+        case "fail":
+            return "复制失败";
+        default:
+            return "复制";
+    }
+});
 
 const handleCopy = (text) => {
-    clipboard.writeText(text);
+    writeText(text, { showSuccessToast: true, showFailToast: true });
 };
 
-const handleListCopy = (items) => {
+const handleListCopy = async (items) => {
     const textToCopy = items.join("\n");
-    const result = handleCopy(textToCopy);
-    if (result) {
-        copied.value = true;
+    const result = await writeText(textToCopy);
+    if (result.success) {
+        copyStatus.value = "success";
         setTimeout(() => {
-            copied.value = false;
+            copyStatus.value = "idle";
+        }, 2000);
+    } else {
+        copyStatus.value = "fail";
+        setTimeout(() => {
+            copyStatus.value = "idle";
         }, 2000);
     }
 };
@@ -37,7 +67,7 @@ const handleListCopy = (items) => {
             <h2 class="font-medium text-gray-700 ps-3">{{ title }}</h2>
             <UTooltip :text="items.length ? '复制该列内容' : '无可复制内容'">
                 <UButton
-                    :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
+                    :icon="copyIcon"
                     color="neutral"
                     size="md"
                     variant="ghost"
@@ -49,7 +79,7 @@ const handleListCopy = (items) => {
                         leadingIcon: 'size-4',
                     }"
                 >
-                    {{ copied ? "已复制" : "复制" }}
+                    {{ copyText }}
                 </UButton>
             </UTooltip>
         </div>

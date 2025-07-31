@@ -40,7 +40,7 @@ const handleClick = async () => {
         emit("update:open", false);
         toast.add({
             title: "识别结果已添加到输入框",
-            icon: "i-lucide-check-circle",
+            icon: "i-lucide-check",
         });
     }
 };

@@ -36,13 +36,35 @@ const appendText = (target: "A" | "B", text: string) => {
 provide("appendText", appendText);
 
 const toast = useToast();
-const clipboard = useClipboard();
+const { writeText } = useClipboard();
 
-const validListACopied = ref(false);
-const validListBCopied = ref(false);
+const validListACopyStatus: CopyStatus = ref("idle");
+const validListBCopyStatus: CopyStatus = ref("idle");
 
-const handleCopy = (content: string) => {
-    clipboard.writeText(content);
+const handleCopy = async (target: "A" | "B") => {
+    const text =
+        target === "A"
+            ? listAInfo.value.validItems.join("\n")
+            : listBInfo.value.validItems.join("\n");
+    const result = await writeText(text);
+
+    if (result.success) {
+        if (target === "A") validListACopyStatus.value = "success";
+        else validListBCopyStatus.value = "success";
+
+        setTimeout(() => {
+            if (target === "A") validListACopyStatus.value = "idle";
+            else validListBCopyStatus.value = "idle";
+        }, 1500);
+    } else {
+        if (target === "A") validListACopyStatus.value = "fail";
+        else validListBCopyStatus.value = "fail";
+
+        setTimeout(() => {
+            if (target === "A") validListACopyStatus.value = "idle";
+            else validListBCopyStatus.value = "idle";
+        }, 1500);
+    }
 };
 
 import { removeDuplicateItems, removeInvalidItems } from "@/utils/parse";
@@ -122,8 +144,8 @@ import type { DuplicateItem } from "@/types";
                         :items="listAInfo.validItems"
                         status="green"
                         :show-copy="true"
-                        @copy="handleCopy(listAInfo.validItems.join('\n'))"
-                        :copied="validListACopied"
+                        @copy="handleCopy('A')"
+                        :copyStatus="validListACopyStatus"
                     />
 
                     <StatPopover
@@ -164,8 +186,8 @@ import type { DuplicateItem } from "@/types";
                         :items="listBInfo.validItems"
                         status="green"
                         :show-copy="true"
-                        @copy="handleCopy(listBInfo.validItems.join('\n'))"
-                        :copied="validListBCopied"
+                        @copy="handleCopy('B', validTextB)"
+                        :copyStatus="validListBCopyStatus"
                     />
 
                     <StatPopover

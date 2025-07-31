@@ -1,10 +1,2 @@
-export {};
-
-declare module "#app" {
-  interface NuxtApp {
-    $clipboard: {
-      readText: () => Promise<string>;
-      writeText: (text: string) => Promise<void>;
-    };
-  }
-}
+export type CopyStatus = "idle" | "success" | "fail";
+export type PasteStatus = "idle" | "success" | "fail";

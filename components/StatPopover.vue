@@ -1,11 +1,9 @@
 <script setup lang="ts">
-const clipboard = useClipboard();
+const { writeText } = useClipboard();
 
 const handleCopy = (text: string) => {
-    clipboard.writeText(text);
+    writeText(text, { showSuccessToast: true, showFailToast: true });
 };
-
-import type { DuplicateItem } from "@/types";
 
 const props = defineProps({
     title: String,
@@ -29,7 +27,12 @@ const props = defineProps({
         type: Function,
         default: (item: string | DuplicateItem) => item,
     },
-    copied: Boolean,
+    copyStatus: {
+        type: String as PropType<CopyStatus>,
+        required: false,
+        validator: (value: string) =>
+            ["idle", "success", "fail"].includes(value),
+    },
 });
 
 const colors: Record<"red" | "yellow" | "green", string> = {
@@ -49,6 +52,28 @@ defineEmits(["clean", "copy"]);
 const getItemLabel = (item: string | DuplicateItem): string => {
     return typeof item === "string" ? item : item.label;
 };
+
+const copyIcon = computed(() => {
+    switch (props.copyStatus) {
+        case "success":
+            return "i-lucide-check";
+        case "fail":
+            return "i-lucide-x";
+        default:
+            return "i-lucide-copy";
+    }
+});
+
+const copyText = computed(() => {
+    switch (props.copyStatus) {
+        case "success":
+            return "已复制";
+        case "fail":
+            return "复制失败";
+        default:
+            return "复制";
+    }
+});
 </script>
 
 <template>
@@ -74,14 +99,14 @@ const getItemLabel = (item: string | DuplicateItem): string => {
                     </p>
                     <UButton
                         v-if="showCopy"
-                        :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
+                        :icon="copyIcon"
                         size="xs"
                         color="neutral"
                         variant="ghost"
                         class="hover:cursor-pointer gap-0.5 flex-1 justify-end py-2 -my-2"
                         @click="$emit('copy')"
                     >
-                        复制
+                        {{ copyText }}
                     </UButton>
                     <UButton
                         v-if="showClean"

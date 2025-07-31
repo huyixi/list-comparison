@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const emit = defineEmits(["request-focus"]);
-const isPasted = ref(false);
+const pasteStatus = ref<PasteStatus>("idle");
 
 const props = defineProps({
     target: {
@@ -8,28 +8,54 @@ const props = defineProps({
         required: true,
     },
 });
-const clipboard = useClipboard();
+const { readText, readSuccess } = useClipboard();
+
 const appendText =
     inject<(target: "A" | "B", text: string) => void>("appendText");
 
 const handlePaste = async () => {
     emit("request-focus");
 
-    const text = await clipboard.readText();
-    if (text?.trim()) {
+    const { success, text } = await readText();
+
+    if (success && typeof text === "string" && text.trim()) {
         appendText?.(props.target, text.trim());
-
-        isPasted.value = true;
-
-        setTimeout(() => (isPasted.value = false), 500);
+        pasteStatus.value = "success";
+        setTimeout(() => {
+            pasteStatus.value = "idle";
+        }, 500);
+    } else {
+        pasteStatus.value = "fail";
     }
 };
+
+const pasteText = computed(() => {
+    switch (pasteStatus.value) {
+        case "success":
+            return "已粘贴";
+        case "fail":
+            return "粘贴失败";
+        default:
+            return "粘贴";
+    }
+});
+
+const pasteIcon = computed(() => {
+    switch (pasteStatus.value) {
+        case "success":
+            return "i-lucide-check";
+        case "fail":
+            return "i-lucide-x";
+        default:
+            return "i-lucide-clipboard";
+    }
+});
 </script>
 
 <template>
     <UTooltip text="从剪贴板粘贴">
         <UButton
-            :icon="isPasted ? 'i-lucide-check' : 'i-lucide-clipboard'"
+            :icon="pasteIcon"
             size="md"
             color="neutral"
             variant="ghost"
@@ -41,7 +67,7 @@ const handlePaste = async () => {
                 leadingIcon: 'size-4',
             }"
         >
-            {{ isPasted ? "已粘贴" : "粘贴" }}
+            {{ pasteText }}
         </UButton>
     </UTooltip>
 </template>
