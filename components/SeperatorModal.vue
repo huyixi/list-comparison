@@ -108,18 +108,18 @@ const filteredSeparators = computed(() => {
                     v-if="filteredSeparators.length === 0"
                     class="text-sm text-gray-400"
                 >
-                    回车添加此分隔符。
+                    回车添加该分隔符。
                 </p>
             </div>
         </template>
         <template #footer>
-            <div class="px-6 py-2">
+            <div>
                 <UButton
                     variant="ghost"
                     color="neutral"
                     leading-icon="i-lucide-rotate-cw"
                     :ui="{
-                        base: 'p-0 gap-1 hover:cursor-pointer',
+                        base: 'ps-6 pe-8 py-3 gap-1 hover:cursor-pointer',
                         leadingIcon: 'size-3',
                     }"
                     @click="resetSeparators"
