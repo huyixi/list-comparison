@@ -42,7 +42,7 @@ export const useClipboard = () => {
       if (showFailToast) {
         toast?.add?.({
           title: "复制失败",
-          description: error.message || "请尝试手动复制（Ctrl+C）",
+          description: "请尝试手动复制（Ctrl+C）",
           color: "error",
           icon: "i-lucide-x",
         });
@@ -64,12 +64,7 @@ export const useClipboard = () => {
 
     try {
       const text = await navigator.clipboard.readText();
-      if (!text?.trim()) {
-        const error = new Error("剪贴板内容为空");
-        handleFailToast(error);
-        return { success: false, error };
-      }
-      if (options.showSuccessToast) {
+      if (showSuccessToast) {
         toast?.add?.({
           title: "粘贴成功",
           color: "success",
@@ -86,7 +81,7 @@ export const useClipboard = () => {
       if (showFailToast) {
         toast?.add?.({
           title: "粘贴失败",
-          description: error.message || "无法读取剪贴板内容",
+          description: "剪贴板内容读取失败，请手动粘贴（Ctrl+V）",
           color: "error",
           icon: "i-lucide-x",
         });
