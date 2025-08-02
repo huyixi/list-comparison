@@ -26,7 +26,7 @@ export const useClipboard = () => {
 
       if (showSuccessToast) {
         toast?.add?.({
-          title: "复制成功",
+          title: "已复制",
           color: "success",
           icon: "i-lucide-check",
         });
