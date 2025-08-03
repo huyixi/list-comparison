@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { DuplicateItem, CopyStatus } from "@/types";
+
 const { writeText } = useClipboard();
 
 const handleCopy = (text: string) => {
@@ -78,7 +80,7 @@ const copyText = computed(() => {
 
 <template>
     <UPopover v-if="count > 0" :ui="{ content: 'overflow-hidden' }">
-        <p class="flex items-center hover:cursor-pointer">
+        <p class="flex items-center hover:cursor-pointer p-1 py-2">
             <span
                 class="w-2 h-2 rounded-full mr-1"
                 :style="{ backgroundColor: statusColor }"

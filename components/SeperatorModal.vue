@@ -45,7 +45,7 @@ const filteredSeparators = computed(() => {
 <template>
     <UTooltip text="添加分隔符">
         <p
-            class="text-gray-700 p-2 hover:cursor-pointer flex items-center gap-1"
+            class="text-gray-700 ps-3 pe-6 py-2 hover:cursor-pointer flex items-center gap-1"
             @click="openSeparatorPopover"
         >
             <span>检测到 {{ props.totalCount }} 项</span>

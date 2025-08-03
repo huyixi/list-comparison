@@ -30,7 +30,7 @@ defineExpose({
         class="bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden"
     >
         <div
-            class="flex items-center justify-between border-b border-gray-200 bg-gray-50 ps-3"
+            class="flex items-center justify-between border-b border-gray-200 bg-gray-50 ps-3 overflow-hidden"
         >
             <h2 class="text-lg font-medium text-gray-700">{{ props.title }}</h2>
             <div class="flex items-center gap-0">
@@ -50,7 +50,9 @@ defineExpose({
             class="flex justify-between items-center border-t border-gray-200 bg-gray-50 text-sm"
         >
             <SeperatorModal :totalCount="props.totalCount"></SeperatorModal>
-            <div class="flex items-center justify-end gap-3 p-2">
+            <div
+                class="flex items-center justify-end [&>*:first-child]:ps-6 [&>*:last-child]:pe-3"
+            >
                 <slot name="stats"></slot>
             </div>
         </div>

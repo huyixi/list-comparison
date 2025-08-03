@@ -36,11 +36,11 @@ const copyText = computed(() => {
     }
 });
 
-const handleCopy = (text) => {
+const handleCopy = (text: string) => {
     writeText(text, { showSuccessToast: true, showFailToast: true });
 };
 
-const handleListCopy = async (items) => {
+const handleListCopy = async (items: string[]) => {
     const textToCopy = items.join("\n");
     const result = await writeText(textToCopy);
     if (result.success) {
@@ -65,7 +65,7 @@ const handleListCopy = async (items) => {
             class="flex items-center justify-between border-b border-gray-200 bg-gray-50"
         >
             <h2 class="font-medium text-gray-700 ps-3">{{ title }}</h2>
-            <UTooltip :text="items.length ? '复制该列内容' : '无可复制内容'">
+            <UTooltip :text="items?.length ? '复制该列内容' : '无可复制内容'">
                 <UButton
                     :icon="copyIcon"
                     color="neutral"

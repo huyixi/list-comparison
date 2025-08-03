@@ -204,7 +204,7 @@ provide("closeImageModal", () => {
             class="hover:cursor-pointer"
             @click="openCommonFilePicker()"
             :ui="{
-                base: 'gap-0.5 ps-1 py-3',
+                base: 'gap-0.5 ps-1 pe-3 py-3',
                 leadingIcon: 'size-4',
             }"
         >
