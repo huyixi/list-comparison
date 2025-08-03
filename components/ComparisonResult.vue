@@ -73,9 +73,9 @@ const handleListCopy = async (items: string[]) => {
                     variant="ghost"
                     @click="handleListCopy(items)"
                     :aria-label="`复制${title}`"
-                    class="hover:cursor-pointer"
+                    class="hover:cursor-pointer rounded-none"
                     :ui="{
-                        base: 'gap-0.5 py-3 px-2.5 ',
+                        base: 'gap-0.5 py-3 ps-4 pe-3',
                         leadingIcon: 'size-4',
                     }"
                 >
