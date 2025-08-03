@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { exportResultsToFile } from "@/utils/export";
+import type { DuplicateItem } from "~/types";
 
 const listARef = ref(null);
 const listBRef = ref(null);
@@ -38,8 +38,10 @@ provide("appendText", appendText);
 const toast = useToast();
 const { writeText } = useClipboard();
 
-const validListACopyStatus: CopyStatus = ref("idle");
-const validListBCopyStatus: CopyStatus = ref("idle");
+import type { CopyStatus } from "~/types";
+
+const validListACopyStatus: Ref<CopyStatus> = ref("idle");
+const validListBCopyStatus: Ref<CopyStatus> = ref("idle");
 
 const handleCopy = async (target: "A" | "B") => {
     const text =
@@ -110,17 +112,6 @@ const handleRemoveInvalidItems = (target: "A" | "B") => {
     if (target === "A") setInputA(result);
     else setInputB(result);
 };
-
-import type { DuplicateItem } from "@/types";
-
-// exportResultsToFile({
-//     onlyInA: comparedResult.value.onlyInA,
-//     onlyInB: comparedResult.value.onlyInB,
-//     inBoth: comparedResult.value.inBoth,
-//     listAInfo: listAInfo.value,
-//     listBInfo: listBInfo.value,
-//     filename: "名单比对",
-// });
 </script>
 
 <template>
@@ -184,7 +175,7 @@ import type { DuplicateItem } from "@/types";
                         :items="listBInfo.validItems"
                         status="green"
                         :show-copy="true"
-                        @copy="handleCopy('B', validTextB)"
+                        @copy="handleCopy('B')"
                         :copyStatus="validListBCopyStatus"
                     />
 
@@ -238,17 +229,5 @@ import type { DuplicateItem } from "@/types";
                 suffix="独有"
             />
         </div>
-        <!--
-        <div v-if="showResults" class="text-center my-6">
-            <UButton
-                @click="exportResults"
-                icon="i-lucide-download"
-                color="primary"
-                variant="subtle"
-                class="px-4 py-2 hover:cursor-pointer"
-            >
-                导出结果
-            </UButton>
-        </div> -->
     </UContainer>
 </template>
