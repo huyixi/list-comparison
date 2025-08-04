@@ -106,7 +106,7 @@ const handleFileInput = async (e: Event) => {
                 await closeOtherModals();
             }
             isProcessingImage.value = true;
-            await handleImages(images);
+            await addImages(images);
             isImageModalOpen.value = true;
         }
 
@@ -190,6 +190,11 @@ provide("deleteImage", deleteImageAt);
 provide("closeImageModal", () => {
     isImageModalOpen.value = false;
 });
+
+const closeImageModal = () => {
+    stopOCR();
+    console.log(ocrAbort.value);
+};
 </script>
 
 <template>

@@ -1,6 +1,4 @@
 // utils/ocr.ts
-import type { ImageItem } from "~/types/file";
-
 function preprocessImageBase64(base64: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -26,35 +24,36 @@ function preprocessImageBase64(base64: string): Promise<string> {
   });
 }
 
-export async function performOCR(img: ImageItem): Promise<ImageItem> {
+export async function performOCR(base64: string): Promise<{
+  success: boolean;
+  text?: string;
+  error?: unknown;
+}> {
   if (process.server) {
-    return img;
+    return { success: false, error: "Server side" };
   }
-
-  const { createWorker } = await import("tesseract.js");
-
-  img.ocrStatus = "pending";
-
-  const base64 = img.croppedBase64 || img.base64;
-  const preprocessedBase64 = await preprocessImageBase64(base64);
-
-  const worker = await createWorker(["chi_sim"], 1);
-  await worker.setParameters({
-    preserve_interword_spaces: "1",
-    user_defined_dpi: "300",
-  });
 
   try {
-    const result = await worker.recognize(preprocessedBase64);
-    img.ocrText = result.data.text.trim();
-    img.ocrStatus = "success";
-  } catch (error) {
-    img.ocrStatus = "error";
-    img.ocrText = "";
-    console.error("[OCR] Failed to recognize:", error);
-  } finally {
-    await worker.terminate();
-  }
+    const { createWorker } = await import("tesseract.js");
 
-  return img;
+    const preprocessedBase64 = await preprocessImageBase64(base64);
+
+    const worker = await createWorker(["chi_sim"], 1);
+    await worker.setParameters({
+      preserve_interword_spaces: "1",
+      user_defined_dpi: "300",
+    });
+
+    const result = await worker.recognize(preprocessedBase64);
+    await worker.terminate();
+    return {
+      success: true,
+      text: result.data.text.trim(),
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error,
+    };
+  }
 }

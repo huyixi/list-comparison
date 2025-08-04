@@ -1,8 +1,7 @@
 <!-- ./components/image-import/Modal.vue -->
 <script setup lang="ts">
 import { useImage } from "~/composables/useImage";
-const { imageItems, performAllOCR, allOcrDone, clearImages, ocredCount } =
-    useImage();
+const { imageItems, allOcrDone, clearImages, ocredCount } = useImage();
 const toast = useToast();
 const imageCount = computed(() => imageItems.value.length);
 
@@ -21,28 +20,18 @@ const appendText =
 const isRecognizing = ref(false);
 
 const handleClick = async () => {
-    if (!allOcrDone.value) {
-        if (isRecognizing.value) return;
+    const text = imageItems.value
+        .filter((item) => item.ocrStatus === "success" && item.ocrText?.trim())
+        .map((item) => item.ocrText!.trim())
+        .join("\n");
 
-        isRecognizing.value = true;
-        await performAllOCR();
-        isRecognizing.value = false;
-    } else {
-        const text = imageItems.value
-            .filter(
-                (item) => item.ocrStatus === "success" && item.ocrText?.trim(),
-            )
-            .map((item) => item.ocrText!.trim())
-            .join("\n");
-
-        appendText(props.target, text);
-        clearImages();
-        emit("update:open", false);
-        toast.add({
-            title: "识别结果已添加到输入框",
-            icon: "i-lucide-check",
-        });
-    }
+    appendText(props.target, text);
+    clearImages();
+    emit("update:open", false);
+    toast.add({
+        title: `识别结果已添加到输入框 ${props.target}`,
+        icon: "i-lucide-check",
+    });
 };
 
 const isOpen = defineModel<boolean>("open");
@@ -74,7 +63,9 @@ const isOpen = defineModel<boolean>("open");
                     </UTooltip>
                     <UTooltip
                         :text="
-                            allOcrDone ? '导入图片中的文字' : '识别图片中的文字'
+                            allOcrDone
+                                ? '导入图片中的文字'
+                                : '正在识别文字中...'
                         "
                     >
                         <UButton
@@ -88,17 +79,11 @@ const isOpen = defineModel<boolean>("open");
                                 base: 'text-white',
                                 leadingIcon: 'text-white',
                             }"
-                            :loading="isRecognizing"
-                            :disabled="isRecognizing"
+                            :loading="!allOcrDone"
+                            :disabled="!allOcrDone"
                             @click="handleClick"
                         >
-                            {{
-                                isRecognizing
-                                    ? "识别中..."
-                                    : allOcrDone
-                                      ? "导入文字"
-                                      : "识别文字"
-                            }}
+                            {{ allOcrDone ? "添加文字" : "识别中..." }}
                         </UButton>
                     </UTooltip>
                 </div>

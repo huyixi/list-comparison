@@ -188,14 +188,6 @@ const compareInitImage = (current: CropperResult): boolean => {
                         >
                             重置
                         </UButton>
-                        <!-- <UButton
-                            size="md"
-                            variant="ghost"
-                            @click="getResult"
-                            class="text-black text-md font-normal"
-                        >
-                            Get Result
-                        </UButton> -->
                     </div>
 
                     <div class="flex-1 flex justify-end">

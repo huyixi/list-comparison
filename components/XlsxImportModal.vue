@@ -247,8 +247,9 @@ const importSelectedData = () => {
                     size="md"
                     class="px-4"
                     @click="importSelectedData"
+                    icon="i-lucide-circle-arrow-up"
                 >
-                    导入
+                    导入数据
                 </UButton>
             </div>
         </template>

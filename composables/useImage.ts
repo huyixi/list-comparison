@@ -4,6 +4,7 @@ import type { Ref } from "vue";
 import type { ImageItem } from "~/types";
 import type { Cropper } from "vue-advanced-cropper";
 import { performOCR } from "~/utils/ocr";
+import { fileToBase64 } from "~/utils/file";
 
 const imageItems = ref<ImageItem[]>([]);
 const selectedIndex = ref<number | null>(null);
@@ -62,17 +63,56 @@ const closeEditor = () => {
   selectedIndex.value = null;
 };
 
-const addImages = (items: ImageItem[]) => {
-  imageItems.value.push(...items);
-};
+async function addImages(files: File[]) {
+  const newItems: ImageItem[] = [];
+  console.log("Adding images...", files);
 
-const updateImageAt = (index: number, item: ImageItem) => {
-  if (index >= 0 && index < imageItems.value.length) {
-    imageItems.value.splice(index, 1, item);
-  } else {
-    console.warn("[useImage] updateImageAt: index 越界", index);
+  for (const file of files) {
+    const base64 = await fileToBase64(file);
+
+    newItems.push({
+      file,
+      base64,
+      ocrStatus: "idle",
+    });
   }
-};
+
+  imageItems.value.push(...newItems);
+
+  for (let i = 0; i < imageItems.value.length; i++) {
+    if (imageItems.value[i].ocrStatus === "success") continue;
+    if (imageItems.value[i].ocrStatus === "idle") {
+      runOCRForImage(i);
+    }
+  }
+}
+
+function updateImageAt(index: number, patch: Partial<ImageItem>) {
+  const item = imageItems.value[index];
+  imageItems.value[index] = { ...item, ...patch };
+  for (let i = 0; i < imageItems.value.length; i++) {
+    if (imageItems.value[i].ocrStatus === "success") continue;
+    if (imageItems.value[i].ocrStatus === "idle") {
+      runOCRForImage(i);
+    }
+  }
+}
+
+async function runOCRForImage(index: number) {
+  const item = imageItems.value[index];
+  if (!item) return;
+
+  updateImageAt(index, { ocrStatus: "pending" });
+
+  const base64 = item.croppedBase64 || item.base64;
+  const { success, text } = await performOCR(base64);
+  if (!success) {
+    updateImageAt(index, { ocrStatus: "error" });
+    return;
+  } else {
+    updateImageAt(index, { ocrText: text, ocrStatus: "success" });
+  }
+}
 
 const deleteImageAt = (index: number) => {
   if (index >= 0 && index < imageItems.value.length) {
@@ -118,25 +158,7 @@ const cropSelectedImage = (
   };
 
   updateImageAt(index, newItem);
-
   closeEditor();
-};
-
-const performAllOCR = async () => {
-  for (let i = 0; i < imageItems.value.length; i++) {
-    const item = imageItems.value[i];
-    if (item.ocrStatus === "success") continue;
-
-    updateImageAt(i, { ...item, ocrStatus: "pending" });
-
-    try {
-      const updated = await performOCR(item);
-      updateImageAt(i, updated);
-    } catch (e) {
-      updateImageAt(i, { ...item, ocrStatus: "error", ocrText: "" });
-      console.error(`OCR failed for image ${i}:`, e);
-    }
-  }
 };
 
 const allOcrDone = computed(() => {
@@ -162,7 +184,6 @@ export function useImage() {
     deleteImageAt,
     clearImages,
     cropSelectedImage,
-    performAllOCR,
     allOcrDone,
     ocredCount,
   };
