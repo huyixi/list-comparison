@@ -143,6 +143,12 @@ provide("closeImageModal", () => {
     clearImages();
     isImageModalOpen.value = false;
 });
+
+watch(isImageModalOpen, (val) => {
+    if (!val) {
+        clearImages();
+    }
+});
 </script>
 
 <template>
