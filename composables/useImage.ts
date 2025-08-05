@@ -65,7 +65,6 @@ const closeEditor = () => {
 
 async function addImages(files: File[]) {
   const newItems: ImageItem[] = [];
-  console.log("Adding images...", files);
 
   for (const file of files) {
     const base64 = await fileToBase64(file);

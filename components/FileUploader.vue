@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { Sheet } from "~/types/sheet";
-import type { ImageItem } from "~/types/file";
 import { useFileHandler } from "~/composables/useFileHandler";
 import { useImage } from "~/composables/useImage";
+import { useModalQueue } from "~/composables/useModalQueue";
 
-const { imageItems, addImages, deleteImageAt, editorOpen, clearImages } =
-    useImage();
+const { imageItems, addImages, editorOpen, clearImages } = useImage();
 const { parseFile, getFileType } = useFileHandler();
+const { queueModal } = useModalQueue();
 const toast = useToast();
 
 const props = defineProps({
@@ -24,40 +24,16 @@ const inputAccept = ref("");
 const inputMultiple = ref(true);
 const isXlsxModalOpen = ref(false);
 const isImageModalOpen = ref(false);
-const isProcessingImage = ref(false);
 const workbookData = ref<Sheet[]>([]);
-const spreadsheetQueue = ref<File[]>([]);
 
 const TOOLTIP_TEXT = "上传 txt / xlsx / 图片";
-const ACCEPT_IMAGE_TYPES = [
-    ".png",
-    ".jpg",
-    ".jpeg",
-    ".webp",
-    "image/png",
-    "image/jpeg",
-    "image/webp",
-].join(",");
-const ACCEPT_FILE_TYPES = [
-    ".txt",
-    ".csv",
-    ".xlsx",
-    ...ACCEPT_IMAGE_TYPES.split(","),
-    "text/plain",
-    "text/csv",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-].join(",");
 
 const openCommonFilePicker = (isImage = false) => {
-    inputAccept.value = isImage ? ACCEPT_IMAGE_TYPES : ACCEPT_FILE_TYPES;
+    inputAccept.value = isImage
+        ? AppConfig.ACCEPT_IMAGE_TYPES
+        : AppConfig.ACCEPT_FILE_TYPES;
     inputMultiple.value = true;
     nextTick(() => fileInput.value?.click());
-};
-
-const closeOtherModals = async () => {
-    isImageModalOpen.value = false;
-    isXlsxModalOpen.value = false;
-    await nextTick();
 };
 
 const checkImageLimit = (files: File[]) => {
@@ -88,7 +64,7 @@ const handleFileInput = async (e: Event) => {
     input.value = "";
 
     if (files.length === 0) {
-        toast.add({ title: "请选择文件", color: "warning" });
+        toast.add({ title: "请选择文件上传", color: "warning" });
         return;
     }
 
@@ -101,23 +77,49 @@ const handleFileInput = async (e: Event) => {
     const { images, spreadsheets, texts } = classifyFiles(files);
 
     try {
-        if (images.length > 0) {
-            if (!isImageModalOpen.value) {
-                await closeOtherModals();
+        if (texts.length > 0) {
+            for (const file of texts) {
+                const content = await parseFile(file);
+                appendText(props.target, content as string);
             }
-            isProcessingImage.value = true;
+        }
+
+        if (isImageModalOpen.value && images.length > 0) {
             await addImages(images);
-            isImageModalOpen.value = true;
+        } else if (!isImageModalOpen.value && images.length > 0) {
+            queueModal(() => {
+                return new Promise<void>(async (resolve) => {
+                    await addImages(images);
+                    isImageModalOpen.value = true;
+
+                    const stop = watch(isImageModalOpen, (val) => {
+                        if (!val) {
+                            stop();
+                            clearImages();
+                            resolve();
+                        }
+                    });
+                });
+            });
         }
 
         if (spreadsheets.length > 0) {
-            spreadsheetQueue.value = [...spreadsheets];
-            processNextXlsxFile();
-        }
+            for (const file of spreadsheets) {
+                queueModal(() => {
+                    return new Promise<void>(async (resolve) => {
+                        const sheets = await parseFile(file);
+                        workbookData.value = sheets as Sheet[];
+                        isXlsxModalOpen.value = true;
 
-        for (const file of texts) {
-            const content = await parseFile(file);
-            appendText(props.target, content as string);
+                        const stop = watch(isXlsxModalOpen, (val) => {
+                            if (!val) {
+                                stop();
+                                resolve();
+                            }
+                        });
+                    });
+                });
+            }
         }
 
         if (
@@ -137,64 +139,10 @@ const handleFileInput = async (e: Event) => {
     }
 };
 
-const handleImages = async (files: File[]) => {
-    try {
-        const newItems: ImageItem[] = await Promise.all(
-            files.map(async (file) => ({
-                file,
-                base64: await imageFileToBase64(file),
-                croppedBase64: "",
-                ocrText: "",
-                ocrStatus: "idle",
-            })),
-        );
-        addImages(newItems);
-    } catch (err) {
-        console.error("图片处理失败", err);
-        toast.add({ title: "图片解析失败", color: "error" });
-    }
-};
-
-const processNextXlsxFile = async () => {
-    if (spreadsheetQueue.value.length === 0) return;
-    const file = spreadsheetQueue.value.shift()!;
-    const parsedSheets = await parseFile(file);
-    workbookData.value = parsedSheets as Sheet[];
-    isXlsxModalOpen.value = true;
-};
-
-watch([isImageModalOpen, isXlsxModalOpen], async ([imgOpen, xlsxOpen]) => {
-    if (!imgOpen && isProcessingImage.value) {
-        isProcessingImage.value = false;
-        if (spreadsheetQueue.value.length > 0) {
-            await closeOtherModals();
-            await processNextXlsxFile();
-        }
-    }
-});
-
-watch(isXlsxModalOpen, async (val) => {
-    if (!val && spreadsheetQueue.value.length > 0 && !isProcessingImage.value) {
-        await closeOtherModals();
-        await processNextXlsxFile();
-    }
-});
-
-watch(isImageModalOpen, async (val) => {
-    if (!val) {
-        clearImages();
-    }
-});
-
-provide("deleteImage", deleteImageAt);
 provide("closeImageModal", () => {
+    clearImages();
     isImageModalOpen.value = false;
 });
-
-const closeImageModal = () => {
-    stopOCR();
-    console.log(ocrAbort.value);
-};
 </script>
 
 <template>
