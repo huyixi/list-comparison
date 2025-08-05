@@ -1,6 +1,6 @@
 // utils/imagePreprocess.ts
 
-export function convertToGrayscale(imageData: ImageData): ImageData {
+export function grayscale(imageData: ImageData): ImageData {
   const data = imageData.data;
   for (let i = 0; i < data.length; i += 4) {
     const gray = 0.3 * data[i] + 0.59 * data[i + 1] + 0.11 * data[i + 2];
@@ -9,10 +9,7 @@ export function convertToGrayscale(imageData: ImageData): ImageData {
   return imageData;
 }
 
-export function binarizeImage(
-  imageData: ImageData,
-  threshold = 180,
-): ImageData {
+export function binarize(imageData: ImageData, threshold = 180): ImageData {
   const data = imageData.data;
   for (let i = 0; i < data.length; i += 4) {
     const gray = data[i];
@@ -32,32 +29,48 @@ export function enhanceContrast(imageData: ImageData, factor = 1.2): ImageData {
   return imageData;
 }
 
-export function preprocessImageData(
-  imageData: ImageData,
-  {
-    grayscale = true,
-    contrast = 1.2,
-    binarize = true,
-    binarizeThreshold = 180,
-  }: {
-    grayscale?: boolean;
-    contrast?: number;
-    binarize?: boolean;
-    binarizeThreshold?: number;
-    blur?: boolean;
-  } = {},
-): ImageData {
-  if (grayscale) {
-    imageData = convertToGrayscale(imageData);
+export function invert(imageData: ImageData): ImageData {
+  const data = imageData.data;
+  for (let i = 0; i < data.length; i += 4) {
+    data[i] = 255 - data[i];
+    data[i + 1] = 255 - data[i + 1];
+    data[i + 2] = 255 - data[i + 2];
   }
-
-  if (contrast !== 1) {
-    imageData = enhanceContrast(imageData, contrast);
-  }
-
-  if (binarize) {
-    imageData = binarizeImage(imageData, binarizeThreshold);
-  }
-
   return imageData;
+}
+
+export function resizeImage(
+  image: HTMLImageElement,
+  width: number,
+  height: number,
+): HTMLCanvasElement {
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d")!;
+  ctx.drawImage(image, 0, 0, width, height);
+  return canvas;
+}
+
+export async function preprocessImage(base64: string): Promise<ImageData> {
+  const img = new Image();
+  img.src = base64;
+
+  return new Promise<ImageData>((resolve) => {
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0);
+      let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      imageData = grayscale(imageData);
+      // imageData = binarize(imageData, 128);
+      // imageData = invert(imageData);
+      // imageData = enhanceContrast(imageData, 1.2);
+
+      resolve(imageData);
+    };
+  });
 }

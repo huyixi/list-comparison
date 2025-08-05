@@ -47,6 +47,18 @@ type OCRResult = {
   error?: unknown;
 };
 
+import { preprocessImage } from "./imagePreprocess";
+
+async function preprocessImageBase64(base64: string): Promise<string> {
+  const imageData = await preprocessImage(base64);
+  const canvas = document.createElement("canvas");
+  canvas.width = imageData.width;
+  canvas.height = imageData.height;
+  const ctx = canvas.getContext("2d")!;
+  ctx.putImageData(imageData, 0, 0);
+  return canvas.toDataURL("image/png");
+}
+
 export const performOCR = async (base64: string): Promise<OCRResult> => {
   if (process.server) {
     return { success: false, error: new Error("Not available on server side") };
@@ -57,8 +69,8 @@ export const performOCR = async (base64: string): Promise<OCRResult> => {
       await initOCRWorker();
     }
 
-    // const preprocessedBase64 = await preprocessImageBase64(base64);
-    const result = await workerInstance!.recognize(base64);
+    const preprocessedBase64 = await preprocessImageBase64(base64);
+    const result = await workerInstance!.recognize(preprocessedBase64);
     return { success: true, text: result.data.text };
   } catch (error) {
     return { success: false, error };
