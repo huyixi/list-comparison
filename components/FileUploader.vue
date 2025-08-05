@@ -149,6 +149,12 @@ watch(isImageModalOpen, (val) => {
         clearImages();
     }
 });
+
+import { initOCRWorker } from "~/utils/ocrWorker";
+
+onMounted(() => {
+    initOCRWorker();
+});
 </script>
 
 <template>

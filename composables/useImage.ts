@@ -3,8 +3,10 @@
 import type { Ref } from "vue";
 import type { ImageItem } from "~/types";
 import type { Cropper } from "vue-advanced-cropper";
-import { performOCR } from "~/utils/ocr";
+// import { performOCR } from "~/utils/ocr";
+import { initOCRWorker, performOCR } from "~/utils/ocrWorker";
 import { fileToBase64 } from "~/utils/file";
+import { enqueueOCR } from "~/utils/ocrWorker";
 
 const imageItems = ref<ImageItem[]>([]);
 const selectedIndex = ref<number | null>(null);
@@ -78,23 +80,13 @@ async function addImages(files: File[]) {
 
   imageItems.value.push(...newItems);
 
-  for (let i = 0; i < imageItems.value.length; i++) {
-    if (imageItems.value[i].ocrStatus === "success") continue;
-    if (imageItems.value[i].ocrStatus === "idle") {
-      runOCRForImage(i);
-    }
-  }
+  triggerOCRQueue();
 }
 
 function updateImageAt(index: number, patch: Partial<ImageItem>) {
   const item = imageItems.value[index];
+  if (!item) return;
   imageItems.value[index] = { ...item, ...patch };
-  for (let i = 0; i < imageItems.value.length; i++) {
-    if (imageItems.value[i].ocrStatus === "success") continue;
-    if (imageItems.value[i].ocrStatus === "idle") {
-      runOCRForImage(i);
-    }
-  }
 }
 
 async function runOCRForImage(index: number) {
@@ -104,14 +96,25 @@ async function runOCRForImage(index: number) {
   updateImageAt(index, { ocrStatus: "pending" });
 
   const base64 = item.croppedBase64 || item.base64;
-  const { success, text } = await performOCR(base64);
-  if (!success) {
-    updateImageAt(index, { ocrStatus: "error" });
-    return;
-  } else {
-    updateImageAt(index, { ocrText: text, ocrStatus: "success" });
-  }
+  enqueueOCR(base64, (result) => {
+    if (!result.success) {
+      updateImageAt(index, { ocrStatus: "error" });
+    } else {
+      updateImageAt(index, {
+        ocrText: result.text,
+        ocrStatus: "success",
+      });
+    }
+  });
 }
+
+const triggerOCRQueue = () => {
+  for (let i = 0; i < imageItems.value.length; i++) {
+    if (imageItems.value[i].ocrStatus === "idle") {
+      runOCRForImage(i);
+    }
+  }
+};
 
 const deleteImageAt = (index: number) => {
   if (index >= 0 && index < imageItems.value.length) {
@@ -157,6 +160,7 @@ const cropSelectedImage = (
   };
 
   updateImageAt(index, newItem);
+  triggerOCRQueue();
   closeEditor();
 };
 
