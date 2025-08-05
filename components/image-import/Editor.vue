@@ -198,8 +198,8 @@ const compareInitImage = (current: CropperResult): boolean => {
                                 variant="ghost"
                                 @click="handleFlip"
                                 :ui="{
-                                    base: 'flex items-center justify-center',
-                                    leadingIcon: 'size-5 text-black',
+                                    base: 'flex items-center justify-center font-thin',
+                                    leadingIcon: 'size-5 text-black/80',
                                 }"
                             >
                             </UButton>
@@ -211,8 +211,8 @@ const compareInitImage = (current: CropperResult): boolean => {
                                 variant="ghost"
                                 @click="handleRotate"
                                 :ui="{
-                                    base: 'flex items-center justify-center',
-                                    leadingIcon: 'size-[22px] text-black',
+                                    base: 'flex items-center justify-center font-thin',
+                                    leadingIcon: 'size-[22px] text-black/80',
                                 }"
                             >
                             </UButton>
